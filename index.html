@@ -1,0 +1,1735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adarsha Educational Institute</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        @keyframes gradient-animation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #e5e7eb;
+            background: linear-gradient(-45deg, #1d2b64, #f8cdda, #1d2b64, #f8cdda);
+            background-size: 400% 400%;
+            animation: gradient-animation 25s ease infinite;
+        }
+        
+        .main-container { transition: all 0.5s ease-in-out; }
+        .view { display: none; animation: slideInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .view.active { display: block; }
+
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .btn {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .card {
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 12px 40px -5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .dashboard-action-card {
+             background: rgba(255, 255, 255, 0.1);
+             transition: background 0.3s ease;
+        }
+        
+        .dashboard-action-card:hover { background: rgba(255, 255, 255, 0.2); }
+        
+        h1, h2, h3 { text-shadow: 0px 2px 4px rgba(0,0,0,0.3); }
+
+        .modal-backdrop {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px);
+            z-index: 1050; display: flex; justify-content: center; align-items: center; animation: fadeIn 0.3s;
+        }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .modal-content {
+            background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(10px); color: white;
+            padding: 2rem; border-radius: 12px; width: 90%; max-width: 500px;
+            text-align: center; border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .loader {
+            border: 4px solid rgba(255,255,255,0.2); border-radius: 50%; border-top: 4px solid #fff;
+            width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        input, select, textarea {
+            background: rgba(0, 0, 0, 0.2) !important; border: 1px solid rgba(255, 255, 255, 0.2) !important; color: white !important;
+        }
+        input::placeholder, textarea::placeholder { color: #a1a1aa !important; }
+        select option { background: #1e293b !important; color: white !important; }
+
+        .admin-tab { cursor: pointer; padding: 8px 12px; border-radius: 8px; transition: background-color 0.3s; white-space: nowrap; }
+        .admin-tab.active { background-color: rgba(255, 255, 255, 0.2); font-weight: 600; }
+        .admin-tab:not(.active):hover { background-color: rgba(255, 255, 255, 0.1); }
+        
+        .admin-tab-content { display: none; }
+        .admin-tab-content.active { display: block; animation: adminContentFadeIn 0.5s ease-in-out; }
+
+        @keyframes adminContentFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .stat-card { opacity: 0; animation: statCardAppear 0.6s ease-out forwards; }
+        @keyframes statCardAppear { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+
+        #login-form > div { opacity: 0; animation: formFieldSlideIn 0.5s ease-out forwards; }
+        @keyframes formFieldSlideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+        
+        .confetti-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1000; overflow: hidden; }
+        .confetti { position: absolute; bottom: 0; opacity: 0; will-change: transform, opacity; animation: confetti-animation 3.5s ease-out forwards; }
+        @keyframes confetti-animation {
+            0% { transform: translateY(0) translateX(0) rotateZ(0) rotateY(0); opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(var(--x-drift)) rotateZ(var(--rotation)) rotateY(720deg); opacity: 0; }
+        }
+        .confetti-message {
+            position: fixed; top: 50%; left: 50%; color: white;
+            font-size: clamp(1.5rem, 5vw, 2.25rem); font-weight: bold; text-align: center;
+            text-shadow: 0 0 15px rgba(0,0,0,0.7); z-index: 1001; padding: 20px 30px;
+            background: rgba(0, 0, 0, 0.5); border-radius: 12px;
+            animation: fadeInOutPulse 3.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; opacity: 0;
+        }
+        @keyframes fadeInOutPulse {
+            0%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.7); }
+            15%, 85% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.05); }
+        }
+
+        /* Janmashtami Animation */
+        .janmashtami-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0;
+            animation: fadeInFestival 2s 1s ease-in-out forwards;
+        }
+        @keyframes fadeInFestival {
+            to { opacity: 0.15; }
+        }
+        .peacock-feather {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            animation: floatFeather 15s ease-in-out infinite;
+        }
+        .flute {
+            position: absolute;
+            width: 250px;
+            height: 50px;
+            animation: floatFlute 18s ease-in-out infinite;
+        }
+        @keyframes floatFeather {
+            0%, 100% { transform: translate(0, 0) rotate(-10deg); }
+            50% { transform: translate(20px, 10px) rotate(10deg); }
+        }
+        @keyframes floatFlute {
+            0%, 100% { transform: translate(0, 0) rotate(5deg); }
+            50% { transform: translate(-15px, -10px) rotate(-5deg); }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div id="janmashtami-special" class="hidden">
+        <div class="janmashtami-container">
+            <svg class="peacock-feather" style="top: 5%; left: 5%;" viewBox="0 0 100 100">
+                <ellipse cx="50" cy="50" rx="45" ry="20" fill="#2196F3" transform="rotate(45 50 50)"/>
+                <ellipse cx="50" cy="50" rx="30" ry="15" fill="#4CAF50" transform="rotate(45 50 50)"/>
+                <circle cx="50" cy="50" r="10" fill="#9C27B0"/>
+                <circle cx="50" cy="50" r="5" fill="#FFC107"/>
+            </svg>
+            <svg class="flute" style="bottom: 10%; right: 10%;" viewBox="0 0 200 40">
+                <rect x="0" y="15" width="200" height="10" rx="5" fill="#FFC107"/>
+                <circle cx="20" cy="20" r="3" fill="#8D6E63"/><circle cx="40" cy="20" r="3" fill="#8D6E63"/>
+                <circle cx="60" cy="20" r="3" fill="#8D6E63"/><circle cx="80" cy="20" r="3" fill="#8D6E63"/>
+                <circle cx="100" cy="20" r="3" fill="#8D6E63"/><circle cx="120" cy="20" r="3" fill="#8D6E63"/>
+            </svg>
+        </div>
+    </div>
+
+    <div id="app" class="min-h-screen flex flex-col items-center justify-center p-4">
+
+        <!-- Main Container for Views -->
+        <div class="main-container w-full max-w-5xl">
+
+            <!-- Initial Selection View -->
+            <div id="initial-view" class="view active text-center">
+                <div class="card p-6 md:p-12">
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-2 animate-pulse">Adarsha Educational Institute</h1>
+                    <p class="text-gray-300 mb-6 md:mb-8 text-base md:text-lg">Your Gateway to Excellence</p>
+                    
+                    <div class="my-6 md:my-8 p-4 md:p-6 bg-black bg-opacity-20 border-l-4 border-blue-400 rounded-r-lg">
+                        <p class="text-gray-200 italic text-sm sm:text-base md:text-lg" id="daily-quote"></p>
+                    </div>
+
+                    <!-- Feature Tiles Section -->
+                    <div class="my-8 md:my-10 grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 text-center">
+                        <!-- Students Tile -->
+                        <div class="card p-4 md:p-6">
+                            <div class="flex justify-center items-center mx-auto bg-blue-500/20 rounded-full h-14 w-14 mb-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-300"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                            </div>
+                            <p id="student-count" class="text-3xl md:text-4xl font-bold text-white">0</p>
+                            <p class="text-gray-300 mt-1 text-sm">Enrolled Students</p>
+                        </div>
+                        <!-- Teachers Tile -->
+                        <div class="card p-4 md:p-6">
+                             <div class="flex justify-center items-center mx-auto bg-green-500/20 rounded-full h-14 w-14 mb-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-300"><path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21v-1a6 6 0 00-5.176-5.973" /></svg>
+                            </div>
+                            <p id="teacher-count" class="text-3xl md:text-4xl font-bold text-white">0</p>
+                            <p class="text-gray-300 mt-1 text-sm">Dedicated Teachers</p>
+                        </div>
+                        <!-- Subjects Tile -->
+                        <div class="card p-4 md:p-6">
+                             <div class="flex justify-center items-center mx-auto bg-indigo-500/20 rounded-full h-14 w-14 mb-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-300"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                            </div>
+                            <p id="subject-count" class="text-3xl md:text-4xl font-bold text-white">0</p>
+                            <p class="text-gray-300 mt-1 text-sm">Subjects Taught</p>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row justify-center gap-4">
+                        <button id="show-teacher-login" class="btn bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-bold py-3 px-6 rounded-lg text-lg w-full sm:w-auto">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21v-1a6 6 0 00-5.176-5.973" /></svg>
+                            Teacher Panel
+                        </button>
+                        <button id="show-admin-login" class="btn bg-gradient-to-r from-green-500 to-teal-600 text-white font-bold py-3 px-6 rounded-lg text-lg w-full sm:w-auto">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                            Admin Panel
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Login View -->
+            <div id="login-view" class="view">
+                 <div class="card p-6 md:p-12">
+                    <button id="back-to-home" class="text-blue-300 hover:underline mb-6">&larr; Back to Home</button>
+                    <h2 id="login-title" class="text-2xl md:text-3xl font-bold text-center mb-6 md:mb-8 text-white"></h2>
+                    <form id="login-form" class="space-y-6">
+                        <div id="teacher-login-fields" style="animation-delay: 0.1s;">
+                            <div>
+                                <label for="username" class="block text-sm font-medium text-gray-300">Username</label>
+                                <input type="text" id="username" name="username" required class="mt-1 block w-full px-4 py-3 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            </div>
+                        </div>
+                        <div id="admin-login-fields" class="hidden" style="animation-delay: 0.1s;">
+                            <div>
+                                <label for="admin-username" class="block text-sm font-medium text-gray-300">Username</label>
+                                <select id="admin-username" name="admin-username" class="mt-1 block w-full px-4 py-3 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                    <option value="akpalei_sir">A.K. Palei Sir</option>
+                                    <option value="amar_admin">Amar</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="animation-delay: 0.2s;">
+                            <label for="password" class="block text-sm font-medium text-gray-300">Password</label>
+                            <input type="password" id="password" name="password" required class="mt-1 block w-full px-4 py-3 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        <div style="animation-delay: 0.3s;">
+                            <button type="submit" class="w-full btn bg-indigo-600 text-white font-bold py-3 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Login</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Teacher Dashboard View -->
+            <div id="teacher-dashboard-view" class="view">
+                <div class="card p-4 sm:p-6 md:p-8">
+                    <div class="flex flex-col sm:flex-row justify-between items-center mb-6 md:mb-8 gap-4">
+                        <h2 id="welcome-message" class="text-2xl md:text-3xl font-bold text-white text-center sm:text-left"></h2>
+                        <button id="logout-teacher" class="btn bg-red-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-600 w-full sm:w-auto">Logout</button>
+                    </div>
+                    <div id="teacher-actions" class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+                        <div id="action-attendance" class="card dashboard-action-card p-4 md:p-6 text-center cursor-pointer">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-3 text-blue-300"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect><path d="m9 14 2 2 4-4"></path></svg>
+                            <h3 class="text-base md:text-lg font-semibold text-white">Take Attendance</h3>
+                        </div>
+                        <div id="action-marks" class="card dashboard-action-card p-4 md:p-6 text-center cursor-pointer">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-3 text-green-300"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+                            <h3 class="text-base md:text-lg font-semibold text-white">Add Marks</h3>
+                        </div>
+                        <div id="action-request-class" class="card dashboard-action-card p-4 md:p-6 text-center cursor-pointer">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-3 text-yellow-300"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><path d="M8 14h.01"></path><path d="M12 14h.01"></path><path d="M16 14h.01"></path><path d="M8 18h.01"></path><path d="M12 18h.01"></path><path d="M16 18h.01"></path></svg>
+                            <h3 class="text-base md:text-lg font-semibold text-white">Request Class</h3>
+                        </div>
+                        <div id="action-schedule-exam" class="card dashboard-action-card p-4 md:p-6 text-center cursor-pointer">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-3 text-purple-300"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path><path d="M15 5l4 4"></path></svg>
+                            <h3 class="text-base md:text-lg font-semibold text-white">Schedule Exam</h3>
+                        </div>
+                         <div id="action-gemini-questions" class="card dashboard-action-card p-4 md:p-6 text-center cursor-pointer col-span-2 md:col-span-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-3 text-pink-300"><path d="m12 3-1.9 4.2-4.6.7 3.3 3.2-.8 4.6L12 13l4.1 2.2-.8-4.6 3.3-3.2-4.6-.7L12 3z"></path><path d="M5 21v-1.5a2.5 2.5 0 0 1 5 0V21"></path><path d="M14 21v-1.5a2.5 2.5 0 0 1 5 0V21"></path></svg>
+                            <h3 class="text-base md:text-lg font-semibold text-white">✨ AI Questions</h3>
+                        </div>
+                    </div>
+                    
+                    <!-- Teacher Dashboard Sections -->
+                    <div id="dashboard-sections" class="mt-8">
+                        <div id="attendance-section" class="dashboard-section hidden">
+                             <button class="back-to-dashboard text-blue-300 hover:underline mb-4">&larr; Back to Dashboard</button>
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 border-b border-gray-500 pb-2 text-white">Take Attendance</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="attendance-class" class="block text-sm font-medium text-gray-300">Select Class</label>
+                                    <select id="attendance-class" class="mt-1 block w-full p-2 rounded-md"></select>
+                                </div>
+                                <div>
+                                    <label for="attendance-subject" class="block text-sm font-medium text-gray-300">Select Subject</label>
+                                    <select id="attendance-subject" class="mt-1 block w-full p-2 rounded-md"></select>
+                                </div>
+                                <div id="student-list-attendance" class="space-y-2 max-h-60 overflow-y-auto p-2 border border-gray-600 rounded-md bg-black bg-opacity-20"></div>
+                                <button id="generate-attendance-btn" class="btn bg-blue-500 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-600 w-full">Prepare Attendance Message</button>
+                                
+                                <div id="attendance-message-container" class="hidden mt-4 space-y-2">
+                                    <label class="block text-sm font-medium text-gray-300">Generated Message:</label>
+                                    <textarea id="attendance-message" rows="10" class="w-full p-2 rounded-md bg-opacity-20" readonly></textarea>
+                                    <div class="flex flex-col sm:flex-row gap-4">
+                                        <button data-copytarget="attendance-message" class="copy-btn btn bg-indigo-500 text-white font-bold py-2 px-4 rounded-md hover:bg-indigo-600 flex-1">Copy Message</button>
+                                        <a href="#" id="attendance-whatsapp-link" target="_blank" class="btn bg-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600 flex-1 text-center">Open WhatsApp</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="marks-section" class="dashboard-section hidden">
+                            <button class="back-to-dashboard text-blue-300 hover:underline mb-4">&larr; Back to Dashboard</button>
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 border-b border-gray-500 pb-2 text-white">Add Test Marks</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="marks-class" class="block text-sm font-medium text-gray-300">Select Class</label>
+                                    <select id="marks-class" class="mt-1 block w-full p-2 rounded-md"></select>
+                                </div>
+                                <div>
+                                    <label for="marks-subject" class="block text-sm font-medium text-gray-300">Select Subject</label>
+                                    <select id="marks-subject" class="mt-1 block w-full p-2 rounded-md"></select>
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="test-name" class="block text-sm font-medium text-gray-300">Test Name / Date</label>
+                                        <input type="text" id="test-name" placeholder="e.g., Physics Weekly Test" class="mt-1 block w-full p-2 rounded-md">
+                                    </div>
+                                    <div>
+                                        <label for="max-marks" class="block text-sm font-medium text-gray-300">Maximum Marks</label>
+                                        <input type="number" id="max-marks" placeholder="e.g., 50" class="mt-1 block w-full p-2 rounded-md">
+                                    </div>
+                                </div>
+                                <div id="student-list-marks" class="space-y-2 max-h-60 overflow-y-auto p-2 border border-gray-600 rounded-md bg-black bg-opacity-20"></div>
+                                <button id="generate-marks-btn" class="btn bg-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600 w-full">Prepare Marks Message</button>
+                                
+                                <div id="marks-message-container" class="hidden mt-4 space-y-2">
+                                    <label class="block text-sm font-medium text-gray-300">Generated Message:</label>
+                                    <textarea id="marks-message" rows="8" class="w-full p-2 rounded-md bg-opacity-20" readonly></textarea>
+                                    <div class="flex flex-col sm:flex-row gap-4">
+                                        <button data-copytarget="marks-message" class="copy-btn btn bg-indigo-500 text-white font-bold py-2 px-4 rounded-md hover:bg-indigo-600 flex-1">Copy Message</button>
+                                        <a href="#" id="marks-whatsapp-link" target="_blank" class="btn bg-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600 flex-1 text-center">Open WhatsApp</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div id="request-class-section" class="dashboard-section hidden">
+                             <button class="back-to-dashboard text-blue-300 hover:underline mb-4">&larr; Back to Dashboard</button>
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 border-b border-gray-500 pb-2 text-white">Request an Extra Class</h3>
+                             <div class="space-y-4">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="request-class-class" class="block text-sm font-medium text-gray-300">Select Class</label>
+                                        <select id="request-class-class" class="mt-1 block w-full p-2 rounded-md"></select>
+                                    </div>
+                                    <div>
+                                        <label for="request-class-subject" class="block text-sm font-medium text-gray-300">Select Subject</label>
+                                        <select id="request-class-subject" class="mt-1 block w-full p-2 rounded-md"></select>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="request-date" class="block text-sm font-medium text-gray-300">Preferred Date</label>
+                                    <input type="date" id="request-date" class="mt-1 block w-full p-2 rounded-md">
+                                </div>
+                                <div>
+                                    <label for="request-reason" class="block text-sm font-medium text-gray-300">Reason / Topic to Cover</label>
+                                    <textarea id="request-reason" rows="3" placeholder="e.g., To finish the chapter on Optics." class="mt-1 block w-full p-2 rounded-md"></textarea>
+                                </div>
+                                <button id="generate-request-class-btn" class="btn bg-yellow-500 text-white font-bold py-2 px-4 rounded-md hover:bg-yellow-600 w-full">Prepare Request Message</button>
+                                
+                                <div id="request-class-message-container" class="hidden mt-4 space-y-2">
+                                    <label class="block text-sm font-medium text-gray-300">Generated Message:</label>
+                                    <textarea id="request-class-message" rows="5" class="w-full p-2 rounded-md bg-opacity-20" readonly></textarea>
+                                    <div class="flex flex-col sm:flex-row gap-4">
+                                        <button data-copytarget="request-class-message" class="copy-btn btn bg-indigo-500 text-white font-bold py-2 px-4 rounded-md hover:bg-indigo-600 flex-1">Copy Message</button>
+                                        <a href="#" id="request-class-whatsapp-link" target="_blank" class="btn bg-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600 flex-1 text-center">Open WhatsApp</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="schedule-exam-section" class="dashboard-section hidden">
+                             <button class="back-to-dashboard text-blue-300 hover:underline mb-4">&larr; Back to Dashboard</button>
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 border-b border-gray-500 pb-2 text-white">Request to Schedule an Exam</h3>
+                            <div class="space-y-4">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="schedule-exam-class" class="block text-sm font-medium text-gray-300">Select Class</label>
+                                        <select id="schedule-exam-class" class="mt-1 block w-full p-2 rounded-md"></select>
+                                    </div>
+                                    <div>
+                                        <label for="schedule-exam-subject" class="block text-sm font-medium text-gray-300">Select Subject</label>
+                                        <select id="schedule-exam-subject" class="mt-1 block w-full p-2 rounded-md"></select>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="exam-date" class="block text-sm font-medium text-gray-300">Preferred Date</label>
+                                    <input type="date" id="exam-date" class="mt-1 block w-full p-2 rounded-md">
+                                </div>
+                                <div>
+                                    <label for="exam-syllabus" class="block text-sm font-medium text-gray-300">Syllabus / Topics</label>
+                                    <textarea id="exam-syllabus" rows="3" placeholder="e.g., Electromagnetism, Optics Chapters 1-3" class="mt-1 block w-full p-2 rounded-md"></textarea>
+                                </div>
+                                <button id="generate-request-exam-btn" class="btn bg-purple-500 text-white font-bold py-2 px-4 rounded-md hover:bg-purple-600 w-full">Prepare Request Message</button>
+
+                                <div id="request-exam-message-container" class="hidden mt-4 space-y-2">
+                                    <label class="block text-sm font-medium text-gray-300">Generated Message:</label>
+                                    <textarea id="request-exam-message" rows="5" class="w-full p-2 rounded-md bg-opacity-20" readonly></textarea>
+                                    <div class="flex flex-col sm:flex-row gap-4">
+                                        <button data-copytarget="request-exam-message" class="copy-btn btn bg-indigo-500 text-white font-bold py-2 px-4 rounded-md hover:bg-indigo-600 flex-1">Copy Message</button>
+                                        <a href="#" id="request-exam-whatsapp-link" target="_blank" class="btn bg-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600 flex-1 text-center">Open WhatsApp</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="gemini-questions-section" class="dashboard-section hidden">
+                            <button class="back-to-dashboard text-blue-300 hover:underline mb-4">&larr; Back to Dashboard</button>
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 border-b border-gray-500 pb-2 text-white">Generate Practice Questions with AI</h3>
+                            <div class="space-y-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="gemini-class" class="block text-sm font-medium text-gray-300">Select Class</label>
+                                        <select id="gemini-class" class="mt-1 block w-full p-2 rounded-md"></select>
+                                    </div>
+                                    <div>
+                                        <label for="gemini-subject" class="block text-sm font-medium text-gray-300">Select Subject</label>
+                                        <select id="gemini-subject" class="mt-1 block w-full p-2 rounded-md"></select>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="gemini-topic" class="block text-sm font-medium text-gray-300">Topic</label>
+                                    <input type="text" id="gemini-topic" placeholder="e.g., Photosynthesis, Quadratic Equations" class="mt-1 block w-full p-2 rounded-md">
+                                </div>
+                                <button id="generate-gemini-questions-btn" class="btn bg-pink-500 text-white font-bold py-2 px-4 rounded-md hover:bg-pink-600 w-full">Generate Questions</button>
+                                
+                                <div id="gemini-loading" class="hidden">
+                                    <div class="loader"></div>
+                                    <p class="text-center text-gray-300">Generating questions... Please wait.</p>
+                                </div>
+
+                                <div id="gemini-result-container" class="hidden mt-6">
+                                    <h4 class="text-lg md:text-xl font-semibold mb-2 text-white">Generated Questions:</h4>
+                                    <textarea id="gemini-result" rows="10" class="p-4 rounded-md border-gray-600 whitespace-pre-wrap w-full bg-black bg-opacity-20" readonly></textarea>
+                                    <div class="flex flex-col sm:flex-row gap-4 mt-2">
+                                        <button data-copytarget="gemini-result" class="copy-btn btn bg-indigo-500 text-white font-bold py-2 px-4 rounded-md hover:bg-indigo-600 flex-1">Copy Questions</button>
+                                        <a href="#" id="gemini-whatsapp-link" target="_blank" class="btn bg-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600 flex-1 text-center">Open WhatsApp</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Dashboard View -->
+            <div id="admin-dashboard-view" class="view">
+                 <div class="card p-4 sm:p-6 md:p-8">
+                    <div class="flex flex-col sm:flex-row justify-between items-center mb-6 md:mb-8 gap-4">
+                        <h2 id="admin-welcome-message" class="text-2xl md:text-3xl font-bold text-white text-center sm:text-left"></h2>
+                        <button id="logout-admin" class="btn bg-red-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-600 w-full sm:w-auto">Logout</button>
+                    </div>
+
+                    <!-- Admin Stats Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
+                        <div class="card p-4 md:p-6 text-center stat-card">
+                            <div class="flex justify-center items-center mx-auto bg-green-500/20 rounded-full h-14 w-14 mb-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-300"><path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21v-1a6 6 0 00-5.176-5.973" /></svg>
+                            </div>
+                            <p id="admin-teacher-count" class="text-3xl md:text-4xl font-bold text-white">0</p>
+                            <p class="text-gray-300 mt-1 text-sm">Total Teachers</p>
+                        </div>
+                        <div class="card p-4 md:p-6 text-center stat-card" style="animation-delay: 0.1s;">
+                            <div class="flex justify-center items-center mx-auto bg-blue-500/20 rounded-full h-14 w-14 mb-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-300"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                            </div>
+                            <p id="admin-student-count" class="text-3xl md:text-4xl font-bold text-white">0</p>
+                            <p class="text-gray-300 mt-1 text-sm">Total Students</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Admin Tabs -->
+                    <div id="admin-tabs-container" class="flex space-x-1 sm:space-x-2 border-b border-gray-700 mb-4 overflow-x-auto pb-2">
+                        <div class="admin-tab active" data-tab="teacher-overview">Teachers</div>
+                        <div class="admin-tab" data-tab="institute-structure">Structure</div>
+                        <div class="admin-tab" data-tab="student-lookup">Lookup</div>
+                        <div class="admin-tab" data-tab="class-roster">Roster</div>
+                        <div class="admin-tab" data-tab="announcements">Announcements</div>
+                        <div class="admin-tab" data-tab="analysis">Analysis</div>
+                    </div>
+
+                    <!-- Admin Tab Content -->
+                    <div id="admin-tab-content">
+                        <div id="teacher-overview-content" class="admin-tab-content active">
+                            <div class="bg-black bg-opacity-20 p-4 md:p-6 rounded-lg">
+                                <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
+                                    <h3 class="text-xl md:text-2xl font-semibold text-white">Teacher List</h3>
+                                </div>
+                                <div id="teacher-overview-list" class="space-y-4">
+                                    <!-- Teacher info will be dynamically inserted here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="institute-structure-content" class="admin-tab-content">
+                            <div class="bg-black bg-opacity-20 p-4 md:p-6 rounded-lg">
+                                 <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
+                                    <h3 class="text-xl md:text-2xl font-semibold text-white">Institute Structure</h3>
+                                </div>
+                                <div id="institute-structure-list" class="space-y-4 max-h-96 overflow-y-auto">
+                                    <!-- Structure will be dynamically inserted here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="student-lookup-content" class="admin-tab-content">
+                            <div class="bg-black bg-opacity-20 p-4 md:p-6 rounded-lg">
+                                <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
+                                    <h3 class="text-xl md:text-2xl font-semibold text-white">Student Lookup</h3>
+                                </div>
+                                <div class="flex gap-2">
+                                    <input type="text" id="student-search-input" placeholder="Type a student's name..." class="flex-grow p-2 rounded-md">
+                                </div>
+                                <div id="student-lookup-results" class="mt-4 p-4 bg-black bg-opacity-20 rounded-md min-h-[50px]">
+                                    <!-- Search results will appear here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="class-roster-content" class="admin-tab-content">
+                             <div class="bg-black bg-opacity-20 p-4 md:p-6 rounded-lg">
+                                 <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
+                                    <h3 class="text-xl md:text-2xl font-semibold text-white">Class Roster</h3>
+                                </div>
+                                <div id="class-roster-list" class="space-y-4 max-h-96 overflow-y-auto">
+                                    <!-- Roster will be dynamically inserted here -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="announcements-content" class="admin-tab-content">
+                            <div class="bg-black bg-opacity-20 p-4 md:p-6 rounded-lg">
+                                <h3 class="text-xl md:text-2xl font-semibold mb-4 text-white">Create Announcement for Main Group</h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label for="teacher-request-input" class="block text-sm font-medium text-gray-300">Paste Teacher Request Message Here</label>
+                                        <textarea id="teacher-request-input" rows="4" placeholder="Paste the approved request message from the teacher..." class="mt-1 block w-full p-2 rounded-md"></textarea>
+                                    </div>
+                                    <button id="generate-announcement-btn" class="btn bg-teal-500 text-white font-bold py-2 px-4 rounded-md hover:bg-teal-600 w-full">Generate Announcement</button>
+                                    
+                                    <div id="announcement-message-container" class="hidden mt-4 space-y-2">
+                                        <label class="block text-sm font-medium text-gray-300">Generated Announcement:</label>
+                                        <textarea id="announcement-message" rows="6" class="w-full p-2 rounded-md bg-opacity-20" readonly></textarea>
+                                        <div class="flex flex-col sm:flex-row gap-4">
+                                            <button data-copytarget="announcement-message" class="copy-btn btn bg-indigo-500 text-white font-bold py-2 px-4 rounded-md hover:bg-indigo-600 flex-1">Copy Announcement</button>
+                                            <a href="#" id="announcement-whatsapp-link" target="_blank" class="btn bg-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600 flex-1 text-center">Open Main Group</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="analysis-content" class="admin-tab-content">
+                            <div class="bg-black bg-opacity-20 p-4 md:p-6 rounded-lg">
+                                <h3 class="text-xl md:text-2xl font-semibold mb-4 text-white">Marks Analysis</h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label for="marks-analysis-input" class="block text-sm font-medium text-gray-300">Paste Marks Report Here</label>
+                                        <textarea id="marks-analysis-input" rows="6" placeholder="Paste the full marks report generated by a teacher..." class="mt-1 block w-full p-2 rounded-md"></textarea>
+                                    </div>
+                                    <button id="analyze-marks-btn" class="btn bg-purple-500 text-white font-bold py-2 px-4 rounded-md hover:bg-purple-600 w-full">Analyze Marks</button>
+                                    
+                                    <div id="analysis-results-container" class="hidden mt-4 space-y-4">
+                                        <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
+                                             <h4 class="text-lg font-semibold text-white">Analysis Report</h4>
+                                             <button id="print-analysis-btn" class="btn bg-gray-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-gray-600 flex items-center gap-2 w-full sm:w-auto">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                                                Print Report
+                                            </button>
+                                        </div>
+                                        <div id="analysis-results" class="p-4 bg-black bg-opacity-25 rounded-md">
+                                            <!-- Analysis results will be injected here -->
+                                        </div>
+                                        <div>
+                                            <canvas id="grade-chart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    
+    <!-- This container is for the confetti animation -->
+    <div id="confetti-container" class="confetti-container"></div>
+    
+    <!-- Custom Modal -->
+    <div id="custom-modal" class="modal-backdrop hidden">
+        <div class="modal-content">
+            <h3 id="modal-title" class="text-xl font-bold mb-4"></h3>
+            <p id="modal-message" class="text-lg mb-6 whitespace-pre-line"></p>
+            <button id="modal-ok-btn" class="btn bg-indigo-600 text-white font-bold py-2 px-6 rounded-md">OK</button>
+        </div>
+    </div>
+
+    <script>
+    // --- SCRIPT WRAPPER ---
+    // This ensures the entire script runs only after the HTML document has been fully loaded and parsed.
+    // This is a robust way to prevent "blank page" errors caused by scripts trying to access elements that don't exist yet.
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // --- DATABASE (Hardcoded Data) ---
+
+        const users = {
+            // Teachers
+            'banita': { password: 'banita215', role: 'teacher', name: "Banita Ma'am" },
+            'sujata': { password: 'sujata867', role: 'teacher', name: "Sujata Ma'am" },
+            'manas': { password: 'manas520', role: 'teacher', name: "Manas Sir" },
+            'ritanjali': { password: 'ritanjali211', role: 'teacher', name: "Ritanjali Ma'am" },
+            'tapas': { password: 'tapas670', role: 'teacher', name: "Tapas Sir" },
+            'dasa': { password: 'dasa312', role: 'teacher', name: "Dasa Sir" },
+            'akpalei': { password: 'akp245', role: 'teacher', name: "A.K Palei Sir" },
+            'satabdi': { password: 'satabdi467', role: 'teacher', name: "Satabdi Ma'am" },
+            'amar': { password: 'amar21', role: 'teacher', name: "Amar" },
+            'trilochan': { password: 'trilochan621', role: 'teacher', name: "Trilochan Sir" },
+            'jyotirmaya': { password: 'jyotirmaya732', role: 'teacher', name: "Jyotirmaya Sir" },
+            // Admins
+            'akpalei_sir': { password: 'akp246', role: 'admin', name: "A.K. Palei Sir" },
+            'amar_admin': { password: 'amarp21', role: 'admin', name: "Amar" }
+        };
+
+        const teacherData = {
+            'sujata': { name: "Sujata Ma'am", subjects: ['Biology (XII)', 'Biology (XI)', 'Biology (X)', 'Biology (IX)', 'Science (VIII)', 'Science (VII)', 'Science (VI)', 'Science (VIII Odia Medium)', 'Science (IX Odia Medium)'] },
+            'banita': { name: "Banita Ma'am", subjects: ['Maths (VI-VIII)', 'Social Studies (VIII-X)'] },
+            'satabdi': { name: "Satabdi Ma'am", subjects: ['Maths (XII)', 'Maths (X)', 'Maths (IX)', 'Physics (XII)'] },
+            'ritanjali': { name: "Ritanjali Ma'am", subjects: ['English (VI-XII)', 'Social Studies (VI)', 'Social Studies (VII)', 'English (VIII Odia Medium)', 'English (IX Odia Medium)'] },
+            'manas': { name: "Manas Sir", subjects: ['Computer (VI-X)', 'Chemistry (IX)', 'Chemistry (X)', 'Physics (IX)', 'Physics (X)', 'Physics (XI)', 'Science (VII)', 'Science (VIII)', 'Maths (VIII Odia Medium)', 'Maths (IX Odia Medium)', 'Science (VIII Odia Medium)', 'Science (IX Odia Medium)'] },
+            'akpalei': { name: "A.K Palei Sir", subjects: ['English (VI)', 'English (VII)', 'Odia (VI-VIII)', 'English (VIII Odia Medium)'] },
+            'dasa': { name: "Dasa Sir", subjects: ['Odia (VII)', 'Odia (VIII)', 'Social Science (VIII Odia Medium)', 'Social Science (IX Odia Medium)'] },
+            'tapas': { name: "Tapas Sir", subjects: ['Sanskrit (VI-VIII)'] },
+            'amar': { name: "Amar", subjects: ['Science (VI-VIII)', 'Physics (IX-XII)', 'English (VI-X)'] },
+            'trilochan': { name: "Trilochan Sir", subjects: ['Odia (X)'] },
+            'jyotirmaya': { name: "Jyotirmaya Sir", subjects: ['Chemistry (XII)'] }
+        };
+
+        const students = {
+            'VI': ['Sujit Ku. Nayak', 'Monalisha Biswal', 'Kshyati Prangya Naik', 'Paripurna Rout', 'Subhashree Nayak', 'Pradnesh Sahoo', 'Twinkle Rana'],
+            'VII': ['Debadutta Dandapat', 'Tarini Prasad Nayak', 'Giri Ranjan Naik', 'Padmanabha Nayak', 'Krushna Chandra Mahapatra', 'Anirban Mahanta', 'Shubham Shubhaprada Mahanta', 'Amit Ku. Nayak', 'Alok Ku. Mukhi', 'Lilamaya Nayak', 'Pruthiraj Patra', 'Priyaranjan Samad', 'Tanaya Rani Mahanta', 'Barsha Rani Nayak', 'Lipsa Priyadarshini Naik'],
+            'VIII': ['Jeet Prakash Nayak', 'Tarzan Nayak', 'Babul Ku. Naik', 'Naren Ku. Dalei', 'Nagen Ku. Dalei', 'Deepak Naik', 'Chetna Aradhya Mahanta', 'Urmila Mahanta', 'Sujata Munda', 'Shibani Munda', 'Shubhalaxmi Munda', 'Anjali Nayak', 'Ankita Rana', 'Anushka Abhilipsa Naik', 'Sonali Nayak', 'Sonakshi Dehury', 'Debsita Nayak', 'Pritilipsa Das'],
+            'IX': ['Premananda Mahanta', 'Shubham Ku. Dehury', 'Aditya Ku. Mahanta', 'Kshirod Munda', 'Anirudha Naik', 'Satyajit Das', 'Debajit Dalei', 'Biswajit Naik', 'Saurabh Ku. Nayak', 'Suparna Singh', 'Hemangini Mahanta', 'Subhangi Giri', 'Hemamalini Nayak', 'Sipra Singh', 'Swati Mahanta', 'Tejaswini Naik', 'Saipriya Singh', 'Saumyashree Nayak', 'Seema Nayak'],
+            'X': ['Sonali Barik', 'Manisha Nayak', 'Rinki Behera', 'Srishti S. Dandapat', 'Suman S. Dalei', 'Gyana Ranjan Nayak', 'Mithun Munda', 'Saroj Ku. Sandil', 'Ayush Ku. Mudi', 'Jigyansu Naik', 'Rahul Khandei', 'Saumya Ranjan Sethy', 'Atreya Nandan Palei', 'Akash Ku. Nayak', 'Adarsh Ku. Nayak', 'Padma Bhusan Mahanta', 'Soumya Ranjan Nayak',
+                { name: 'Sweety Patra', onlyForSubject: 'English' }, 
+                { name: 'Abhipsa Laha', onlyForSubject: 'English' }, 
+                { name: 'Deepika Mahapatra', onlyForSubject: 'English' }],
+            'XI': ['Saumya Ranjan Das', 'Dibyanka Das'],
+            'XII': ['Itishree Nayak', 'Swagatika Sethy', { name: 'Dishanjali Tarai', onlyForSubjects: ['Physics', 'Maths', 'English', 'Chemistry'] }, 'Nihar Ranjan Mahanta', 'Rashmita Mahanta'],
+            'VIII Odia Medium': ['Satyaban Naik', 'Kumar Sanu Behera'],
+            'IX Odia Medium': ['Sugam Mahapatra', 'Padmalochan Mahanta', 'Balaram Mahanta']
+        };
+        
+        const educationalQuotes = [
+            "The beautiful thing about learning is that no one can take it away from you.",
+            "Education is the most powerful weapon which you can use to change the world.",
+            "The roots of education are bitter, but the fruit is sweet.",
+            "Education is not the filling of a pail, but the lighting of a fire.",
+            "Live as if you were to die tomorrow. Learn as if you were to live forever."
+        ];
+
+        const teacherGreetingQuotes = [
+            "A good teacher can inspire hope, ignite the imagination, and instill a love of learning.", "Teaching is the one profession that creates all other professions.", "The art of teaching is the art of assisting discovery.", "It takes a big heart to help shape little minds.", "To the world you may be just a teacher, but to your students you are a hero.", "The influence of a good teacher can never be erased.", "Teachers who love teaching, teach children to love learning.", "A truly special teacher is very wise and sees tomorrow in every child's eyes.", "The best teachers are those who show you where to look but don't tell you what to see.", "A teacher affects eternity; he can never tell where his influence stops.", "Good teaching is more a giving of right questions than a giving of right answers.", "The mediocre teacher tells. The good teacher explains. The superior teacher demonstrates. The great teacher inspires.", "A teacher's purpose is not to create students in his own image, but to develop students who can create their own image.", "What the teacher is, is more important than what he teaches.", "The dream begins with a teacher who believes in you.", "A great teacher takes a hand, opens a mind, and touches a heart.", "Better than a thousand days of diligent study is one day with a great teacher.", "Your heart is slightly bigger than the average human heart, but that's because you're a teacher.", "Teachers can change lives with just the right mix of chalk and challenges.", "Teaching is the greatest act of optimism.", "The best teachers teach from the heart, not from the book.", "A teacher is a compass that activates the magnets of curiosity, knowledge, and wisdom in the pupils.", "One child, one teacher, one book, one pen can change the world.", "A good teacher is like a candle—it consumes itself to light the way for others.", "Not all superheroes have capes, some have teaching degrees.", "The task of the modern educator is not to cut down jungles, but to irrigate deserts.", "Education is the key to success in life, and teachers make a lasting impact in the lives of their students.", "Anyone who does anything to help a child in his life is a hero to me.", "In learning you will teach, and in teaching you will learn.", "The job of an educator is to teach students to see vitality in themselves."
+        ];
+
+        const whatsappLink = "https://chat.whatsapp.com/KOOiewuMecL6jflAEHkIKQ?mode=ac_t";
+        const mainGroupWhatsappLink = "https://chat.whatsapp.com/HNkxAz2Y3MV4kxjAzwAPXb?mode=ac_t";
+
+        // --- APPLICATION STATE ---
+        let currentUser = null;
+        let currentRole = null;
+        let gradeChart = null;
+        let wasLate = false;
+        
+        // --- ANIMATION FUNCTION ---
+        function animateCountUp(element, target, duration = 2000) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                element.textContent = Math.floor(progress * target);
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                } else {
+                    element.textContent = target; // Ensure final count is accurate
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+
+        // --- VIEW MANAGEMENT ---
+        function showView(viewId) {
+            document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+        }
+
+        function showLogin(role) {
+            currentRole = role;
+            const loginTitle = document.getElementById('login-title');
+            const teacherFields = document.getElementById('teacher-login-fields');
+            const adminFields = document.getElementById('admin-login-fields');
+            const teacherUsernameInput = document.getElementById('username');
+            
+            if (role === 'teacher') {
+                loginTitle.textContent = 'Teacher Login';
+                teacherFields.style.display = 'block';
+                teacherUsernameInput.required = true;
+                adminFields.style.display = 'none';
+                
+                teacherUsernameInput.value = '';
+                document.getElementById('password').value = '';
+                showView('login-view');
+            } else { // admin
+                loginTitle.textContent = 'Admin Login';
+                teacherFields.style.display = 'none';
+                teacherUsernameInput.required = false;
+                adminFields.style.display = 'block';
+                document.getElementById('password').value = '';
+                showView('login-view');
+            }
+        }
+        
+        // --- AUTHENTICATION ---
+        function handleLogin(event) {
+            event.preventDefault();
+            const password = document.getElementById('password').value;
+            let username;
+
+            if (currentRole === 'teacher') {
+                username = document.getElementById('username').value.toLowerCase().trim();
+            } else { // admin
+                username = document.getElementById('admin-username').value;
+            }
+
+            const user = users[username];
+
+            if (user && user.password === password && user.role === currentRole) {
+                currentUser = { username: username, ...user };
+                if (user.role === 'teacher') {
+                    const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
+                    const quoteIndex = dayOfYear % teacherGreetingQuotes.length;
+                    const quote = teacherGreetingQuotes[quoteIndex];
+                    const greetingMessage = `"${quote}"\n\nWe are grateful to have you with us and for your hard work, ${currentUser.name}.`;
+                    
+                    showModal(greetingMessage, `Welcome, ${currentUser.name}!`);
+
+                    setupTeacherDashboard();
+                    showView('teacher-dashboard-view');
+                } else {
+                    setupAdminDashboard();
+                    showView('admin-dashboard-view');
+                }
+            } else {
+                showModal('Invalid username or password. Please try again.');
+            }
+            document.getElementById('login-form').reset();
+            if(currentRole === 'admin') {
+                 document.getElementById('username').required = false;
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            currentRole = null;
+            hideDashboardSections();
+            showView('initial-view');
+        }
+
+        // --- DASHBOARD SETUP ---
+        function setupTeacherDashboard() {
+            document.getElementById('welcome-message').textContent = `Welcome, ${currentUser.name}`;
+            const teacherSubjects = teacherData[currentUser.username].subjects;
+            const teacherClasses = new Set();
+
+            teacherSubjects.forEach(sub => {
+                const match = sub.match(/\(([^)]+)\)/);
+                if (match) {
+                    const classInfo = match[1];
+                    if (classInfo.includes('-')) {
+                        const [start, end] = classInfo.split('-').map(s => s.trim());
+                        const romanNumerals = ['VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
+                        const startIndex = romanNumerals.indexOf(start);
+                        const endIndex = romanNumerals.indexOf(end);
+                        if (startIndex !== -1 && endIndex !== -1) {
+                            for (let i = startIndex; i <= endIndex; i++) {
+                                teacherClasses.add(romanNumerals[i]);
+                            }
+                        }
+                    } else {
+                        classInfo.split(',').forEach(c => teacherClasses.add(c.trim()));
+                    }
+                }
+            });
+
+            const sortedClasses = Array.from(teacherClasses).sort((a, b) => {
+                const romanOrder = ['VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
+                const aBase = a.replace(' Odia Medium', '');
+                const bBase = b.replace(' Odia Medium', '');
+                const aIndex = romanOrder.indexOf(aBase);
+                const bIndex = romanOrder.indexOf(bBase);
+                if (aIndex !== bIndex) return aIndex - bIndex;
+                return a.includes('Odia Medium') ? 1 : -1;
+            });
+
+            const classSelects = ['attendance-class', 'marks-class', 'gemini-class', 'request-class-class', 'schedule-exam-class'];
+            classSelects.forEach(selectId => {
+                const select = document.getElementById(selectId);
+                select.innerHTML = '<option value="">Select a class</option>';
+                sortedClasses.forEach(cls => {
+                    select.innerHTML += `<option value="${cls}">${cls}</option>`;
+                });
+            });
+        }
+        
+        function setupAdminDashboard() {
+            document.getElementById('admin-welcome-message').textContent = `Welcome, ${currentUser.name}`;
+            
+            // Calculate and display stats
+            const totalTeachers = Object.keys(teacherData).length;
+            const totalStudents = Object.values(students).reduce((sum, classArray) => sum + classArray.length, 0);
+
+            animateCountUp(document.getElementById('admin-teacher-count'), totalTeachers);
+            animateCountUp(document.getElementById('admin-student-count'), totalStudents);
+
+            // Populate Teacher Overview List
+            const listContainer = document.getElementById('teacher-overview-list');
+            listContainer.innerHTML = '';
+            Object.values(teacherData).forEach(teacher => {
+                const teacherDiv = document.createElement('div');
+                teacherDiv.className = 'p-4 bg-black bg-opacity-20 rounded-lg shadow';
+                teacherDiv.innerHTML = `
+                    <p class="font-bold text-lg text-white">${teacher.name}</p>
+                    <p class="text-sm text-gray-300">${teacher.subjects.join(', ')}</p>
+                `;
+                listContainer.appendChild(teacherDiv);
+            });
+            
+            // Build and display Institute Structure
+            buildInstituteStructure();
+            // Build and display Class Roster
+            buildClassRoster();
+        }
+
+        // --- ADMIN PANEL FEATURES ---
+        
+        function showAdminTab(tabId) {
+            document.querySelectorAll('.admin-tab-content').forEach(content => content.classList.remove('active'));
+            document.querySelectorAll('.admin-tab').forEach(tab => tab.classList.remove('active'));
+            
+            document.getElementById(`${tabId}-content`).classList.add('active');
+            document.querySelector(`.admin-tab[data-tab="${tabId}"]`).classList.add('active');
+        }
+
+        function buildInstituteStructure() {
+            const structure = {};
+            const romanOrder = ['VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'VIII Odia Medium', 'IX Odia Medium'];
+
+            romanOrder.forEach(className => {
+                if (students[className]) {
+                    structure[className] = {};
+                }
+            });
+
+            Object.entries(teacherData).forEach(([_, teacher]) => {
+                teacher.subjects.forEach(subjectStr => {
+                    const subjectName = subjectStr.replace(/\s*\([^)]*\)/, '').trim();
+                    const classMatch = subjectStr.match(/\(([^)]+)\)/);
+                    if (classMatch) {
+                        const classInfo = classMatch[1];
+                        let classes = [];
+                        if (classInfo.includes('-')) {
+                            const [start, end] = classInfo.split('-').map(s => s.trim());
+                            const startIndex = romanOrder.indexOf(start);
+                            const endIndex = romanOrder.indexOf(end);
+                            if (startIndex !== -1 && endIndex !== -1) {
+                                classes = romanOrder.slice(startIndex, endIndex + 1);
+                            }
+                        } else {
+                            classes = classInfo.split(',').map(c => c.trim());
+                        }
+
+                        classes.forEach(className => {
+                            if (structure[className]) {
+                                if (!structure[className][subjectName]) {
+                                    structure[className][subjectName] = [];
+                                }
+                                structure[className][subjectName].push(teacher.name);
+                            }
+                        });
+                    }
+                });
+            });
+
+            const container = document.getElementById('institute-structure-list');
+            container.innerHTML = '';
+            Object.entries(structure).forEach(([className, subjects]) => {
+                let subjectHtml = Object.entries(subjects).map(([subjectName, teachers]) => {
+                    return `<div class="ml-4 pl-4 border-l-2 border-gray-600">
+                                <p class="font-semibold text-white">${subjectName}</p>
+                                <p class="text-sm text-gray-400 pl-2">- ${teachers.join(', ')}</p>
+                            </div>`;
+                }).join('');
+
+                container.innerHTML += `
+                    <div class="p-3 bg-black bg-opacity-20 rounded-md">
+                        <h4 class="text-lg font-bold text-blue-300">${className}</h4>
+                        ${subjectHtml || '<p class="ml-4 text-gray-400">No subjects assigned.</p>'}
+                    </div>
+                `;
+            });
+        }
+
+        function buildClassRoster() {
+            const container = document.getElementById('class-roster-list');
+            container.innerHTML = '';
+            const romanOrder = ['VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'VIII Odia Medium', 'IX Odia Medium'];
+
+            romanOrder.forEach(className => {
+                const studentArray = students[className];
+                if (studentArray) {
+                     let studentHtml = studentArray.map(student => {
+                        const studentName = (typeof student === 'object') ? student.name : student;
+                        return `<li>${studentName}</li>`;
+                    }).join('');
+
+                    container.innerHTML += `
+                        <div class="p-3 bg-black bg-opacity-20 rounded-md">
+                            <h4 class="text-lg font-bold text-blue-300">Class ${className}</h4>
+                            <ol class="list-decimal list-inside ml-4">${studentHtml}</ol>
+                        </div>
+                    `;
+                }
+            });
+        }
+        
+        function lookupStudent() {
+            const searchTerm = document.getElementById('student-search-input').value.toLowerCase().trim();
+            const resultsContainer = document.getElementById('student-lookup-results');
+            
+            if (!searchTerm) {
+                resultsContainer.innerHTML = '<p class="p-2 text-gray-400">Start typing to search for a student.</p>';
+                return;
+            }
+
+            let found = false;
+            let resultsHtml = '';
+            Object.entries(students).forEach(([className, studentArray]) => {
+                studentArray.forEach(student => {
+                    const studentName = (typeof student === 'object') ? student.name : student;
+                    if (studentName.toLowerCase().includes(searchTerm)) {
+                        resultsHtml += `<p class="p-2 rounded-md bg-black bg-opacity-25">${studentName} - <span class="font-bold text-blue-300">Class ${className}</span></p>`;
+                        found = true;
+                    }
+                });
+            });
+
+            if (found) {
+                resultsContainer.innerHTML = resultsHtml;
+            } else {
+                resultsContainer.innerHTML = `<p class="p-2 text-gray-400">No student found matching "${searchTerm}".</p>`;
+            }
+        }
+        
+        function printContent(elementId, title) {
+            const contentElement = document.getElementById(elementId);
+            // Defensive check to prevent errors if the element doesn't exist
+            if (!contentElement) {
+                console.error("Element to print not found:", elementId);
+                showModal("Could not generate the print view. The content is missing.");
+                return;
+            }
+            const contentToPrint = contentElement.innerHTML;
+            const printWindow = window.open('', '', 'height=600,width=800');
+            printWindow.document.write('<html><head><title>' + title + '</title>');
+            printWindow.document.write(`
+                <style>
+                    body { font-family: sans-serif; color: #333; margin: 20px;}
+                    h1 { text-align: center; border-bottom: 2px solid #ccc; padding-bottom: 10px; margin-bottom: 20px;}
+                    div { border: 1px solid #eee; border-radius: 5px; padding: 15px; margin-bottom: 10px; page-break-inside: avoid; }
+                    h4 { font-size: 1.5em; font-weight: bold; color: #000; margin-bottom: 10px; }
+                    p { margin: 0 0 5px 0; }
+                    ol, ul { padding-left: 20px; } li { margin-bottom: 5px; }
+                </style>
+            `);
+            printWindow.document.write('</head><body>');
+            printWindow.document.write('<h1>' + title + '</h1>');
+            printWindow.document.write(contentToPrint);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        // --- TEACHER ACTIONS & DYNAMIC POPULATION ---
+
+        function handleAttendanceClick() {
+            const now = new Date();
+            const day = now.getDay();
+            const currentTimeInMinutes = now.getHours() * 60 + now.getMinutes();
+            const weekdayStartTimes = [17 * 60 + 30, 18 * 60 + 30, 19 * 60 + 30];
+            const sundayStartTimes = [6 * 60 + 45, 7 * 60 + 45, 8 * 60 + 45];
+            const schedule = (day === 0) ? sundayStartTimes : weekdayStartTimes;
+            let isLate = false;
+
+            for (const startTime of schedule) {
+                const lateThreshold = startTime + 10;
+                const classEndTime = startTime + 60; 
+                if (currentTimeInMinutes > lateThreshold && currentTimeInMinutes < classEndTime) {
+                    isLate = true;
+                    break;
+                }
+            }
+            
+            if (isLate) {
+                wasLate = true;
+                showModal("Students might be arriving late. Kindly remind them to be punctual and take necessary steps to discourage delays.", "Late Entry Alert");
+            } else {
+                wasLate = false;
+            }
+
+            showDashboardSection('attendance-section');
+        }
+
+        function showDashboardSection(sectionId) {
+            document.getElementById('teacher-actions').style.display = 'none';
+            document.querySelectorAll('.dashboard-section').forEach(sec => sec.classList.add('hidden'));
+            document.getElementById(sectionId).classList.remove('hidden');
+        }
+
+        function hideDashboardSections() {
+            document.querySelectorAll('.dashboard-section').forEach(sec => sec.classList.add('hidden'));
+            document.getElementById('teacher-actions').style.display = 'grid';
+        }
+
+        function populateSubjects(type) {
+            const classSelect = document.getElementById(`${type}-class`);
+            const subjectSelect = document.getElementById(`${type}-subject`);
+            const selectedClass = classSelect.value;
+            subjectSelect.innerHTML = '<option value="">Select a subject</option>';
+
+            if (!selectedClass) {
+                 if(type === 'attendance') populateStudentsForAttendance();
+                 if(type === 'marks') populateStudentsForMarks();
+                return;
+            }
+
+            const teacherSubs = teacherData[currentUser.username].subjects;
+            const subjectMap = new Map();
+
+            teacherSubs.forEach(sub => {
+                const match = sub.match(/\(([^)]+)\)/);
+                if (match) {
+                    const classInfo = match[1];
+                    const cleanSubjectName = sub.replace(/\s*\([^)]*\)/, '').trim();
+
+                    if (classInfo.includes('-')) {
+                        const [start, end] = classInfo.split('-').map(s => s.trim());
+                        const romanNumerals = ['VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
+                        const startIndex = romanNumerals.indexOf(start);
+                        const endIndex = romanNumerals.indexOf(end);
+                        const selectedIndex = romanNumerals.indexOf(selectedClass.replace(' Odia Medium', ''));
+                        if (selectedIndex >= startIndex && selectedIndex <= endIndex) {
+                            subjectMap.set(cleanSubjectName, sub);
+                        }
+                    } else if (classInfo.split(',').map(c => c.trim()).includes(selectedClass)) {
+                        subjectMap.set(cleanSubjectName, sub);
+                    }
+                }
+            });
+
+            subjectMap.forEach((originalValue, displayName) => {
+                subjectSelect.innerHTML += `<option value="${originalValue}">${displayName}</option>`;
+            });
+
+            if(type === 'attendance') populateStudentsForAttendance();
+            if(type === 'marks') populateStudentsForMarks();
+        }
+
+        function populateStudentsForAttendance() {
+            const selectedClass = document.getElementById('attendance-class').value;
+            const selectedSubject = document.getElementById('attendance-subject').value;
+            const studentListDiv = document.getElementById('student-list-attendance');
+            studentListDiv.innerHTML = '';
+            document.getElementById('attendance-message-container').classList.add('hidden');
+            if (selectedClass && students[selectedClass]) {
+                students[selectedClass].forEach(student => {
+                    const isConditional = typeof student === 'object';
+                    const studentName = isConditional ? student.name : student;
+
+                    if (isConditional) {
+                        const subjectNameOnly = selectedSubject.split(' (')[0].trim();
+                        if (student.onlyForSubject && !selectedSubject.toLowerCase().includes(student.onlyForSubject.toLowerCase())) {
+                             return;
+                        }
+                        if (student.onlyForSubjects && !student.onlyForSubjects.includes(subjectNameOnly)) {
+                             return;
+                        }
+                    }
+
+                    const label = document.createElement('label');
+                    label.className = 'flex items-center space-x-3 p-2 rounded-md hover:bg-black hover:bg-opacity-20';
+                    label.innerHTML = `<input type="checkbox" class="h-5 w-5 rounded border-gray-500 text-indigo-400 focus:ring-indigo-500 bg-transparent" checked><span>${studentName}</span>`;
+                    studentListDiv.appendChild(label);
+                });
+            }
+        }
+        
+        function populateStudentsForMarks() {
+            const selectedClass = document.getElementById('marks-class').value;
+            const selectedSubject = document.getElementById('marks-subject').value;
+            const studentListDiv = document.getElementById('student-list-marks');
+            studentListDiv.innerHTML = '';
+            document.getElementById('marks-message-container').classList.add('hidden');
+            if (selectedClass && students[selectedClass]) {
+                students[selectedClass].forEach(student => {
+                    const isConditional = typeof student === 'object';
+                    const studentName = isConditional ? student.name : student;
+
+                    if (isConditional) {
+                        const subjectNameOnly = selectedSubject.split(' (')[0].trim();
+                         if (student.onlyForSubject && !selectedSubject.toLowerCase().includes(student.onlyForSubject.toLowerCase())) {
+                             return;
+                        }
+                        if (student.onlyForSubjects && !student.onlyForSubjects.includes(subjectNameOnly)) {
+                             return;
+                        }
+                    }
+
+                    const div = document.createElement('div');
+                    div.className = 'flex items-center justify-between p-2 rounded-md hover:bg-black hover:bg-opacity-20';
+                    div.innerHTML = `<span>${studentName}</span><input type="number" placeholder="Marks" class="w-24 p-1 rounded-md">`;
+                    studentListDiv.appendChild(div);
+                });
+            }
+        }
+        
+        // --- MESSAGE GENERATION & COPY ---
+
+        function generateAttendanceMessage() {
+            const studentCheckboxes = document.querySelectorAll('#student-list-attendance input[type="checkbox"]');
+            const subjectEl = document.getElementById('attendance-subject');
+            const subjectValue = subjectEl.value;
+            const subjectText = subjectEl.options[subjectEl.selectedIndex]?.text || subjectValue;
+            const className = document.getElementById('attendance-class').value;
+            if (!className || !subjectValue) {
+                showModal("Please select a class and subject first.");
+                return;
+            }
+
+            const totalCount = studentCheckboxes.length;
+            if (totalCount === 0) {
+                showModal("No students found for this class/subject to generate a report.");
+                return;
+            }
+            const absentees = Array.from(studentCheckboxes)
+                .filter(cb => !cb.checked)
+                .map(cb => cb.nextElementSibling.textContent);
+            const presentCount = totalCount - absentees.length;
+            const attendancePercentage = ((presentCount / totalCount) * 100);
+            
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+            const dateString = now.toLocaleDateString('en-GB');
+
+            let lateMarker = wasLate ? " (L)" : "";
+
+            let message = `*Attendance Report*\n\n` +
+                          `*Date:* ${dateString}\n` +
+                          `*Time:* ${timeString}\n` +
+                          `*Teacher:* ${currentUser.name}\n` +
+                          `*Class:* ${className}\n` +
+                          `*Subject:* ${subjectText}\n\n` +
+                          `*Summary:* ${presentCount} out of ${totalCount} students are present (${attendancePercentage.toFixed(2)}% attendance).${lateMarker}\n\n`;
+            
+            if (absentees.length > 0) {
+                message += `*Absentees (${absentees.length}):*\n` + absentees.map((name, index) => `${index + 1}. ${name}`).join('\n');
+            } else {
+                message += `*All students are present.*`;
+            }
+            
+            document.getElementById('attendance-message').value = message;
+            document.getElementById('attendance-whatsapp-link').href = whatsappLink;
+            document.getElementById('attendance-message-container').classList.remove('hidden');
+
+            if (attendancePercentage === 100) {
+                triggerConfettiAnimation("All students are present! Excellent work!");
+            } else if (attendancePercentage >= 80) {
+                triggerConfettiAnimation("High Attendance! Students love your class!");
+            }
+            wasLate = false; // Reset the flag
+        }
+
+        function getGrade(percentage) {
+            if (percentage >= 90) return 'A+';
+            if (percentage >= 80) return 'A';
+            if (percentage >= 70) return 'B';
+            if (percentage >= 60) return 'C';
+            if (percentage >= 50) return 'D';
+            if (percentage >= 40) return 'E';
+            return 'F';
+        }
+
+        function generateMarksMessage() {
+            const marksInputs = document.querySelectorAll('#student-list-marks input[type="number"]');
+            const className = document.getElementById('marks-class').value;
+            const subjectEl = document.getElementById('marks-subject');
+            const subjectValue = subjectEl.value;
+            const subjectText = subjectEl.options[subjectEl.selectedIndex]?.text || subjectValue;
+            const testName = document.getElementById('test-name').value;
+            const maxMarks = document.getElementById('max-marks').value;
+            
+            if (!className || !subjectValue || !testName || !maxMarks) {
+                showModal("Please fill in all fields: class, subject, test name, and maximum marks.");
+                return;
+            }
+
+            let message = `*📊 Marks Report 📊*\n\n` +
+                                  `*Teacher:* ${currentUser.name}\n` +
+                                  `*Class:* ${className}\n` +
+                                  `*Subject:* ${subjectText}\n` +
+                                  `*Test:* ${testName}\n` +
+                                  `*Max. Marks:* ${maxMarks}\n\n` +
+                                  `*Student Marks:*\n`;
+
+            let hasMarks = false;
+            marksInputs.forEach(input => {
+                const studentName = input.previousElementSibling.textContent;
+                const marks = input.value;
+                if (marks) {
+                    const percentage = (marks / maxMarks) * 100;
+                    const grade = getGrade(percentage);
+                    message += `${studentName}: ${marks}/${maxMarks} (${percentage.toFixed(2)}%, Grade: ${grade})\n`;
+                    hasMarks = true;
+                }
+            });
+
+            if (!hasMarks) {
+                showModal("Please enter marks for at least one student.");
+                return;
+            }
+
+            document.getElementById('marks-message').value = message;
+            document.getElementById('marks-whatsapp-link').href = whatsappLink;
+            document.getElementById('marks-message-container').classList.remove('hidden');
+        }
+
+        function generateRequestMessage(type) {
+            const teacherName = currentUser.name;
+            let message;
+
+            if (type === 'class') {
+                const className = document.getElementById('request-class-class').value;
+                const subjectEl = document.getElementById('request-class-subject');
+                const subjectValue = subjectEl.value;
+                const subjectText = subjectEl.options[subjectEl.selectedIndex]?.text || subjectValue;
+                const date = document.getElementById('request-date').value;
+                const reason = document.getElementById('request-reason').value;
+                
+                if (!className || !subjectValue || !date || !reason) {
+                    showModal("Please fill in all fields: class, subject, date, and reason.");
+                    return;
+                }
+                const formattedDate = new Date(date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long' });
+                message = `${teacherName} seeks an extra class for ${className} (${subjectText}) on ${formattedDate} to cover the topic: "${reason}".`;
+
+                document.getElementById('request-class-message').value = message;
+                document.getElementById('request-class-whatsapp-link').href = whatsappLink;
+                document.getElementById('request-class-message-container').classList.remove('hidden');
+
+            } else { // exam
+                const className = document.getElementById('schedule-exam-class').value;
+                const subjectEl = document.getElementById('schedule-exam-subject');
+                const subjectValue = subjectEl.value;
+                const subjectText = subjectEl.options[subjectEl.selectedIndex]?.text || subjectValue;
+                const date = document.getElementById('exam-date').value;
+                const syllabus = document.getElementById('exam-syllabus').value;
+
+                if (!className || !subjectValue || !date || !syllabus) {
+                    showModal("Please fill in all fields: class, subject, date, and syllabus.");
+                    return;
+                }
+                const formattedDate = new Date(date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long' });
+                message = `${teacherName} seeks to schedule a test for ${className} (${subjectText}) on ${formattedDate}. The syllabus is as follows: ${syllabus}.`;
+
+                document.getElementById('request-exam-message').value = message;
+                document.getElementById('request-exam-whatsapp-link').href = whatsappLink;
+                document.getElementById('request-exam-message-container').classList.remove('hidden');
+            }
+        }
+        
+        function copyMessage(textareaId) {
+            const textarea = document.getElementById(textareaId);
+            textarea.select();
+            textarea.setSelectionRange(0, 99999); // For mobile devices
+
+            try {
+                // Use document.execCommand for broader compatibility in iFrames
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showModal('Message copied to clipboard!');
+                } else {
+                    showModal('Failed to copy. Please copy the text manually.');
+                }
+            } catch (err) {
+                showModal('Failed to copy message. Please copy it manually.');
+                console.error('Copy failed', err);
+            }
+
+            // Deselect the text
+            window.getSelection().removeAllRanges();
+        }
+
+        // --- GEMINI API ---
+        async function generatePracticeQuestions() {
+            const className = document.getElementById('gemini-class').value;
+            const subjectEl = document.getElementById('gemini-subject');
+            const subjectValue = subjectEl.value;
+            const subjectText = subjectEl.options[subjectEl.selectedIndex]?.text || subjectValue;
+            const topic = document.getElementById('gemini-topic').value;
+
+            if (!className || !subjectValue || !topic) {
+                showModal("Please select a class, subject, and provide a topic.");
+                return;
+            }
+
+            const loadingDiv = document.getElementById('gemini-loading');
+            const resultContainer = document.getElementById('gemini-result-container');
+            const resultDiv = document.getElementById('gemini-result');
+            
+            loadingDiv.style.display = 'block';
+            resultContainer.style.display = 'none';
+            resultDiv.value = '';
+
+            const prompt = `You are an expert teacher in an Indian school. Generate 5 practice questions for students of ${className} on the topic of "${topic}" for the subject "${subjectText}". The questions should be clear, concise, and appropriate for the students' level. Include a mix of question types (e.g., multiple-choice, short answer, problem-solving).`;
+            
+            const chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+            const payload = { contents: chatHistory };
+            const apiKey = ""; // API key will be injected by the environment
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(`API request failed: ${error.error.message}`);
+                }
+
+                const result = await response.json();
+                
+                if (result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    resultDiv.value = text;
+                    resultContainer.style.display = 'block';
+                    document.getElementById('gemini-whatsapp-link').href = whatsappLink;
+                } else {
+                    throw new Error("Invalid response structure from API.");
+                }
+
+            } catch (error) {
+                console.error("Gemini API Error:", error);
+                showModal(`An error occurred while generating questions: ${error.message}. Please try again later.`);
+                resultContainer.style.display = 'none';
+            } finally {
+                loadingDiv.style.display = 'none';
+            }
+        }
+
+        // --- MODAL ---
+        function showModal(message, title = '') {
+            const titleEl = document.getElementById('modal-title');
+            if (title) {
+                titleEl.textContent = title;
+                titleEl.style.display = 'block';
+            } else {
+                titleEl.style.display = 'none';
+            }
+            document.getElementById('modal-message').textContent = message;
+            document.getElementById('custom-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+        
+        // --- CONFETTI ANIMATION ---
+        function triggerConfettiAnimation(message) {
+            const container = document.getElementById('confetti-container');
+            container.innerHTML = ''; // Clear previous confetti
+
+            // Add the message
+            const messageEl = document.createElement('div');
+            messageEl.className = 'confetti-message';
+            messageEl.textContent = message;
+            container.appendChild(messageEl);
+
+            // Create confetti particles
+            const colors = ["#ff5722", "#ff9800", "#ffc107", "#ffeb3b", "#cddc39", "#8bc34a", "#4caf50", "#009688", "#00bcd4", "#03a9f4", "#2196f3", "#3f51b5", "#673ab7", "#9c27b0", "#e91e63", "#f44336"];
+            const confettiCount = 150;
+            for (let i = 0; i < confettiCount; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                
+                const xPos = Math.random() * 100; // Starting horizontal position
+                const delay = Math.random() * 1.5; // Staggered start
+                const duration = Math.random() * 2 + 2.5; // Random duration
+                const size = Math.random() * 10 + 5; // Random size
+                const isRectangle = Math.random() > 0.25;
+
+                confetti.style.left = `${xPos}vw`;
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.width = `${size}px`;
+                confetti.style.height = `${isRectangle ? size * 0.6 : size}px`;
+                confetti.style.setProperty('--x-drift', `${(Math.random() - 0.5) * 300}px`);
+                confetti.style.setProperty('--rotation', `${Math.random() * 720 - 360}deg`);
+                confetti.style.animation = `confetti-animation ${duration}s ${delay}s cubic-bezier(0.1, 0.5, 0.5, 1) forwards`;
+                
+                container.appendChild(confetti);
+            }
+
+            // Remove the elements after animation
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5500);
+        }
+
+        function generateAnnouncementMessage() {
+            const requestText = document.getElementById('teacher-request-input').value;
+            const container = document.getElementById('announcement-message-container');
+            const textarea = document.getElementById('announcement-message');
+            const whatsappLinkEl = document.getElementById('announcement-whatsapp-link');
+
+            if (!requestText.trim()) {
+                showModal("Please paste the teacher's request message first.");
+                return;
+            }
+
+            let announcement = "";
+            
+            // This is a simplified parser based on the known message format.
+            if (requestText.includes("extra class")) {
+                const teacherMatch = requestText.match(/(.+) seeks an extra class/);
+                const classMatch = requestText.match(/for (.+?) on/);
+                const dateMatch = requestText.match(/on (.+) to cover/);
+                const topicMatch = requestText.match(/topic: "([^"]+)"/);
+
+                if (teacherMatch && classMatch && dateMatch && topicMatch) {
+                    announcement = `*🔔 Important Notice: Extra Class 🔔*\n\n` +
+                                   `Dear Students and Parents,\n\n` +
+                                   `Please be informed that an extra class has been scheduled as follows:\n\n` +
+                                   `*Subject:* ${classMatch[1]}\n` +
+                                   `*Date:* ${dateMatch[1]}\n` +
+                                   `*Topic:* ${topicMatch[1]}\n` +
+                                   `*Conducted by:* ${teacherMatch[1]}\n\n` +
+                                   `All concerned students are requested to attend.`;
+                }
+            } else if (requestText.includes("schedule a test")) {
+                const teacherMatch = requestText.match(/(.+) seeks to schedule a test/);
+                const classMatch = requestText.match(/for (.+?) on/);
+                const dateMatch = requestText.match(/on (.+?)\. The syllabus/);
+                const syllabusMatch = requestText.match(/syllabus is as follows: (.+)/);
+
+                if (teacherMatch && classMatch && dateMatch && syllabusMatch) {
+                     announcement = `*🗓️ Important Notice: Test Scheduled 🗓️*\n\n` +
+                                    `Dear Students and Parents,\n\n` +
+                                    `A test has been scheduled for your ward as per the details below:\n\n` +
+                                    `*Subject:* ${classMatch[1]}\n` +
+                                    `*Date:* ${dateMatch[1]}\n` +
+                                    `*Syllabus:* ${syllabusMatch[1]}\n` +
+                                    `*Conducted by:* ${teacherMatch[1]}\n\n` +
+                                    `Please ensure your ward is well-prepared. Best of luck!`;
+                }
+            }
+
+            if (announcement) {
+                textarea.value = announcement;
+                whatsappLinkEl.href = mainGroupWhatsappLink;
+                container.classList.remove('hidden');
+            } else {
+                showModal("Could not understand the request format. Please ensure it is an unmodified message generated from the teacher panel.");
+                container.classList.add('hidden');
+            }
+        }
+
+        function analyzeMarks() {
+            const reportText = document.getElementById('marks-analysis-input').value;
+            if (!reportText.trim()) {
+                showModal("Please paste a marks report to analyze.");
+                return;
+            }
+
+            try {
+                const lines = reportText.split('\n');
+                const studentData = [];
+                let maxMarks = 0;
+
+                const maxMarksMatch = reportText.match(/\*Max\. Marks:\* (\d+)/);
+                if (maxMarksMatch) {
+                    maxMarks = parseInt(maxMarksMatch[1], 10);
+                } else {
+                    throw new Error("Maximum marks not found in the report.");
+                }
+
+                lines.forEach(line => {
+                    const match = line.match(/(.+): (\d+)\/\d+ \((\d+\.\d+)%, Grade: ([A-F][+]?)\)/);
+                    if (match) {
+                        studentData.push({
+                            name: match[1].trim(),
+                            score: parseInt(match[2], 10),
+                            percentage: parseFloat(match[3]),
+                            grade: match[4]
+                        });
+                    }
+                });
+
+                if (studentData.length === 0) {
+                    throw new Error("No valid student marks found in the report.");
+                }
+
+                // Calculations
+                const totalStudents = studentData.length;
+                const totalPercentage = studentData.reduce((sum, s) => sum + s.percentage, 0);
+                const averagePercentage = (totalPercentage / totalStudents).toFixed(2);
+                
+                let highestScore = { name: '', score: -1 };
+                let lowestScore = { name: '', score: maxMarks + 1 };
+                studentData.forEach(s => {
+                    if (s.score > highestScore.score) highestScore = s;
+                    if (s.score < lowestScore.score) lowestScore = s;
+                });
+
+                const gradeCounts = { 'A+': 0, 'A': 0, 'B': 0, 'C': 0, 'D': 0, 'E': 0, 'F': 0 };
+                studentData.forEach(s => {
+                    gradeCounts[s.grade]++;
+                });
+
+                // Display Results
+                const resultsDiv = document.getElementById('analysis-results');
+                resultsDiv.innerHTML = `
+                    <p><strong>Total Students:</strong> ${totalStudents}</p>
+                    <p><strong>Class Average:</strong> ${averagePercentage}%</p>
+                    <p><strong>Highest Score:</strong> ${highestScore.name} (${highestScore.score}/${maxMarks})</p>
+                    <p><strong>Lowest Score:</strong> ${lowestScore.name} (${lowestScore.score}/${maxMarks})</p>
+                    <hr class="my-4 border-gray-600">
+                    <p><strong>Grade Distribution:</strong></p>
+                    <ul class="list-disc list-inside">
+                        ${Object.entries(gradeCounts).map(([grade, count]) => `<li>${grade}: ${count} student(s)</li>`).join('')}
+                    </ul>
+                `;
+
+                // Chart
+                const ctx = document.getElementById('grade-chart').getContext('2d');
+                if (gradeChart) {
+                    gradeChart.destroy();
+                }
+                gradeChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(gradeCounts),
+                        datasets: [{
+                            label: '# of Students',
+                            data: Object.values(gradeCounts),
+                            backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    color: '#e5e7eb',
+                                    stepSize: 1
+                                },
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    color: '#e5e7eb'
+                                },
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    color: '#e5e7eb'
+                                }
+                            }
+                        }
+                    }
+                });
+
+                document.getElementById('analysis-results-container').classList.remove('hidden');
+
+            } catch (error) {
+                showModal(`Analysis failed. Please ensure you have pasted a valid, unmodified marks report. Error: ${error.message}`);
+                document.getElementById('analysis-results-container').classList.add('hidden');
+            }
+        }
+
+        // --- INITIALIZATION & EVENT LISTENERS ---
+        
+        // Set daily quote
+        const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
+        const quoteIndex = dayOfYear % educationalQuotes.length;
+        document.getElementById('daily-quote').textContent = `"${educationalQuotes[quoteIndex]}"`;
+
+        // Calculate stats for the feature tiles
+        const totalStudents = Object.values(students).reduce((sum, classArray) => sum + classArray.length, 0);
+        const totalTeachers = Object.keys(teacherData).length;
+        const uniqueSubjects = new Set();
+        Object.values(teacherData).forEach(teacher => {
+            teacher.subjects.forEach(subject => {
+                const cleanSubject = subject.replace(/\s*\([^)]*\)/, '').trim();
+                uniqueSubjects.add(cleanSubject);
+            });
+        });
+        const totalSubjects = uniqueSubjects.size;
+
+        // Animate the counts
+        animateCountUp(document.getElementById('student-count'), totalStudents);
+        animateCountUp(document.getElementById('teacher-count'), totalTeachers);
+        animateCountUp(document.getElementById('subject-count'), totalSubjects);
+        
+        // Janmashtami Check
+        const today = new Date();
+        if (today.getMonth() === 7 && today.getDate() === 26) { // August is month 7 (0-indexed). Janmashtami 2024 is on Aug 26.
+            document.getElementById('janmashtami-special').classList.remove('hidden');
+        }
+
+        // --- Setup Event Listeners ---
+        document.getElementById('show-teacher-login').addEventListener('click', () => showLogin('teacher'));
+        document.getElementById('show-admin-login').addEventListener('click', () => showLogin('admin'));
+        document.getElementById('back-to-home').addEventListener('click', () => showView('initial-view'));
+        document.getElementById('login-form').addEventListener('submit', handleLogin);
+        document.getElementById('logout-teacher').addEventListener('click', logout);
+        document.getElementById('logout-admin').addEventListener('click', logout);
+        document.getElementById('modal-ok-btn').addEventListener('click', closeModal);
+
+        // Teacher action buttons
+        document.getElementById('action-attendance').addEventListener('click', handleAttendanceClick);
+        document.getElementById('action-marks').addEventListener('click', () => showDashboardSection('marks-section'));
+        document.getElementById('action-request-class').addEventListener('click', () => showDashboardSection('request-class-section'));
+        document.getElementById('action-schedule-exam').addEventListener('click', () => showDashboardSection('schedule-exam-section'));
+        document.getElementById('action-gemini-questions').addEventListener('click', () => showDashboardSection('gemini-questions-section'));
+
+        // Back to dashboard buttons
+        document.querySelectorAll('.back-to-dashboard').forEach(btn => btn.addEventListener('click', hideDashboardSections));
+
+        // Dynamic select population
+        document.getElementById('attendance-class').addEventListener('change', () => populateSubjects('attendance'));
+        document.getElementById('attendance-subject').addEventListener('change', populateStudentsForAttendance);
+        document.getElementById('marks-class').addEventListener('change', () => populateSubjects('marks'));
+        document.getElementById('marks-subject').addEventListener('change', populateStudentsForMarks);
+        document.getElementById('request-class-class').addEventListener('change', () => populateSubjects('request-class'));
+        document.getElementById('schedule-exam-class').addEventListener('change', () => populateSubjects('schedule-exam'));
+        document.getElementById('gemini-class').addEventListener('change', () => populateSubjects('gemini'));
+        
+        // Message generation buttons
+        document.getElementById('generate-attendance-btn').addEventListener('click', generateAttendanceMessage);
+        document.getElementById('generate-marks-btn').addEventListener('click', generateMarksMessage);
+        document.getElementById('generate-request-class-btn').addEventListener('click', () => generateRequestMessage('class'));
+        document.getElementById('generate-request-exam-btn').addEventListener('click', () => generateRequestMessage('exam'));
+        document.getElementById('generate-gemini-questions-btn').addEventListener('click', generatePracticeQuestions);
+        document.getElementById('generate-announcement-btn').addEventListener('click', generateAnnouncementMessage);
+        document.getElementById('analyze-marks-btn').addEventListener('click', analyzeMarks);
+
+        // Admin tabs
+        document.getElementById('admin-tabs-container').addEventListener('click', (e) => {
+            if (e.target.classList.contains('admin-tab')) {
+                showAdminTab(e.target.dataset.tab);
+            }
+        });
+        document.getElementById('student-search-input').addEventListener('keyup', lookupStudent);
+        document.getElementById('print-analysis-btn').addEventListener('click', () => printContent('analysis-results', 'Marks Analysis Report'));
+
+        // Copy buttons
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                copyMessage(e.currentTarget.dataset.copytarget);
+            });
+        });
+
+    }); // End of DOMContentLoaded
+    </script>
+</body>
+</html>
