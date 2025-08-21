@@ -674,9 +674,9 @@
                                         <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
                                              <h4 class="text-lg font-semibold text-white">Analysis Report</h4>
                                              <button id="print-analysis-btn" class="btn bg-gray-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-gray-600 flex items-center gap-2 w-full sm:w-auto">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
-                                                Print Report
-                                            </button>
+                                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                                                 Print Report
+                                             </button>
                                         </div>
                                         <div id="analysis-results" class="p-4 bg-black bg-opacity-25 rounded-md">
                                             <!-- Analysis results will be injected here -->
@@ -703,7 +703,9 @@
         <div class="modal-content">
             <h3 id="modal-title" class="text-xl font-bold mb-4"></h3>
             <p id="modal-message" class="text-lg mb-6 whitespace-pre-line"></p>
-            <button id="modal-ok-btn" class="btn bg-indigo-600 text-white font-bold py-2 px-6 rounded-md">OK</button>
+            <div id="modal-buttons" class="flex justify-center gap-4">
+                <!-- Buttons will be dynamically inserted here -->
+            </div>
         </div>
     </div>
 
@@ -1260,15 +1262,13 @@
             const timeString = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
             const dateString = now.toLocaleDateString('en-GB');
 
-            let lateMarker = wasLate ? " (L)" : "";
-
             let message = `*Attendance Report*\n\n` +
                           `*Date:* ${dateString}\n` +
                           `*Time:* ${timeString}\n` +
                           `*Teacher:* ${currentUser.name}\n` +
                           `*Class:* ${className}\n` +
                           `*Subject:* ${subjectText}\n\n` +
-                          `*Summary:* ${presentCount} out of ${totalCount} students are present (${attendancePercentage.toFixed(2)}% attendance).${lateMarker}\n\n`;
+                          `*Summary:* ${presentCount} out of ${totalCount} students are present (${attendancePercentage.toFixed(2)}% attendance).\n\n`;
             
             if (absentees.length > 0) {
                 message += `*Absentees (${absentees.length}):*\n` + absentees.map((name, index) => `${index + 1}. ${name}`).join('\n');
@@ -1469,17 +1469,51 @@
         }
 
         // --- MODAL ---
-        function showModal(message, title = '') {
+        function showModal(message, title = '', onConfirm = null) {
             const titleEl = document.getElementById('modal-title');
+            const messageEl = document.getElementById('modal-message');
+            const modal = document.getElementById('custom-modal');
+            const buttonsContainer = document.getElementById('modal-buttons');
+
             if (title) {
                 titleEl.textContent = title;
                 titleEl.style.display = 'block';
             } else {
                 titleEl.style.display = 'none';
             }
-            document.getElementById('modal-message').textContent = message;
-            document.getElementById('custom-modal').classList.remove('hidden');
+            messageEl.textContent = message;
+
+            buttonsContainer.innerHTML = ''; // Clear previous buttons
+
+            if (typeof onConfirm === 'function') {
+                // Confirmation dialog
+                const cancelBtn = document.createElement('button');
+                cancelBtn.className = 'btn bg-gray-500 text-white font-bold py-2 px-6 rounded-md';
+                cancelBtn.textContent = 'Cancel';
+                cancelBtn.onclick = closeModal;
+
+                const confirmBtn = document.createElement('button');
+                confirmBtn.className = 'btn bg-red-600 text-white font-bold py-2 px-6 rounded-md';
+                confirmBtn.textContent = 'Proceed';
+                confirmBtn.onclick = () => {
+                    onConfirm();
+                    closeModal();
+                };
+
+                buttonsContainer.appendChild(cancelBtn);
+                buttonsContainer.appendChild(confirmBtn);
+            } else {
+                // Standard info dialog
+                const okBtn = document.createElement('button');
+                okBtn.className = 'btn bg-indigo-600 text-white font-bold py-2 px-6 rounded-md';
+                okBtn.textContent = 'OK';
+                okBtn.onclick = closeModal;
+                buttonsContainer.appendChild(okBtn);
+            }
+
+            modal.classList.remove('hidden');
         }
+
 
         function closeModal() {
             document.getElementById('custom-modal').classList.add('hidden');
@@ -1706,6 +1740,48 @@
             }
         }
 
+        // --- LATE ATTENDANCE CHECK ---
+        function checkClassStartTime() {
+            const now = new Date();
+            const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+            // Class start times in minutes from midnight
+            const class1Start = 17 * 60 + 30; // 5:30 PM
+            const class2Start = 18 * 60 + 30; // 6:30 PM
+            const class3Start = 19 * 60 + 30; // 7:30 PM
+            const classesEnd = 20 * 60 + 30;   // 8:30 PM
+
+            let relevantClassStart = 0;
+            let isAfterHours = false;
+
+            if (currentMinutes < class1Start) {
+                relevantClassStart = class1Start; // Before first class, target is the first class
+            } else if (currentMinutes >= class1Start && currentMinutes < class2Start) {
+                relevantClassStart = class1Start;
+            } else if (currentMinutes >= class2Start && currentMinutes < class3Start) {
+                relevantClassStart = class2Start;
+            } else if (currentMinutes >= class3Start && currentMinutes < classesEnd) {
+                relevantClassStart = class3Start;
+            } else {
+                isAfterHours = true;
+            }
+
+            if (isAfterHours) {
+                showModal("All classes have concluded for the day. Attendance cannot be taken after 8:30 PM.");
+                return;
+            }
+
+            const minutesLate = currentMinutes - relevantClassStart;
+
+            if (minutesLate > 10) {
+                wasLate = true;
+                showModal(`You are ${minutesLate} minutes late for this class slot.`);
+            } else {
+                wasLate = false; // Ensure it's reset if on time
+            }
+            showView('attendance-view');
+        }
+
         // --- INITIALIZATION & EVENT LISTENERS ---
         
         // Set daily quote
@@ -1745,10 +1821,9 @@
         document.getElementById('login-form').addEventListener('submit', handleLogin);
         document.getElementById('logout-teacher').addEventListener('click', logout);
         document.getElementById('logout-admin').addEventListener('click', logout);
-        document.getElementById('modal-ok-btn').addEventListener('click', closeModal);
 
         // Teacher action buttons
-        document.getElementById('action-attendance').addEventListener('click', () => showView('attendance-view'));
+        document.getElementById('action-attendance').addEventListener('click', checkClassStartTime); // UPDATED
         document.getElementById('action-marks').addEventListener('click', () => showView('marks-view'));
         document.getElementById('action-request-class').addEventListener('click', () => showView('request-class-view'));
         document.getElementById('action-schedule-exam').addEventListener('click', () => showView('schedule-exam-view'));
