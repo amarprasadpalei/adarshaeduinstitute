@@ -108,7 +108,7 @@
         @keyframes adminContentFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
         .stat-card { opacity: 0; animation: statCardAppear 0.6s ease-out forwards; }
-        @keyframes statCardAppear { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        @keyframes statCardAppear { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         #login-form > div { opacity: 0; animation: formFieldSlideIn 0.5s ease-out forwards; }
         @keyframes formFieldSlideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
@@ -232,6 +232,10 @@
                     </div>
 
                     <div class="flex flex-col sm:flex-row justify-center gap-4">
+                        <button id="show-student-portal" class="btn bg-gradient-to-r from-purple-500 to-pink-600 text-white font-bold py-3 px-6 rounded-lg text-lg w-full sm:w-auto">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 1.01a11 11 0 1011 11 11 11 0 00-11-11zm0 3.12a3.12 3.12 0 11-3.12 3.12A3.12 3.12 0 0112 4.13zm0 15.75a7.25 7.25 0 01-7.25-7.25h14.5a7.25 7.25 0 01-7.25 7.25z" /></svg>
+                            Student/Parents Portal
+                        </button>
                         <button id="show-teacher-login" class="btn bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-bold py-3 px-6 rounded-lg text-lg w-full sm:w-auto">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21v-1a6 6 0 00-5.176-5.973" /></svg>
                             Teacher Panel
@@ -243,6 +247,38 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- Student/Parents Portal View -->
+            <div id="student-portal-view" class="view">
+                <div class="card p-6 md:p-12">
+                    <button id="portal-back-to-home" class="text-blue-300 hover:underline mb-6">&larr; Back to Home</button>
+                    <h2 class="text-2xl md:text-3xl font-bold text-center mb-6 md:mb-8 text-white">Student & Parents Portal</h2>
+                    <p class="text-gray-300 text-center mb-8">Access attendance and marks reports below.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Attendance Card -->
+                        <div class="card dashboard-action-card p-6 text-center">
+                            <h3 class="text-xl font-semibold text-white mb-4">Attendance Reports</h3>
+                            <a href="https://drive.google.com/drive/folders/1qK_iuIHRkYT30NY8JQ7GvxrUAutdxYr3?usp=sharing" target="_blank" class="btn bg-blue-500 text-white font-bold py-3 px-6 rounded-lg w-full inline-block">View All Reports</a>
+                        </div>
+
+                        <!-- Marks Card -->
+                        <div class="card dashboard-action-card p-6">
+                            <h3 class="text-xl font-semibold text-white mb-4 text-center">Marks Reports</h3>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                <a href="https://drive.google.com/drive/folders/1ON1IzHWW3MIW_pZ8sDQjEtobGAdF3i3X?usp=sharing" target="_blank" class="btn bg-indigo-500 text-white font-semibold py-2 px-4 rounded-lg text-center">Class 6</a>
+                                <a href="https://drive.google.com/drive/folders/1FEN8sqZyW8UiXLQAwAl7cQvpi2P0Hdr-?usp=sharing" target="_blank" class="btn bg-indigo-500 text-white font-semibold py-2 px-4 rounded-lg text-center">Class 7</a>
+                                <a href="https://drive.google.com/drive/folders/1J28DB6Ccy_jdZzU7Q_Gb9zy6sV5jDzuD?usp=sharing" target="_blank" class="btn bg-indigo-500 text-white font-semibold py-2 px-4 rounded-lg text-center">Class 8</a>
+                                <a href="https://drive.google.com/drive/folders/1p9LzIOy4Hk49Dk9ib847n_pg43zsoSKh?usp=sharing" target="_blank" class="btn bg-indigo-500 text-white font-semibold py-2 px-4 rounded-lg text-center">Class 9</a>
+                                <a href="https://drive.google.com/drive/folders/11a6YYW0hrLBr5TPRNJoe0ipGolBoqd7f?usp=sharing" target="_blank" class="btn bg-indigo-500 text-white font-semibold py-2 px-4 rounded-lg text-center">Class 10</a>
+                                <a href="https://drive.google.com/drive/folders/1iIBhFkF9yByTeAjEFrA_Wtd9CWDdtykM?usp=sharing" target="_blank" class="btn bg-indigo-500 text-white font-semibold py-2 px-4 rounded-lg text-center">Class 11</a>
+                                <a href="https://drive.google.com/drive/folders/15hxDPaxC3JCchBBK0P0jrXU8ETaoY5s5?usp=sharing" target="_blank" class="btn bg-indigo-500 text-white font-semibold py-2 px-4 rounded-lg text-center">Class 12</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 
             <!-- Login View -->
             <div id="login-view" class="view">
@@ -300,185 +336,222 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-3 text-purple-300"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path><path d="M15 5l4 4"></path></svg>
                             <h3 class="text-base md:text-lg font-semibold text-white">Schedule Exam</h3>
                         </div>
-                         <div id="action-gemini-questions" class="card dashboard-action-card p-4 md:p-6 text-center cursor-pointer col-span-2 md:col-span-1">
+                         <div id="action-gemini-questions" class="card dashboard-action-card p-4 md:p-6 text-center cursor-pointer">
                             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-3 text-pink-300"><path d="m12 3-1.9 4.2-4.6.7 3.3 3.2-.8 4.6L12 13l4.1 2.2-.8-4.6 3.3-3.2-4.6-.7L12 3z"></path><path d="M5 21v-1.5a2.5 2.5 0 0 1 5 0V21"></path><path d="M14 21v-1.5a2.5 2.5 0 0 1 5 0V21"></path></svg>
                             <h3 class="text-base md:text-lg font-semibold text-white">✨ AI Questions</h3>
                         </div>
+                        <!-- Teacher Management Link -->
+                        <div id="action-my-resources" class="card dashboard-action-card p-4 md:p-6 text-center cursor-pointer">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-3 text-teal-300"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                            <h3 class="text-base md:text-lg font-semibold text-white">My Resources</h3>
+                        </div>
                     </div>
-                    
-                    <!-- Teacher Dashboard Sections -->
-                    <div id="dashboard-sections" class="mt-8">
-                        <div id="attendance-section" class="dashboard-section hidden">
-                             <button class="back-to-dashboard text-blue-300 hover:underline mb-4">&larr; Back to Dashboard</button>
-                            <h3 class="text-xl md:text-2xl font-semibold mb-4 border-b border-gray-500 pb-2 text-white">Take Attendance</h3>
-                            <div class="space-y-4">
-                                <div>
-                                    <label for="attendance-class" class="block text-sm font-medium text-gray-300">Select Class</label>
-                                    <select id="attendance-class" class="mt-1 block w-full p-2 rounded-md"></select>
-                                </div>
-                                <div>
-                                    <label for="attendance-subject" class="block text-sm font-medium text-gray-300">Select Subject</label>
-                                    <select id="attendance-subject" class="mt-1 block w-full p-2 rounded-md"></select>
-                                </div>
-                                <div id="student-list-attendance" class="space-y-2 max-h-60 overflow-y-auto p-2 border border-gray-600 rounded-md bg-black bg-opacity-20"></div>
-                                <button id="generate-attendance-btn" class="btn bg-blue-500 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-600 w-full">Prepare Attendance Message</button>
-                                
-                                <div id="attendance-message-container" class="hidden mt-4 space-y-2">
-                                    <label class="block text-sm font-medium text-gray-300">Generated Message:</label>
-                                    <textarea id="attendance-message" rows="10" class="w-full p-2 rounded-md bg-opacity-20" readonly></textarea>
-                                    <div class="flex flex-col sm:flex-row gap-4">
-                                        <button data-copytarget="attendance-message" class="copy-btn btn bg-indigo-500 text-white font-bold py-2 px-4 rounded-md hover:bg-indigo-600 flex-1">Copy Message</button>
-                                        <a href="#" id="attendance-whatsapp-link" target="_blank" class="btn bg-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600 flex-1 text-center">Open WhatsApp</a>
-                                    </div>
-                                </div>
-                            </div>
+                </div>
+            </div>
+
+            <!-- Take Attendance View -->
+            <div id="attendance-view" class="view">
+                <div class="card p-4 sm:p-6 md:p-8">
+                    <button class="back-to-teacher-dashboard text-blue-300 hover:underline mb-4">&larr; Back to Dashboard</button>
+                    <h3 class="text-xl md:text-2xl font-semibold mb-4 border-b border-gray-500 pb-2 text-white">Take Attendance</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="attendance-class" class="block text-sm font-medium text-gray-300">Select Class</label>
+                            <select id="attendance-class" class="mt-1 block w-full p-2 rounded-md"></select>
                         </div>
-
-                        <div id="marks-section" class="dashboard-section hidden">
-                            <button class="back-to-dashboard text-blue-300 hover:underline mb-4">&larr; Back to Dashboard</button>
-                            <h3 class="text-xl md:text-2xl font-semibold mb-4 border-b border-gray-500 pb-2 text-white">Add Test Marks</h3>
-                            <div class="space-y-4">
-                                <div>
-                                    <label for="marks-class" class="block text-sm font-medium text-gray-300">Select Class</label>
-                                    <select id="marks-class" class="mt-1 block w-full p-2 rounded-md"></select>
-                                </div>
-                                <div>
-                                    <label for="marks-subject" class="block text-sm font-medium text-gray-300">Select Subject</label>
-                                    <select id="marks-subject" class="mt-1 block w-full p-2 rounded-md"></select>
-                                </div>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div>
-                                        <label for="test-name" class="block text-sm font-medium text-gray-300">Test Name / Date</label>
-                                        <input type="text" id="test-name" placeholder="e.g., Physics Weekly Test" class="mt-1 block w-full p-2 rounded-md">
-                                    </div>
-                                    <div>
-                                        <label for="max-marks" class="block text-sm font-medium text-gray-300">Maximum Marks</label>
-                                        <input type="number" id="max-marks" placeholder="e.g., 50" class="mt-1 block w-full p-2 rounded-md">
-                                    </div>
-                                </div>
-                                <div id="student-list-marks" class="space-y-2 max-h-60 overflow-y-auto p-2 border border-gray-600 rounded-md bg-black bg-opacity-20"></div>
-                                <button id="generate-marks-btn" class="btn bg-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600 w-full">Prepare Marks Message</button>
-                                
-                                <div id="marks-message-container" class="hidden mt-4 space-y-2">
-                                    <label class="block text-sm font-medium text-gray-300">Generated Message:</label>
-                                    <textarea id="marks-message" rows="8" class="w-full p-2 rounded-md bg-opacity-20" readonly></textarea>
-                                    <div class="flex flex-col sm:flex-row gap-4">
-                                        <button data-copytarget="marks-message" class="copy-btn btn bg-indigo-500 text-white font-bold py-2 px-4 rounded-md hover:bg-indigo-600 flex-1">Copy Message</button>
-                                        <a href="#" id="marks-whatsapp-link" target="_blank" class="btn bg-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600 flex-1 text-center">Open WhatsApp</a>
-                                    </div>
-                                </div>
-                            </div>
+                        <div>
+                            <label for="attendance-subject" class="block text-sm font-medium text-gray-300">Select Subject</label>
+                            <select id="attendance-subject" class="mt-1 block w-full p-2 rounded-md"></select>
                         </div>
-
-
-                        <div id="request-class-section" class="dashboard-section hidden">
-                             <button class="back-to-dashboard text-blue-300 hover:underline mb-4">&larr; Back to Dashboard</button>
-                            <h3 class="text-xl md:text-2xl font-semibold mb-4 border-b border-gray-500 pb-2 text-white">Request an Extra Class</h3>
-                             <div class="space-y-4">
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div>
-                                        <label for="request-class-class" class="block text-sm font-medium text-gray-300">Select Class</label>
-                                        <select id="request-class-class" class="mt-1 block w-full p-2 rounded-md"></select>
-                                    </div>
-                                    <div>
-                                        <label for="request-class-subject" class="block text-sm font-medium text-gray-300">Select Subject</label>
-                                        <select id="request-class-subject" class="mt-1 block w-full p-2 rounded-md"></select>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label for="request-date" class="block text-sm font-medium text-gray-300">Preferred Date</label>
-                                    <input type="date" id="request-date" class="mt-1 block w-full p-2 rounded-md">
-                                </div>
-                                <div>
-                                    <label for="request-reason" class="block text-sm font-medium text-gray-300">Reason / Topic to Cover</label>
-                                    <textarea id="request-reason" rows="3" placeholder="e.g., To finish the chapter on Optics." class="mt-1 block w-full p-2 rounded-md"></textarea>
-                                </div>
-                                <button id="generate-request-class-btn" class="btn bg-yellow-500 text-white font-bold py-2 px-4 rounded-md hover:bg-yellow-600 w-full">Prepare Request Message</button>
-                                
-                                <div id="request-class-message-container" class="hidden mt-4 space-y-2">
-                                    <label class="block text-sm font-medium text-gray-300">Generated Message:</label>
-                                    <textarea id="request-class-message" rows="5" class="w-full p-2 rounded-md bg-opacity-20" readonly></textarea>
-                                    <div class="flex flex-col sm:flex-row gap-4">
-                                        <button data-copytarget="request-class-message" class="copy-btn btn bg-indigo-500 text-white font-bold py-2 px-4 rounded-md hover:bg-indigo-600 flex-1">Copy Message</button>
-                                        <a href="#" id="request-class-whatsapp-link" target="_blank" class="btn bg-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600 flex-1 text-center">Open WhatsApp</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div id="schedule-exam-section" class="dashboard-section hidden">
-                             <button class="back-to-dashboard text-blue-300 hover:underline mb-4">&larr; Back to Dashboard</button>
-                            <h3 class="text-xl md:text-2xl font-semibold mb-4 border-b border-gray-500 pb-2 text-white">Request to Schedule an Exam</h3>
-                            <div class="space-y-4">
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div>
-                                        <label for="schedule-exam-class" class="block text-sm font-medium text-gray-300">Select Class</label>
-                                        <select id="schedule-exam-class" class="mt-1 block w-full p-2 rounded-md"></select>
-                                    </div>
-                                    <div>
-                                        <label for="schedule-exam-subject" class="block text-sm font-medium text-gray-300">Select Subject</label>
-                                        <select id="schedule-exam-subject" class="mt-1 block w-full p-2 rounded-md"></select>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label for="exam-date" class="block text-sm font-medium text-gray-300">Preferred Date</label>
-                                    <input type="date" id="exam-date" class="mt-1 block w-full p-2 rounded-md">
-                                </div>
-                                <div>
-                                    <label for="exam-syllabus" class="block text-sm font-medium text-gray-300">Syllabus / Topics</label>
-                                    <textarea id="exam-syllabus" rows="3" placeholder="e.g., Electromagnetism, Optics Chapters 1-3" class="mt-1 block w-full p-2 rounded-md"></textarea>
-                                </div>
-                                <button id="generate-request-exam-btn" class="btn bg-purple-500 text-white font-bold py-2 px-4 rounded-md hover:bg-purple-600 w-full">Prepare Request Message</button>
-
-                                <div id="request-exam-message-container" class="hidden mt-4 space-y-2">
-                                    <label class="block text-sm font-medium text-gray-300">Generated Message:</label>
-                                    <textarea id="request-exam-message" rows="5" class="w-full p-2 rounded-md bg-opacity-20" readonly></textarea>
-                                    <div class="flex flex-col sm:flex-row gap-4">
-                                        <button data-copytarget="request-exam-message" class="copy-btn btn bg-indigo-500 text-white font-bold py-2 px-4 rounded-md hover:bg-indigo-600 flex-1">Copy Message</button>
-                                        <a href="#" id="request-exam-whatsapp-link" target="_blank" class="btn bg-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600 flex-1 text-center">Open WhatsApp</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div id="gemini-questions-section" class="dashboard-section hidden">
-                            <button class="back-to-dashboard text-blue-300 hover:underline mb-4">&larr; Back to Dashboard</button>
-                            <h3 class="text-xl md:text-2xl font-semibold mb-4 border-b border-gray-500 pb-2 text-white">Generate Practice Questions with AI</h3>
-                            <div class="space-y-4">
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <label for="gemini-class" class="block text-sm font-medium text-gray-300">Select Class</label>
-                                        <select id="gemini-class" class="mt-1 block w-full p-2 rounded-md"></select>
-                                    </div>
-                                    <div>
-                                        <label for="gemini-subject" class="block text-sm font-medium text-gray-300">Select Subject</label>
-                                        <select id="gemini-subject" class="mt-1 block w-full p-2 rounded-md"></select>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label for="gemini-topic" class="block text-sm font-medium text-gray-300">Topic</label>
-                                    <input type="text" id="gemini-topic" placeholder="e.g., Photosynthesis, Quadratic Equations" class="mt-1 block w-full p-2 rounded-md">
-                                </div>
-                                <button id="generate-gemini-questions-btn" class="btn bg-pink-500 text-white font-bold py-2 px-4 rounded-md hover:bg-pink-600 w-full">Generate Questions</button>
-                                
-                                <div id="gemini-loading" class="hidden">
-                                    <div class="loader"></div>
-                                    <p class="text-center text-gray-300">Generating questions... Please wait.</p>
-                                </div>
-
-                                <div id="gemini-result-container" class="hidden mt-6">
-                                    <h4 class="text-lg md:text-xl font-semibold mb-2 text-white">Generated Questions:</h4>
-                                    <textarea id="gemini-result" rows="10" class="p-4 rounded-md border-gray-600 whitespace-pre-wrap w-full bg-black bg-opacity-20" readonly></textarea>
-                                    <div class="flex flex-col sm:flex-row gap-4 mt-2">
-                                        <button data-copytarget="gemini-result" class="copy-btn btn bg-indigo-500 text-white font-bold py-2 px-4 rounded-md hover:bg-indigo-600 flex-1">Copy Questions</button>
-                                        <a href="#" id="gemini-whatsapp-link" target="_blank" class="btn bg-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600 flex-1 text-center">Open WhatsApp</a>
-                                    </div>
-                                </div>
+                        <div id="student-list-attendance" class="space-y-2 max-h-60 overflow-y-auto p-2 border border-gray-600 rounded-md bg-black bg-opacity-20"></div>
+                        <button id="generate-attendance-btn" class="btn bg-blue-500 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-600 w-full">Prepare Attendance Message</button>
+                        
+                        <div id="attendance-message-container" class="hidden mt-4 space-y-2">
+                            <label class="block text-sm font-medium text-gray-300">Generated Message:</label>
+                            <textarea id="attendance-message" rows="10" class="w-full p-2 rounded-md bg-opacity-20" readonly></textarea>
+                            <div class="flex flex-col sm:flex-row gap-4">
+                                <button data-copytarget="attendance-message" class="copy-btn btn bg-indigo-500 text-white font-bold py-2 px-4 rounded-md hover:bg-indigo-600 flex-1">Copy Message</button>
+                                <a href="#" id="attendance-whatsapp-link" target="_blank" class="btn bg-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600 flex-1 text-center">Open WhatsApp</a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <!-- Add Marks View -->
+            <div id="marks-view" class="view">
+                <div class="card p-4 sm:p-6 md:p-8">
+                    <button class="back-to-teacher-dashboard text-blue-300 hover:underline mb-4">&larr; Back to Dashboard</button>
+                    <h3 class="text-xl md:text-2xl font-semibold mb-4 border-b border-gray-500 pb-2 text-white">Add Test Marks</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="marks-class" class="block text-sm font-medium text-gray-300">Select Class</label>
+                            <select id="marks-class" class="mt-1 block w-full p-2 rounded-md"></select>
+                        </div>
+                        <div>
+                            <label for="marks-subject" class="block text-sm font-medium text-gray-300">Select Subject</label>
+                            <select id="marks-subject" class="mt-1 block w-full p-2 rounded-md"></select>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="test-name" class="block text-sm font-medium text-gray-300">Test Name / Date</label>
+                                <input type="text" id="test-name" placeholder="e.g., Physics Weekly Test" class="mt-1 block w-full p-2 rounded-md">
+                            </div>
+                            <div>
+                                <label for="max-marks" class="block text-sm font-medium text-gray-300">Maximum Marks</label>
+                                <input type="number" id="max-marks" placeholder="e.g., 50" class="mt-1 block w-full p-2 rounded-md">
+                            </div>
+                        </div>
+                        <div id="student-list-marks" class="space-y-2 max-h-60 overflow-y-auto p-2 border border-gray-600 rounded-md bg-black bg-opacity-20"></div>
+                        <button id="generate-marks-btn" class="btn bg-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600 w-full">Prepare Marks Message</button>
+                        
+                        <div id="marks-message-container" class="hidden mt-4 space-y-2">
+                            <label class="block text-sm font-medium text-gray-300">Generated Message:</label>
+                            <textarea id="marks-message" rows="8" class="w-full p-2 rounded-md bg-opacity-20" readonly></textarea>
+                            <div class="flex flex-col sm:flex-row gap-4">
+                                <button data-copytarget="marks-message" class="copy-btn btn bg-indigo-500 text-white font-bold py-2 px-4 rounded-md hover:bg-indigo-600 flex-1">Copy Message</button>
+                                <a href="#" id="marks-whatsapp-link" target="_blank" class="btn bg-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600 flex-1 text-center">Open WhatsApp</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Request Class View -->
+            <div id="request-class-view" class="view">
+                <div class="card p-4 sm:p-6 md:p-8">
+                    <button class="back-to-teacher-dashboard text-blue-300 hover:underline mb-4">&larr; Back to Dashboard</button>
+                    <h3 class="text-xl md:text-2xl font-semibold mb-4 border-b border-gray-500 pb-2 text-white">Request an Extra Class</h3>
+                     <div class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="request-class-class" class="block text-sm font-medium text-gray-300">Select Class</label>
+                                <select id="request-class-class" class="mt-1 block w-full p-2 rounded-md"></select>
+                            </div>
+                            <div>
+                                <label for="request-class-subject" class="block text-sm font-medium text-gray-300">Select Subject</label>
+                                <select id="request-class-subject" class="mt-1 block w-full p-2 rounded-md"></select>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="request-date" class="block text-sm font-medium text-gray-300">Preferred Date</label>
+                            <input type="date" id="request-date" class="mt-1 block w-full p-2 rounded-md">
+                        </div>
+                        <div>
+                            <label for="request-reason" class="block text-sm font-medium text-gray-300">Reason / Topic to Cover</label>
+                            <textarea id="request-reason" rows="3" placeholder="e.g., To finish the chapter on Optics." class="mt-1 block w-full p-2 rounded-md"></textarea>
+                        </div>
+                        <button id="generate-request-class-btn" class="btn bg-yellow-500 text-white font-bold py-2 px-4 rounded-md hover:bg-yellow-600 w-full">Prepare Request Message</button>
+                        
+                        <div id="request-class-message-container" class="hidden mt-4 space-y-2">
+                            <label class="block text-sm font-medium text-gray-300">Generated Message:</label>
+                            <textarea id="request-class-message" rows="5" class="w-full p-2 rounded-md bg-opacity-20" readonly></textarea>
+                            <div class="flex flex-col sm:flex-row gap-4">
+                                <button data-copytarget="request-class-message" class="copy-btn btn bg-indigo-500 text-white font-bold py-2 px-4 rounded-md hover:bg-indigo-600 flex-1">Copy Message</button>
+                                <a href="#" id="request-class-whatsapp-link" target="_blank" class="btn bg-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600 flex-1 text-center">Open WhatsApp</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schedule Exam View -->
+            <div id="schedule-exam-view" class="view">
+                <div class="card p-4 sm:p-6 md:p-8">
+                    <button class="back-to-teacher-dashboard text-blue-300 hover:underline mb-4">&larr; Back to Dashboard</button>
+                    <h3 class="text-xl md:text-2xl font-semibold mb-4 border-b border-gray-500 pb-2 text-white">Request to Schedule an Exam</h3>
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="schedule-exam-class" class="block text-sm font-medium text-gray-300">Select Class</label>
+                                <select id="schedule-exam-class" class="mt-1 block w-full p-2 rounded-md"></select>
+                            </div>
+                            <div>
+                                <label for="schedule-exam-subject" class="block text-sm font-medium text-gray-300">Select Subject</label>
+                                <select id="schedule-exam-subject" class="mt-1 block w-full p-2 rounded-md"></select>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="exam-date" class="block text-sm font-medium text-gray-300">Preferred Date</label>
+                            <input type="date" id="exam-date" class="mt-1 block w-full p-2 rounded-md">
+                        </div>
+                        <div>
+                            <label for="exam-syllabus" class="block text-sm font-medium text-gray-300">Syllabus / Topics</label>
+                            <textarea id="exam-syllabus" rows="3" placeholder="e.g., Electromagnetism, Optics Chapters 1-3" class="mt-1 block w-full p-2 rounded-md"></textarea>
+                        </div>
+                        <button id="generate-request-exam-btn" class="btn bg-purple-500 text-white font-bold py-2 px-4 rounded-md hover:bg-purple-600 w-full">Prepare Request Message</button>
+
+                        <div id="request-exam-message-container" class="hidden mt-4 space-y-2">
+                            <label class="block text-sm font-medium text-gray-300">Generated Message:</label>
+                            <textarea id="request-exam-message" rows="5" class="w-full p-2 rounded-md bg-opacity-20" readonly></textarea>
+                            <div class="flex flex-col sm:flex-row gap-4">
+                                <button data-copytarget="request-exam-message" class="copy-btn btn bg-indigo-500 text-white font-bold py-2 px-4 rounded-md hover:bg-indigo-600 flex-1">Copy Message</button>
+                                <a href="#" id="request-exam-whatsapp-link" target="_blank" class="btn bg-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600 flex-1 text-center">Open WhatsApp</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Questions View -->
+            <div id="gemini-questions-view" class="view">
+                <div class="card p-4 sm:p-6 md:p-8">
+                    <button class="back-to-teacher-dashboard text-blue-300 hover:underline mb-4">&larr; Back to Dashboard</button>
+                    <h3 class="text-xl md:text-2xl font-semibold mb-4 border-b border-gray-500 pb-2 text-white">Generate Practice Questions with AI</h3>
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="gemini-class" class="block text-sm font-medium text-gray-300">Select Class</label>
+                                <select id="gemini-class" class="mt-1 block w-full p-2 rounded-md"></select>
+                            </div>
+                            <div>
+                                <label for="gemini-subject" class="block text-sm font-medium text-gray-300">Select Subject</label>
+                                <select id="gemini-subject" class="mt-1 block w-full p-2 rounded-md"></select>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="gemini-topic" class="block text-sm font-medium text-gray-300">Topic</label>
+                            <input type="text" id="gemini-topic" placeholder="e.g., Photosynthesis, Quadratic Equations" class="mt-1 block w-full p-2 rounded-md">
+                        </div>
+                        <button id="generate-gemini-questions-btn" class="btn bg-pink-500 text-white font-bold py-2 px-4 rounded-md hover:bg-pink-600 w-full">Generate Questions</button>
+                        
+                        <div id="gemini-loading" class="hidden">
+                            <div class="loader"></div>
+                            <p class="text-center text-gray-300">Generating questions... Please wait.</p>
+                        </div>
+
+                        <div id="gemini-result-container" class="hidden mt-6">
+                            <h4 class="text-lg md:text-xl font-semibold mb-2 text-white">Generated Questions:</h4>
+                            <textarea id="gemini-result" rows="10" class="p-4 rounded-md border-gray-600 whitespace-pre-wrap w-full bg-black bg-opacity-20" readonly></textarea>
+                            <div class="flex flex-col sm:flex-row gap-4 mt-2">
+                                <button data-copytarget="gemini-result" class="copy-btn btn bg-indigo-500 text-white font-bold py-2 px-4 rounded-md hover:bg-indigo-600 flex-1">Copy Questions</button>
+                                <a href="#" id="gemini-whatsapp-link" target="_blank" class="btn bg-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600 flex-1 text-center">Open WhatsApp</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Teacher Resources View -->
+            <div id="teacher-resources-view" class="view">
+                <div class="card p-6 md:p-12">
+                    <button class="back-to-teacher-dashboard text-blue-300 hover:underline mb-6">&larr; Back to Dashboard</button>
+                    <h2 class="text-2xl md:text-3xl font-bold text-center mb-8 text-white">Teacher Resources</h2>
+                    <div class="space-y-6 max-w-md mx-auto">
+                        <div id="cbse-questions-btn-container" class="hidden">
+                            <a id="cbse-questions-link" href="#" target="_blank" class="btn bg-gradient-to-r from-green-500 to-teal-600 text-white font-bold py-3 px-6 rounded-lg text-lg w-full block text-center">
+                                CBSE Sample Questions & Marking Scheme
+                            </a>
+                        </div>
+                        <div>
+                            <button class="btn bg-gradient-to-r from-gray-500 to-gray-700 text-white font-bold py-3 px-6 rounded-lg text-lg w-full block text-center">
+                                Syllabus Tracker
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 
             <!-- Admin Dashboard View -->
             <div id="admin-dashboard-view" class="view">
@@ -673,6 +746,20 @@
             'trilochan': { name: "Trilochan Sir", subjects: ['Odia (X)', 'Odia (IX)'] },
             'jyotirmaya': { name: "Jyotirmaya Sir", subjects: ['Chemistry (XII)', 'Chemistry (XI)'] }
         };
+        
+        const teacherManagementLinks = {
+            'amar': 'https://drive.google.com/drive/folders/1V4ix1_b6TfLVsSOSrETd1bmPEAOEpBHd?usp=sharing',
+            'banita': 'https://drive.google.com/drive/folders/1cDNe4sJRjBGV-zgyFl-K6RuAxnVPVAID?usp=sharing',
+            'manas': 'https://drive.google.com/drive/folders/1JaR-2EVcfyaBhfBgi_Qv5WdolYIfaidc?usp=sharing',
+            'ritanjali': 'https://drive.google.com/drive/folders/1tLbMT68I_SRuQR-F-5iV6zv_p5KT7R4-?usp=sharing',
+            'satabdi': 'https://drive.google.com/drive/folders/1cO1vUJzWDYIZTAi01OmytabOkvLyU1s1?usp=sharing',
+            'sujata': 'https://drive.google.com/drive/folders/1p7r7fnoU5EamE3gRKl43HcRPDqf4P4en?usp=sharing',
+            'tapas': 'https://drive.google.com/drive/folders/1SyD11XyI-VN6j9ef82IG-j3Zv_UMBygw?usp=sharing',
+            'trilochan': 'https://drive.google.com/drive/folders/1pIYIGtqlaVpj5gujnbKIFfaEn1scswrN?usp=sharing',
+            'jyotirmaya': 'https://drive.google.com/drive/folders/1UHEkDTP0BQVjnvZ5z1n5B6bJHfIgRzi5?usp=sharing',
+            'dasa': 'https://drive.google.com/drive/folders/1tl1Z4B4qWu9uNBzaYBf4t0JOojuMS5-U?usp=sharing',
+            'akpalei': 'https://drive.google.com/drive/folders/12jN-ST3frS95MiNcjrnzDOHKwdstZ7UI?usp=sharing'
+        };
 
         const students = {
             'VI': ['Sujit Ku. Nayak', 'Monalisha Biswal', 'Kshyati Prangya Naik', 'Paripurna Rout', 'Subhashree Nayak', 'Pradnesh Sahoo', 'Twinkle Rana'],
@@ -801,13 +888,25 @@
         function logout() {
             currentUser = null;
             currentRole = null;
-            hideDashboardSections();
             showView('initial-view');
         }
 
         // --- DASHBOARD SETUP ---
         function setupTeacherDashboard() {
             document.getElementById('welcome-message').textContent = `Welcome, ${currentUser.name}`;
+            
+            // Set up the Teacher Resources page
+            const cbseBtnContainer = document.getElementById('cbse-questions-btn-container');
+            const cbseLink = document.getElementById('cbse-questions-link');
+            const cbseTeachers = ['banita', 'sujata', 'manas', 'ritanjali', 'jyotirmaya', 'trilochan', 'satabdi', 'amar'];
+
+            if (cbseTeachers.includes(currentUser.username) && teacherManagementLinks[currentUser.username]) {
+                cbseLink.href = teacherManagementLinks[currentUser.username];
+                cbseBtnContainer.classList.remove('hidden');
+            } else {
+                cbseBtnContainer.classList.add('hidden');
+            }
+
             const teacherSubjects = teacherData[currentUser.username].subjects;
             const teacherClasses = new Set();
 
@@ -1030,45 +1129,6 @@
         }
 
         // --- TEACHER ACTIONS & DYNAMIC POPULATION ---
-
-        function handleAttendanceClick() {
-            const now = new Date();
-            const day = now.getDay();
-            const currentTimeInMinutes = now.getHours() * 60 + now.getMinutes();
-            const weekdayStartTimes = [17 * 60 + 30, 18 * 60 + 30, 19 * 60 + 30];
-            const sundayStartTimes = [6 * 60 + 45, 7 * 60 + 45, 8 * 60 + 45];
-            const schedule = (day === 0) ? sundayStartTimes : weekdayStartTimes;
-            let isLate = false;
-
-            for (const startTime of schedule) {
-                const lateThreshold = startTime + 10;
-                const classEndTime = startTime + 60; 
-                if (currentTimeInMinutes > lateThreshold && currentTimeInMinutes < classEndTime) {
-                    isLate = true;
-                    break;
-                }
-            }
-            
-            if (isLate) {
-                wasLate = true;
-                showModal("Students might be arriving late. Kindly remind them to be punctual and take necessary steps to discourage delays.", "Late Entry Alert");
-            } else {
-                wasLate = false;
-            }
-
-            showDashboardSection('attendance-section');
-        }
-
-        function showDashboardSection(sectionId) {
-            document.getElementById('teacher-actions').style.display = 'none';
-            document.querySelectorAll('.dashboard-section').forEach(sec => sec.classList.add('hidden'));
-            document.getElementById(sectionId).classList.remove('hidden');
-        }
-
-        function hideDashboardSections() {
-            document.querySelectorAll('.dashboard-section').forEach(sec => sec.classList.add('hidden'));
-            document.getElementById('teacher-actions').style.display = 'grid';
-        }
 
         function populateSubjects(type) {
             const classSelect = document.getElementById(`${type}-class`);
@@ -1677,6 +1737,8 @@
         }
 
         // --- Setup Event Listeners ---
+        document.getElementById('show-student-portal').addEventListener('click', () => showView('student-portal-view'));
+        document.getElementById('portal-back-to-home').addEventListener('click', () => showView('initial-view'));
         document.getElementById('show-teacher-login').addEventListener('click', () => showLogin('teacher'));
         document.getElementById('show-admin-login').addEventListener('click', () => showLogin('admin'));
         document.getElementById('back-to-home').addEventListener('click', () => showView('initial-view'));
@@ -1686,14 +1748,15 @@
         document.getElementById('modal-ok-btn').addEventListener('click', closeModal);
 
         // Teacher action buttons
-        document.getElementById('action-attendance').addEventListener('click', handleAttendanceClick);
-        document.getElementById('action-marks').addEventListener('click', () => showDashboardSection('marks-section'));
-        document.getElementById('action-request-class').addEventListener('click', () => showDashboardSection('request-class-section'));
-        document.getElementById('action-schedule-exam').addEventListener('click', () => showDashboardSection('schedule-exam-section'));
-        document.getElementById('action-gemini-questions').addEventListener('click', () => showDashboardSection('gemini-questions-section'));
+        document.getElementById('action-attendance').addEventListener('click', () => showView('attendance-view'));
+        document.getElementById('action-marks').addEventListener('click', () => showView('marks-view'));
+        document.getElementById('action-request-class').addEventListener('click', () => showView('request-class-view'));
+        document.getElementById('action-schedule-exam').addEventListener('click', () => showView('schedule-exam-view'));
+        document.getElementById('action-gemini-questions').addEventListener('click', () => showView('gemini-questions-view'));
+        document.getElementById('action-my-resources').addEventListener('click', () => showView('teacher-resources-view'));
 
         // Back to dashboard buttons
-        document.querySelectorAll('.back-to-dashboard').forEach(btn => btn.addEventListener('click', hideDashboardSections));
+        document.querySelectorAll('.back-to-teacher-dashboard').forEach(btn => btn.addEventListener('click', () => showView('teacher-dashboard-view')));
 
         // Dynamic select population
         document.getElementById('attendance-class').addEventListener('change', () => populateSubjects('attendance'));
@@ -1733,4 +1796,6 @@
     </script>
 </body>
 </html>
+
+
 
