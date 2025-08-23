@@ -242,7 +242,7 @@
                         </button>
                         <button id="show-admin-login" class="btn bg-gradient-to-r from-green-500 to-teal-600 text-white font-bold py-3 px-6 rounded-lg text-lg w-full sm:w-auto">
                              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-                            Admin Panel
+                             Admin Panel
                         </button>
                     </div>
                 </div>
@@ -345,6 +345,13 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-3 text-teal-300"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
                             <h3 class="text-base md:text-lg font-semibold text-white">My Resources</h3>
                         </div>
+                        <!-- NEW LATE ENTRIES BUTTON -->
+                        <div id="late-entries-container" class="hidden col-span-2 md:col-span-3">
+                            <a id="action-late-entries" href="#" target="_blank" class="card dashboard-action-card p-4 md:p-6 text-center cursor-pointer flex flex-col items-center justify-center w-full">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-3 text-orange-300"><path d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"></path></svg>
+                                <h3 class="text-base md:text-lg font-semibold text-white">Late Entries & Tests Conducted</h3>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -392,12 +399,16 @@
                             <label for="marks-subject" class="block text-sm font-medium text-gray-300">Select Subject</label>
                             <select id="marks-subject" class="mt-1 block w-full p-2 rounded-md"></select>
                         </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label for="test-name" class="block text-sm font-medium text-gray-300">Test Name / Date</label>
-                                <input type="text" id="test-name" placeholder="e.g., Physics Weekly Test" class="mt-1 block w-full p-2 rounded-md">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div class="sm:col-span-1">
+                                <label for="test-name" class="block text-sm font-medium text-gray-300">Test Name</label>
+                                <input type="text" id="test-name" placeholder="e.g., Weekly Test" class="mt-1 block w-full p-2 rounded-md">
                             </div>
-                            <div>
+                            <div class="sm:col-span-1">
+                                <label for="test-date" class="block text-sm font-medium text-gray-300">Test Date</label>
+                                <input type="date" id="test-date" class="mt-1 block w-full p-2 rounded-md">
+                            </div>
+                            <div class="sm:col-span-1">
                                 <label for="max-marks" class="block text-sm font-medium text-gray-300">Maximum Marks</label>
                                 <input type="number" id="max-marks" placeholder="e.g., 50" class="mt-1 block w-full p-2 rounded-md">
                             </div>
@@ -711,8 +722,6 @@
 
     <script>
     // --- SCRIPT WRAPPER ---
-    // This ensures the entire script runs only after the HTML document has been fully loaded and parsed.
-    // This is a robust way to prevent "blank page" errors caused by scripts trying to access elements that don't exist yet.
     document.addEventListener('DOMContentLoaded', () => {
 
         // --- DATABASE (Hardcoded Data) ---
@@ -761,6 +770,21 @@
             'jyotirmaya': 'https://drive.google.com/drive/folders/1UHEkDTP0BQVjnvZ5z1n5B6bJHfIgRzi5?usp=sharing',
             'dasa': 'https://drive.google.com/drive/folders/1tl1Z4B4qWu9uNBzaYBf4t0JOojuMS5-U?usp=sharing',
             'akpalei': 'https://drive.google.com/drive/folders/12jN-ST3frS95MiNcjrnzDOHKwdstZ7UI?usp=sharing'
+        };
+
+        // NEW: Links for Late Entries and Tests Conducted
+        const lateEntriesLinks = {
+            'banita': 'https://www.notion.so/BANITA-MA-AM-2581c462524a8009aebbf9f78c950f03?source=copy_link',
+            'sujata': 'https://www.notion.so/SUJATA-MA-AM-2581c462524a80d1a274d9be915ccff1?source=copy_link',
+            'ritanjali': 'https://www.notion.so/RITANJALI-MA-AM-2581c462524a809f8164f8f7c7cd32ba?source=copy_link',
+            'satabdi': 'https://www.notion.so/SATABDI-MA-AM-2581c462524a8079aafdd0060e61dffc?source=copy_link',
+            'manas': 'https://www.notion.so/MANAS-SIR-2581c462524a8031bee7f5f10c7e32e1?source=copy_link',
+            'jyotirmaya': 'https://www.notion.so/JYOTIRMAYA-SIR-2581c462524a80c2a706d61f9848652f?source=copy_link',
+            'tapas': 'https://www.notion.so/TAPAS-SIR-2581c462524a80859a05ea1e2198be93?source=copy_link',
+            'dasa': 'https://www.notion.so/DASA-SIR-2581c462524a80d99161eab618490e57?source=copy_link',
+            'trilochan': 'https://www.notion.so/TRILOCHAN-SIR-2581c462524a8071b904c6767ee7b53b?source=copy_link',
+            'akpalei': 'https://www.notion.so/A-K-PALEI-SIR-2581c462524a801d8f22f4128c6e8491?source=copy_link',
+            'amar': 'https://www.notion.so/AMAR-2581c462524a8056be55cf539a5e37da?source=copy_link'
         };
 
         const students = {
@@ -907,6 +931,18 @@
                 cbseBtnContainer.classList.remove('hidden');
             } else {
                 cbseBtnContainer.classList.add('hidden');
+            }
+
+            // Setup Late Entries Link
+            const lateEntriesContainer = document.getElementById('late-entries-container');
+            const lateEntriesLink = document.getElementById('action-late-entries');
+            const userLateLink = lateEntriesLinks[currentUser.username];
+
+            if (userLateLink) {
+                lateEntriesLink.href = userLateLink;
+                lateEntriesContainer.classList.remove('hidden');
+            } else {
+                lateEntriesContainer.classList.add('hidden');
             }
 
             const teacherSubjects = teacherData[currentUser.username].subjects;
@@ -1103,7 +1139,6 @@
         
         function printContent(elementId, title) {
             const contentElement = document.getElementById(elementId);
-            // Defensive check to prevent errors if the element doesn't exist
             if (!contentElement) {
                 console.error("Element to print not found:", elementId);
                 showModal("Could not generate the print view. The content is missing.");
@@ -1305,20 +1340,24 @@
             const subjectValue = subjectEl.value;
             const subjectText = subjectEl.options[subjectEl.selectedIndex]?.text || subjectValue;
             const testName = document.getElementById('test-name').value;
+            const testDate = document.getElementById('test-date').value;
             const maxMarks = document.getElementById('max-marks').value;
             
-            if (!className || !subjectValue || !testName || !maxMarks) {
-                showModal("Please fill in all fields: class, subject, test name, and maximum marks.");
+            if (!className || !subjectValue || !testName || !maxMarks || !testDate) {
+                showModal("Please fill in all fields: class, subject, test name, test date, and maximum marks.");
                 return;
             }
 
+            const formattedDate = new Date(testDate).toLocaleDateString('en-GB');
+
             let message = `*📊 Marks Report 📊*\n\n` +
-                                  `*Teacher:* ${currentUser.name}\n` +
-                                  `*Class:* ${className}\n` +
-                                  `*Subject:* ${subjectText}\n` +
-                                  `*Test:* ${testName}\n` +
-                                  `*Max. Marks:* ${maxMarks}\n\n` +
-                                  `*Student Marks:*\n`;
+                          `*Teacher:* ${currentUser.name}\n` +
+                          `*Class:* ${className}\n` +
+                          `*Subject:* ${subjectText}\n` +
+                          `*Test:* ${testName}\n` +
+                          `*Date:* ${formattedDate}\n` +
+                          `*Max. Marks:* ${maxMarks}\n\n` +
+                          `*Student Marks:*\n`;
 
             let hasMarks = false;
             marksInputs.forEach(input => {
@@ -1389,10 +1428,9 @@
         function copyMessage(textareaId) {
             const textarea = document.getElementById(textareaId);
             textarea.select();
-            textarea.setSelectionRange(0, 99999); // For mobile devices
+            textarea.setSelectionRange(0, 99999);
 
             try {
-                // Use document.execCommand for broader compatibility in iFrames
                 const successful = document.execCommand('copy');
                 if (successful) {
                     showModal('Message copied to clipboard!');
@@ -1404,7 +1442,6 @@
                 console.error('Copy failed', err);
             }
 
-            // Deselect the text
             window.getSelection().removeAllRanges();
         }
 
@@ -1483,10 +1520,9 @@
             }
             messageEl.textContent = message;
 
-            buttonsContainer.innerHTML = ''; // Clear previous buttons
+            buttonsContainer.innerHTML = '';
 
             if (typeof onConfirm === 'function') {
-                // Confirmation dialog
                 const cancelBtn = document.createElement('button');
                 cancelBtn.className = 'btn bg-gray-500 text-white font-bold py-2 px-6 rounded-md';
                 cancelBtn.textContent = 'Cancel';
@@ -1503,7 +1539,6 @@
                 buttonsContainer.appendChild(cancelBtn);
                 buttonsContainer.appendChild(confirmBtn);
             } else {
-                // Standard info dialog
                 const okBtn = document.createElement('button');
                 okBtn.className = 'btn bg-indigo-600 text-white font-bold py-2 px-6 rounded-md';
                 okBtn.textContent = 'OK';
@@ -1522,25 +1557,23 @@
         // --- CONFETTI ANIMATION ---
         function triggerConfettiAnimation(message) {
             const container = document.getElementById('confetti-container');
-            container.innerHTML = ''; // Clear previous confetti
+            container.innerHTML = '';
 
-            // Add the message
             const messageEl = document.createElement('div');
             messageEl.className = 'confetti-message';
             messageEl.textContent = message;
             container.appendChild(messageEl);
 
-            // Create confetti particles
             const colors = ["#ff5722", "#ff9800", "#ffc107", "#ffeb3b", "#cddc39", "#8bc34a", "#4caf50", "#009688", "#00bcd4", "#03a9f4", "#2196f3", "#3f51b5", "#673ab7", "#9c27b0", "#e91e63", "#f44336"];
             const confettiCount = 150;
             for (let i = 0; i < confettiCount; i++) {
                 const confetti = document.createElement('div');
                 confetti.className = 'confetti';
                 
-                const xPos = Math.random() * 100; // Starting horizontal position
-                const delay = Math.random() * 1.5; // Staggered start
-                const duration = Math.random() * 2 + 2.5; // Random duration
-                const size = Math.random() * 10 + 5; // Random size
+                const xPos = Math.random() * 100;
+                const delay = Math.random() * 1.5;
+                const duration = Math.random() * 2 + 2.5;
+                const size = Math.random() * 10 + 5;
                 const isRectangle = Math.random() > 0.25;
 
                 confetti.style.left = `${xPos}vw`;
@@ -1554,7 +1587,6 @@
                 container.appendChild(confetti);
             }
 
-            // Remove the elements after animation
             setTimeout(() => {
                 container.innerHTML = '';
             }, 5500);
@@ -1573,7 +1605,6 @@
 
             let announcement = "";
             
-            // This is a simplified parser based on the known message format.
             if (requestText.includes("extra class")) {
                 const teacherMatch = requestText.match(/(.+) seeks an extra class/);
                 const classMatch = requestText.match(/for (.+?) on/);
@@ -1597,14 +1628,14 @@
                 const syllabusMatch = requestText.match(/syllabus is as follows: (.+)/);
 
                 if (teacherMatch && classMatch && dateMatch && syllabusMatch) {
-                     announcement = `*🗓️ Important Notice: Test Scheduled 🗓️*\n\n` +
-                                    `Dear Students and Parents,\n\n` +
-                                    `A test has been scheduled for your ward as per the details below:\n\n` +
-                                    `*Subject:* ${classMatch[1]}\n` +
-                                    `*Date:* ${dateMatch[1]}\n` +
-                                    `*Syllabus:* ${syllabusMatch[1]}\n` +
-                                    `*Conducted by:* ${teacherMatch[1]}\n\n` +
-                                    `Please ensure your ward is well-prepared. Best of luck!`;
+                       announcement = `*🗓️ Important Notice: Test Scheduled 🗓️*\n\n` +
+                                      `Dear Students and Parents,\n\n` +
+                                      `A test has been scheduled for your ward as per the details below:\n\n` +
+                                      `*Subject:* ${classMatch[1]}\n` +
+                                      `*Date:* ${dateMatch[1]}\n` +
+                                      `*Syllabus:* ${syllabusMatch[1]}\n` +
+                                      `*Conducted by:* ${teacherMatch[1]}\n\n` +
+                                      `Please ensure your ward is well-prepared. Best of luck!`;
                 }
             }
 
@@ -1653,7 +1684,6 @@
                     throw new Error("No valid student marks found in the report.");
                 }
 
-                // Calculations
                 const totalStudents = studentData.length;
                 const totalPercentage = studentData.reduce((sum, s) => sum + s.percentage, 0);
                 const averagePercentage = (totalPercentage / totalStudents).toFixed(2);
@@ -1670,7 +1700,6 @@
                     gradeCounts[s.grade]++;
                 });
 
-                // Display Results
                 const resultsDiv = document.getElementById('analysis-results');
                 resultsDiv.innerHTML = `
                     <p><strong>Total Students:</strong> ${totalStudents}</p>
@@ -1684,7 +1713,6 @@
                     </ul>
                 `;
 
-                // Chart
                 const ctx = document.getElementById('grade-chart').getContext('2d');
                 if (gradeChart) {
                     gradeChart.destroy();
@@ -1705,29 +1733,16 @@
                         scales: {
                             y: {
                                 beginAtZero: true,
-                                ticks: {
-                                    color: '#e5e7eb',
-                                    stepSize: 1
-                                },
-                                grid: {
-                                    color: 'rgba(255, 255, 255, 0.1)'
-                                }
+                                ticks: { color: '#e5e7eb', stepSize: 1 },
+                                grid: { color: 'rgba(255, 255, 255, 0.1)' }
                             },
                             x: {
-                                ticks: {
-                                    color: '#e5e7eb'
-                                },
-                                grid: {
-                                    color: 'rgba(255, 255, 255, 0.1)'
-                                }
+                                ticks: { color: '#e5e7eb' },
+                                grid: { color: 'rgba(255, 255, 255, 0.1)' }
                             }
                         },
                         plugins: {
-                            legend: {
-                                labels: {
-                                    color: '#e5e7eb'
-                                }
-                            }
+                            legend: { labels: { color: '#e5e7eb' } }
                         }
                     }
                 });
@@ -1740,12 +1755,10 @@
             }
         }
 
-        // --- LATE ATTENDANCE CHECK ---
         function checkClassStartTime() {
             const now = new Date();
             const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
-            // Class start times in minutes from midnight
             const class1Start = 17 * 60 + 30; // 5:30 PM
             const class2Start = 18 * 60 + 30; // 6:30 PM
             const class3Start = 19 * 60 + 30; // 7:30 PM
@@ -1755,7 +1768,7 @@
             let isAfterHours = false;
 
             if (currentMinutes < class1Start) {
-                relevantClassStart = class1Start; // Before first class, target is the first class
+                relevantClassStart = class1Start;
             } else if (currentMinutes >= class1Start && currentMinutes < class2Start) {
                 relevantClassStart = class1Start;
             } else if (currentMinutes >= class2Start && currentMinutes < class3Start) {
@@ -1777,19 +1790,17 @@
                 wasLate = true;
                 showModal(`You are ${minutesLate} minutes late for this class slot.`);
             } else {
-                wasLate = false; // Ensure it's reset if on time
+                wasLate = false;
             }
             showView('attendance-view');
         }
 
         // --- INITIALIZATION & EVENT LISTENERS ---
         
-        // Set daily quote
         const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
         const quoteIndex = dayOfYear % educationalQuotes.length;
         document.getElementById('daily-quote').textContent = `"${educationalQuotes[quoteIndex]}"`;
 
-        // Calculate stats for the feature tiles
         const totalStudents = Object.values(students).reduce((sum, classArray) => sum + classArray.length, 0);
         const totalTeachers = Object.keys(teacherData).length;
         const uniqueSubjects = new Set();
@@ -1801,14 +1812,12 @@
         });
         const totalSubjects = uniqueSubjects.size;
 
-        // Animate the counts
         animateCountUp(document.getElementById('student-count'), totalStudents);
         animateCountUp(document.getElementById('teacher-count'), totalTeachers);
         animateCountUp(document.getElementById('subject-count'), totalSubjects);
         
-        // Janmashtami Check
         const today = new Date();
-        if (today.getMonth() === 7 && today.getDate() === 26) { // August is month 7 (0-indexed). Janmashtami 2024 is on Aug 26.
+        if (today.getMonth() === 7 && today.getDate() === 26) {
             document.getElementById('janmashtami-special').classList.remove('hidden');
         }
 
@@ -1821,19 +1830,13 @@
         document.getElementById('login-form').addEventListener('submit', handleLogin);
         document.getElementById('logout-teacher').addEventListener('click', logout);
         document.getElementById('logout-admin').addEventListener('click', logout);
-
-        // Teacher action buttons
-        document.getElementById('action-attendance').addEventListener('click', checkClassStartTime); // UPDATED
+        document.getElementById('action-attendance').addEventListener('click', checkClassStartTime);
         document.getElementById('action-marks').addEventListener('click', () => showView('marks-view'));
         document.getElementById('action-request-class').addEventListener('click', () => showView('request-class-view'));
         document.getElementById('action-schedule-exam').addEventListener('click', () => showView('schedule-exam-view'));
         document.getElementById('action-gemini-questions').addEventListener('click', () => showView('gemini-questions-view'));
         document.getElementById('action-my-resources').addEventListener('click', () => showView('teacher-resources-view'));
-
-        // Back to dashboard buttons
         document.querySelectorAll('.back-to-teacher-dashboard').forEach(btn => btn.addEventListener('click', () => showView('teacher-dashboard-view')));
-
-        // Dynamic select population
         document.getElementById('attendance-class').addEventListener('change', () => populateSubjects('attendance'));
         document.getElementById('attendance-subject').addEventListener('change', populateStudentsForAttendance);
         document.getElementById('marks-class').addEventListener('change', () => populateSubjects('marks'));
@@ -1841,8 +1844,6 @@
         document.getElementById('request-class-class').addEventListener('change', () => populateSubjects('request-class'));
         document.getElementById('schedule-exam-class').addEventListener('change', () => populateSubjects('schedule-exam'));
         document.getElementById('gemini-class').addEventListener('change', () => populateSubjects('gemini'));
-        
-        // Message generation buttons
         document.getElementById('generate-attendance-btn').addEventListener('click', generateAttendanceMessage);
         document.getElementById('generate-marks-btn').addEventListener('click', generateMarksMessage);
         document.getElementById('generate-request-class-btn').addEventListener('click', () => generateRequestMessage('class'));
@@ -1850,8 +1851,6 @@
         document.getElementById('generate-gemini-questions-btn').addEventListener('click', generatePracticeQuestions);
         document.getElementById('generate-announcement-btn').addEventListener('click', generateAnnouncementMessage);
         document.getElementById('analyze-marks-btn').addEventListener('click', analyzeMarks);
-
-        // Admin tabs
         document.getElementById('admin-tabs-container').addEventListener('click', (e) => {
             if (e.target.classList.contains('admin-tab')) {
                 showAdminTab(e.target.dataset.tab);
@@ -1859,8 +1858,6 @@
         });
         document.getElementById('student-search-input').addEventListener('keyup', lookupStudent);
         document.getElementById('print-analysis-btn').addEventListener('click', () => printContent('analysis-results', 'Marks Analysis Report'));
-
-        // Copy buttons
         document.querySelectorAll('.copy-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 copyMessage(e.currentTarget.dataset.copytarget);
@@ -1871,6 +1868,7 @@
     </script>
 </body>
 </html>
+
 
 
 
