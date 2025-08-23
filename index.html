@@ -587,7 +587,7 @@
                     </div>
                     
                     <!-- ADMIN ACTIONS GRID -->
-                    <div id="admin-actions" class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+                    <div id="admin-actions" class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
                         <div id="action-teacher-overview" class="card dashboard-action-card p-4 md:p-6 text-center cursor-pointer">
                             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-3 text-green-300"><path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21v-1a6 6 0 00-5.176-5.973" /></svg>
                             <h3 class="text-base md:text-lg font-semibold text-white">Teacher Overview</h3>
@@ -611,6 +611,10 @@
                         <div id="action-syllabus-records" class="card dashboard-action-card p-4 md:p-6 text-center cursor-pointer">
                             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-3 text-cyan-300"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
                             <h3 class="text-base md:text-lg font-semibold text-white">Syllabus Records</h3>
+                        </div>
+                        <div id="action-teacher-remarks" class="card dashboard-action-card p-4 md:p-6 text-center cursor-pointer">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-3 text-yellow-300"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                            <h3 class="text-base md:text-lg font-semibold text-white">Teacher Remarks</h3>
                         </div>
                     </div>
                 </div>
@@ -1638,6 +1642,9 @@
         document.getElementById('action-syllabus-records').addEventListener('click', () => {
              window.open('https://lookerstudio.google.com/reporting/0c647c77-6b32-401a-b26f-f83953c97159', '_blank');
         });
+        document.getElementById('action-teacher-remarks').addEventListener('click', () => {
+             window.open('https://lookerstudio.google.com/reporting/dc19b3c3-b1bd-4bee-8e3e-a779b9d8c1c5', '_blank');
+        });
         document.querySelectorAll('.back-to-admin-dashboard').forEach(btn => btn.addEventListener('click', () => showView('admin-dashboard-view')));
         document.getElementById('student-search-input-admin').addEventListener('keyup', lookupStudentAdmin);
 
@@ -1645,6 +1652,7 @@
     </script>
 </body>
 </html>
+
 
 
 
