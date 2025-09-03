@@ -258,10 +258,6 @@
         /* --- Student Progress Bars --- */
         .progress-bar-container { width: 100%; background: rgba(0,0,0,0.3); border-radius: 8px; overflow: hidden; }
         .progress-bar { height: 10px; border-radius: 8px; width: 0; transition: width 1.5s cubic-bezier(0.25, 1, 0.5, 1); }
-
-        /* --- Syllabus Donut Chart --- */
-        .syllabus-chart-container { position: relative; width: 120px; height: 120px; margin: 0 auto; }
-        .syllabus-percentage { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.5rem; font-weight: bold; }
         
     </style>
 </head>
@@ -449,17 +445,24 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-3 text-teal-300"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
                             <h3 class="text-base md:text-lg font-semibold text-white">My Resources</h3>
                         </div>
-                        <div id="action-syllabus-tracker-teacher" class="card dashboard-action-card p-4 md:p-6 text-center cursor-pointer">
-                           <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-3 text-cyan-300"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                            <h3 class="text-base md:text-lg font-semibold text-white">Syllabus Tracker</h3>
-                        </div>
                         <div id="late-entries-container" class="hidden">
                             <a id="action-late-entries" href="#" target="_blank" class="card dashboard-action-card p-4 md:p-6 text-center cursor-pointer flex flex-col items-center justify-center w-full h-full">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-3 text-orange-300"><path d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"></path></svg>
                                 <h3 class="text-base md:text-lg font-semibold text-white">My Statistics</h3>
                             </a>
                         </div>
-                        
+                        <div>
+                            <a href="https://lookerstudio.google.com/reporting/0c647c77-6b32-401a-b26f-f83953c97159" target="_blank" class="card dashboard-action-card p-4 md:p-6 text-center cursor-pointer flex flex-col items-center justify-center w-full h-full">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-3 text-cyan-300"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                                <h3 class="text-base md:text-lg font-semibold text-white">Syllabus Tracker</h3>
+                            </a>
+                        </div>
+                        <div>
+                            <a href="https://forms.gle/1Wz6Wh9CZgpVD4m37" target="_blank" class="card dashboard-action-card p-4 md:p-6 text-center cursor-pointer flex flex-col items-center justify-center w-full h-full">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-3 text-lime-300"><path d="M13.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8.5L13.5 2z"></path><polyline points="13.5 2 13.5 8.5 20 8.5"></polyline><path d="m9 18 2-2 4 4"></path><path d="m9 13 2 2 4-4"></path></svg>
+                                <h3 class="text-base md:text-lg font-semibold text-white">Update Syllabus Completion</h3>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -674,17 +677,6 @@
                 </div>
             </div>
 
-            <!-- Syllabus Tracker View -->
-            <div id="syllabus-tracker-view" class="view">
-                <div class="card p-4 sm:p-6 md:p-8">
-                    <button class="back-to-teacher-dashboard btn text-blue-300 hover:underline mb-4">&larr; Back to Dashboard</button>
-                    <h3 class="text-xl md:text-2xl font-semibold text-white mb-6 text-center">Syllabus Completion Tracker</h3>
-                    <div id="syllabus-charts-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-                        <!-- Donut charts will be dynamically inserted here -->
-                    </div>
-                </div>
-            </div>
-
 
             <!-- Admin Dashboard View -->
             <div id="admin-dashboard-view" class="view">
@@ -710,14 +702,6 @@
                             <p id="admin-student-count" class="text-3xl md:text-4xl font-bold text-white">0</p>
                             <p class="text-gray-300 mt-1 text-sm">Total Students</p>
                         </div>
-                    </div>
-
-                    <!-- Admin Chart -->
-                    <div class="card p-4 md:p-6 mb-6 md:mb-8 stat-card" style="animation-delay: 0.2s;">
-                         <h3 class="text-lg font-semibold text-white mb-4 text-center">Student Distribution by Class</h3>
-                         <div class="w-full h-64 md:h-80">
-                             <canvas id="class-distribution-chart"></canvas>
-                         </div>
                     </div>
                     
                     <!-- ADMIN ACTIONS GRID -->
@@ -924,10 +908,8 @@
         let currentUser = null;
         let currentRole = null;
         let gradeChart = null;
-        let classChart = null;
         let wasLate = false;
         let currentMarksData = [];
-        let syllabusCharts = [];
         
         // --- ANIMATION FUNCTION ---
         function animateCountUp(element, target, duration = 2000) {
@@ -968,12 +950,6 @@
                         if (newView.id === 'teacher-dashboard-view' || newView.id === 'admin-dashboard-view') {
                             staggerDashboardEntrance(newView.id);
                         }
-                        if (newView.id === 'syllabus-tracker-view') {
-                            setupSyllabusTracker();
-                        }
-                        if (newView.id === 'admin-dashboard-view') {
-                            createClassDistributionChart();
-                        }
                     }, 20);
 
                 }, 600);
@@ -988,7 +964,7 @@
         function staggerDashboardEntrance(viewId) {
             const container = document.getElementById(viewId);
             if (!container) return;
-            const cards = container.querySelectorAll('.dashboard-action-card, .stat-card');
+            const cards = container.querySelectorAll('.dashboard-action-card');
             cards.forEach((card, index) => {
                 card.style.animationDelay = `${index * 80}ms`;
             });
@@ -1853,100 +1829,7 @@
 
             openChartModal();
         }
-
-        function createClassDistributionChart() {
-            const container = document.getElementById('class-distribution-chart');
-            if (!container || classChart) return; // Don't re-create if it exists
-
-            const classLabels = Object.keys(students);
-            const studentCounts = classLabels.map(cls => students[cls].length);
-            
-            const ctx = container.getContext('2d');
-            classChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: classLabels,
-                    datasets: [{
-                        label: 'Number of Students',
-                        data: studentCounts,
-                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    indexAxis: 'y',
-                    scales: {
-                        y: { ticks: { color: '#e5e7eb' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } },
-                        x: { ticks: { color: '#e5e7eb' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } }
-                    },
-                    plugins: { legend: { display: false } },
-                    animation: { duration: 1200, easing: 'easeOutBounce' }
-                }
-            });
-        }
         
-        // --- SYLLABUS TRACKER ---
-        function setupSyllabusTracker() {
-            const container = document.getElementById('syllabus-charts-container');
-            container.innerHTML = '';
-            syllabusCharts.forEach(chart => chart.destroy()); // Clear old charts
-            syllabusCharts = [];
-
-            if (!currentUser || !teacherData[currentUser.username]) return;
-            const teacherSubjects = teacherData[currentUser.username].subjects;
-
-            teacherSubjects.forEach(subjectName => {
-                const wrapper = document.createElement('div');
-                wrapper.className = 'flex flex-col items-center gap-2';
-
-                const chartContainer = document.createElement('div');
-                chartContainer.className = 'syllabus-chart-container';
-                
-                const canvas = document.createElement('canvas');
-                const percentageSpan = document.createElement('span');
-                percentageSpan.className = 'syllabus-percentage';
-
-                chartContainer.appendChild(canvas);
-                chartContainer.appendChild(percentageSpan);
-
-                const label = document.createElement('p');
-                label.className = 'text-center text-sm font-medium';
-                label.textContent = subjectName;
-                
-                wrapper.appendChild(chartContainer);
-                wrapper.appendChild(label);
-                container.appendChild(wrapper);
-
-                // Simulate syllabus completion data
-                const completion = Math.floor(Math.random() * 70 + 30); // 30-100%
-                percentageSpan.textContent = `${completion}%`;
-                
-                const ctx = canvas.getContext('2d');
-                const newChart = new Chart(ctx, {
-                    type: 'doughnut',
-                    data: {
-                        datasets: [{
-                            data: [completion, 100 - completion],
-                            backgroundColor: ['#22c55e', 'rgba(255, 255, 255, 0.1)'],
-                            borderColor: '#1e293b',
-                            borderWidth: 2,
-                            cutout: '80%'
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { tooltip: { enabled: false }, legend: { display: false } },
-                        animation: { animateRotate: true, animateScale: true, duration: 1500 }
-                    }
-                });
-                syllabusCharts.push(newChart);
-            });
-        }
-
         // --- CONFETTI ANIMATION ---
         function triggerConfettiAnimation(message) {
             const container = document.getElementById('confetti-container');
@@ -2205,7 +2088,6 @@
         document.getElementById('action-schedule-exam').addEventListener('click', () => showView('schedule-exam-view'));
         document.getElementById('action-gemini-questions').addEventListener('click', () => showView('gemini-questions-view'));
         document.getElementById('action-my-resources').addEventListener('click', () => showView('teacher-resources-view'));
-        document.getElementById('action-syllabus-tracker-teacher').addEventListener('click', () => showView('syllabus-tracker-view'));
         document.querySelectorAll('.back-to-teacher-dashboard').forEach(btn => btn.addEventListener('click', () => showView('teacher-dashboard-view')));
         document.getElementById('attendance-class').addEventListener('change', () => populateSubjects('attendance'));
         document.getElementById('attendance-subject').addEventListener('change', populateStudentsForAttendance);
@@ -2269,6 +2151,7 @@
     </script>
 </body>
 </html>
+
 
 
 
