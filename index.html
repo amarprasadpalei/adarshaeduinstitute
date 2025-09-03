@@ -17,36 +17,94 @@
         body {
             font-family: 'Inter', sans-serif;
             color: #e5e7eb;
+            background: #111827; /* Fallback for the canvas */
+            overflow-x: hidden;
+        }
+
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+        }
+
+        #bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: linear-gradient(-45deg, #1d2b64, #f8cdda, #1d2b64, #f8cdda);
             background-size: 400% 400%;
             animation: gradient-animation 25s ease infinite;
+            z-index: -1;
+            opacity: 0.9;
         }
         
-        .main-container { transition: all 0.5s ease-in-out; }
-        .view { display: none; animation: slideInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .view.active { display: block; }
-
-        @keyframes slideInUp {
-            from { opacity: 0; transform: translateY(40px); }
-            to { opacity: 1; transform: translateY(0); }
+        .main-container { 
+            position: relative;
+            width: 100%;
+            max-width: 55rem;
+            perspective: 1200px;
         }
 
+        .view {
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            backface-visibility: hidden;
+            transform: translateX(100%);
+            opacity: 0;
+            display: none;
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .view.active {
+            position: relative;
+            transform: translateX(0);
+            opacity: 1;
+            display: block;
+        }
+
+        .view.slide-out {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+       
         @keyframes pulse {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.02); }
         }
 
+        /* --- Button Animations --- */
         .btn {
+            position: relative;
+            overflow: hidden;
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
-
         .btn:hover {
             transform: translateY(-3px) scale(1.05);
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
         }
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transform: scale(0);
+            animation: ripple-animation 0.7s linear;
+        }
+        @keyframes ripple-animation { to { transform: scale(4); opacity: 0; } }
 
+        .btn.success {
+            background: #22c55e !important;
+            transform: scale(1.05);
+        }
+        
         .card {
             background: rgba(0, 0, 0, 0.2);
             backdrop-filter: blur(12px);
@@ -62,13 +120,33 @@
             box-shadow: 0 12px 40px -5px rgba(0, 0, 0, 0.2);
         }
         
+        /* --- Staggered Dashboard Entrance --- */
         .dashboard-action-card {
             background: rgba(255, 255, 255, 0.1);
-            transition: background 0.3s ease;
+            transition: background 0.3s ease, transform 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: card-enter 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+        @keyframes card-enter {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
-        .dashboard-action-card:hover { background: rgba(255, 255, 255, 0.2); }
+        .dashboard-action-card:hover { 
+            background: rgba(255, 255, 255, 0.2); 
+            transform: translateY(-4px);
+        }
         
+        .dashboard-action-card svg {
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .dashboard-action-card:hover svg {
+            transform: scale(1.2) rotate(-8deg);
+        }
+
         h1, h2, h3 { text-shadow: 0px 2px 4px rgba(0,0,0,0.3); }
 
         .modal-backdrop {
@@ -83,17 +161,32 @@
             background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(10px); color: white;
             padding: 2rem; border-radius: 12px; width: 90%; max-width: 500px;
             text-align: center; border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: modal-content-appear 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+        @keyframes modal-content-appear { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
 
-        .loader {
-            border: 4px solid rgba(255,255,255,0.2); border-radius: 50%; border-top: 4px solid #fff;
-            width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto;
+        .loader-icon {
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-top-color: #fff;
+            border-radius: 50%;
+            display: inline-block;
+            animation: spin 0.8s linear infinite;
         }
-
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
+        
+        /* --- Input Focus Animation --- */
         input, select, textarea {
-            background: rgba(0, 0, 0, 0.2) !important; border: 1px solid rgba(255, 255, 255, 0.2) !important; color: white !important;
+            background: rgba(0, 0, 0, 0.2) !important; 
+            border: 1px solid rgba(255, 255, 255, 0.2) !important; 
+            color: white !important;
+            transition: box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.4) !important;
+            border-color: rgba(129, 140, 248, 0.8) !important;
         }
         input::placeholder, textarea::placeholder { color: #a1a1aa !important; }
         select option { background: #1e293b !important; color: white !important; }
@@ -104,6 +197,17 @@
         #login-form > div { opacity: 0; animation: formFieldSlideIn 0.5s ease-out forwards; }
         @keyframes formFieldSlideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
         
+        .skeleton-loader .skeleton-line {
+            height: 1rem;
+            width: 100%;
+            background: linear-gradient(90deg, rgba(255,255,255,0.08), rgba(255,255,255,0.15), rgba(255,255,255,0.08));
+            background-size: 200% 100%;
+            animation: skeleton-pulse 1.5s infinite ease-in-out;
+            border-radius: 4px;
+            margin-bottom: 0.75rem;
+        }
+        @keyframes skeleton-pulse { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
         .confetti-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1000; overflow: hidden; }
         .confetti { position: absolute; bottom: 0; opacity: 0; will-change: transform, opacity; animation: confetti-animation 3.5s ease-out forwards; }
         @keyframes confetti-animation {
@@ -123,66 +227,65 @@
             50% { transform: translate(-50%, -50%) scale(1.05); }
         }
 
-        /* Janmashtami Animation */
-        .janmashtami-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -1;
-            opacity: 0;
-            animation: fadeInFestival 2s 1s ease-in-out forwards;
-        }
-        @keyframes fadeInFestival {
-            to { opacity: 0.15; }
-        }
-        .peacock-feather {
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            animation: floatFeather 15s ease-in-out infinite;
-        }
-        .flute {
-            position: absolute;
-            width: 250px;
-            height: 50px;
-            animation: floatFlute 18s ease-in-out infinite;
-        }
-        @keyframes floatFeather {
-            0%, 100% { transform: translate(0, 0) rotate(-10deg); }
-            50% { transform: translate(20px, 10px) rotate(10deg); }
-        }
-        @keyframes floatFlute {
-            0%, 100% { transform: translate(0, 0) rotate(5deg); }
-            50% { transform: translate(-15px, -10px) rotate(-5deg); }
-        }
+        /* --- Holiday Animations --- */
+        .holiday-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; overflow: hidden; }
+        .waving-flag { position: absolute; top: 20px; right: 20px; width: 100px; height: 60px; background: linear-gradient(to bottom, #FF9933 33.3%, white 33.3%, white 66.6%, #138808 66.6%); border-left: 5px solid #8B4513; transform-origin: 0% 50%; animation: wave-flag 2.5s infinite ease-in-out; }
+        @keyframes wave-flag { 0%, 100% { transform: rotateY(0deg); } 50% { transform: rotateY(30deg); } }
+        .diya { position: absolute; bottom: -50px; animation: float-diya 10s linear infinite; }
+        @keyframes float-diya { to { transform: translateY(-110vh) rotate(15deg); opacity: 0; } }
+        .snowflake { position: absolute; color: rgba(255, 255, 255, 0.8); font-size: 1.5rem; animation: fall linear infinite; }
+        @keyframes fall { to { transform: translateY(105vh) rotate(360deg); } }
+        .firework { position: absolute; width: 4px; height: 4px; background-color: #fff; border-radius: 50%; opacity: 1; animation: firework-shoot linear forwards; }
+        .firework::before { content: ''; position: absolute; left: -10px; top: -10px; width: 24px; height: 24px; border: 2px solid currentColor; border-radius: 50%; transform: scale(0); opacity: 0; animation: firework-explode 0.8s 1s ease-out forwards; }
+        @keyframes firework-shoot { to { transform: translateY(-300px); opacity: 0; } }
+        @keyframes firework-explode { from { transform: scale(0); opacity: 1; } to { transform: scale(2); opacity: 0; } }
+        .holi-puff { position: absolute; border-radius: 50%; opacity: 0; animation: puff-animation 3s ease-out forwards; filter: blur(5px); }
+        @keyframes puff-animation { 0% { transform: scale(0); opacity: 0.8; } 100% { transform: scale(1.5); opacity: 0; } }
+        .raindrop { position: absolute; width: 2px; height: 15px; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.4)); animation: rain-fall 1s linear infinite; }
+        @keyframes rain-fall { from { transform: translateY(-100px); } to { transform: translateY(105vh); } }
+        .petal { position: absolute; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="%23f472b6"><path d="M10 2c-4 0-8 3-8 7s4 8 8 8 8-3 8-7-4-8-8-8zm0 13c-2.8 0-5-2.2-5-5s2.2-5 5-5 5 2.2 5 5-2.2 5-5 5z" fill-opacity="0.6"/><path d="M10 4c-3.3 0-6 2.7-6 6s2.7 6 6 6 6-2.7 6-6-2.7-6-6-6zm0 10c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4z" fill-opacity="0.8"/></svg>'); background-size: contain; width: 20px; height: 20px; animation: fall linear infinite; }
+        .balloon { position: absolute; width: 50px; height: 60px; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; animation: float-balloon 10s ease-in-out infinite; }
+        .balloon::after { content:''; position: absolute; bottom: -10px; left: 22.5px; width: 5px; height: 10px; background: inherit; border-radius: 0 0 2px 2px; }
+        @keyframes float-balloon { 0%, 100% { transform: translateY(0) rotate(-5deg); } 50% { transform: translateY(-110vh) rotate(5deg); } }
+
+        /* --- Quote Flip Animation --- */
+        .quote-flipper { perspective: 1000px; cursor: pointer; }
+        .quote-card { position: relative; transition: transform 0.8s; transform-style: preserve-3d; }
+        .quote-flipper.is-flipped .quote-card { transform: rotateY(180deg); }
+        .quote-front, .quote-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; top: 0; left: 0; }
+        .quote-back { transform: rotateY(180deg); }
+
+        /* --- Student Progress Bars --- */
+        .progress-bar-container { width: 100%; background: rgba(0,0,0,0.3); border-radius: 8px; overflow: hidden; }
+        .progress-bar { height: 10px; border-radius: 8px; width: 0; transition: width 1.5s cubic-bezier(0.25, 1, 0.5, 1); }
+
+        /* --- Syllabus Donut Chart --- */
+        .syllabus-chart-container { position: relative; width: 120px; height: 120px; margin: 0 auto; }
+        .syllabus-percentage { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.5rem; font-weight: bold; }
+        
     </style>
 </head>
 <body class="antialiased">
 
-    <div id="janmashtami-special" class="hidden">
-        <div class="janmashtami-container">
-            <svg class="peacock-feather" style="top: 5%; left: 5%;" viewBox="0 0 100 100">
-                <ellipse cx="50" cy="50" rx="45" ry="20" fill="#2196F3" transform="rotate(45 50 50)"/>
-                <ellipse cx="50" cy="50" rx="30" ry="15" fill="#4CAF50" transform="rotate(45 50 50)"/>
-                <circle cx="50" cy="50" r="10" fill="#9C27B0"/>
-                <circle cx="50" cy="50" r="5" fill="#FFC107"/>
-            </svg>
-            <svg class="flute" style="bottom: 10%; right: 10%;" viewBox="0 0 200 40">
-                <rect x="0" y="15" width="200" height="10" rx="5" fill="#FFC107"/>
-                <circle cx="20" cy="20" r="3" fill="#8D6E63"/><circle cx="40" cy="20" r="3" fill="#8D6E63"/>
-                <circle cx="60" cy="20" r="3" fill="#8D6E63"/><circle cx="80" cy="20" r="3" fill="#8D6E63"/>
-                <circle cx="100" cy="20" r="3" fill="#8D6E63"/><circle cx="120" cy="20" r="3" fill="#8D6E63"/>
-            </svg>
-        </div>
-    </div>
+    <canvas id="bg-canvas"></canvas>
+    <div id="bg-overlay"></div>
 
-    <div id="app" class="min-h-screen flex flex-col items-center justify-center p-4">
+    <!-- Holiday Theming Containers -->
+    <div id="independence-day-special" class="holiday-container hidden"></div>
+    <div id="diwali-special" class="holiday-container hidden"></div>
+    <div id="christmas-special" class="holiday-container hidden"></div>
+    <div id="new-year-special" class="holiday-container hidden"></div>
+    <div id="holi-special" class="holiday-container hidden"></div>
+    <div id="monsoon-special" class="holiday-container hidden"></div>
+    <div id="teachers-day-special" class="holiday-container hidden"></div>
+    <div id="childrens-day-special" class="holiday-container hidden"></div>
+    <div id="ganesh-chaturthi-special" class="holiday-container hidden"></div>
+
+
+    <div id="app" class="min-h-screen flex items-center justify-center p-4">
 
         <!-- Main Container for Views -->
-        <div class="main-container w-full max-w-5xl">
+        <div class="main-container">
 
             <!-- Initial Selection View -->
             <div id="initial-view" class="view active text-center">
@@ -190,9 +293,18 @@
                     <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-2 animate-pulse">Adarsha Educational Institute</h1>
                     <p class="text-gray-300 mb-6 md:mb-8 text-base md:text-lg">Your Gateway to Excellence</p>
                     
-                    <div class="my-6 md:my-8 p-4 md:p-6 bg-black bg-opacity-20 border-l-4 border-blue-400 rounded-r-lg">
-                        <p class="text-gray-200 italic text-sm sm:text-base md:text-lg" id="daily-quote"></p>
+                    <div id="daily-quote-container" class="my-6 md:my-8 quote-flipper">
+                         <div class="quote-card bg-black bg-opacity-20 border-l-4 border-blue-400 rounded-r-lg p-4 md:p-6 min-h-[80px] flex items-center justify-center">
+                            <div class="quote-front">
+                                <p class="text-gray-200 italic text-sm sm:text-base md:text-lg" id="daily-quote-text"></p>
+                                <p class="text-xs text-gray-400 mt-2">(Click to reveal author)</p>
+                            </div>
+                            <div class="quote-back flex flex-col items-center justify-center">
+                                <p class="text-gray-200 font-bold text-sm sm:text-base md:text-lg" id="daily-quote-author"></p>
+                            </div>
+                         </div>
                     </div>
+
 
                     <!-- Feature Tiles Section -->
                     <div class="my-8 md:my-10 grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 text-center">
@@ -242,7 +354,7 @@
             <!-- Student/Parents Portal View -->
             <div id="student-portal-view" class="view">
                 <div class="card p-6 md:p-12">
-                    <button id="portal-back-to-home" class="text-blue-300 hover:underline mb-6">&larr; Back to Home</button>
+                    <button id="portal-back-to-home" class="btn text-blue-300 hover:underline mb-6">&larr; Back to Home</button>
                     <h2 class="text-2xl md:text-3xl font-bold text-center mb-6 md:mb-8 text-white">Student & Parents Portal</h2>
                     <p class="text-gray-300 text-center mb-8">Access attendance and marks reports below.</p>
                     
@@ -274,19 +386,19 @@
             <!-- Login View -->
             <div id="login-view" class="view">
                 <div class="card p-6 md:p-12">
-                    <button id="back-to-home" class="text-blue-300 hover:underline mb-6">&larr; Back to Home</button>
+                    <button id="back-to-home" class="btn text-blue-300 hover:underline mb-6">&larr; Back to Home</button>
                     <h2 id="login-title" class="text-2xl md:text-3xl font-bold text-center mb-6 md:mb-8 text-white"></h2>
                     <form id="login-form" class="space-y-6">
                         <div id="teacher-login-fields" style="animation-delay: 0.1s;">
                             <div>
                                 <label for="username" class="block text-sm font-medium text-gray-300">Username</label>
-                                <input type="text" id="username" name="username" required class="mt-1 block w-full px-4 py-3 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                <input type="text" id="username" name="username" required class="mt-1 block w-full px-4 py-3 rounded-md shadow-sm">
                             </div>
                         </div>
                         <div id="admin-login-fields" class="hidden" style="animation-delay: 0.1s;">
                             <div>
                                 <label for="admin-username" class="block text-sm font-medium text-gray-300">Username</label>
-                                <select id="admin-username" name="admin-username" class="mt-1 block w-full px-4 py-3 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                <select id="admin-username" name="admin-username" class="mt-1 block w-full px-4 py-3 rounded-md shadow-sm">
                                     <option value="akpalei_sir">A.K. Palei Sir</option>
                                     <option value="amar_admin">Amar</option>
                                 </select>
@@ -294,10 +406,12 @@
                         </div>
                         <div style="animation-delay: 0.2s;">
                             <label for="password" class="block text-sm font-medium text-gray-300">Password</label>
-                            <input type="password" id="password" name="password" required class="mt-1 block w-full px-4 py-3 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            <input type="password" id="password" name="password" required class="mt-1 block w-full px-4 py-3 rounded-md shadow-sm">
                         </div>
                         <div style="animation-delay: 0.3s;">
-                            <button type="submit" class="w-full btn bg-indigo-600 text-white font-bold py-3 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Login</button>
+                            <button type="submit" class="w-full btn bg-indigo-600 text-white font-bold py-3 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex justify-center items-center gap-2">
+                                <span data-original-content="Login">Login</span>
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -335,24 +449,17 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-3 text-teal-300"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
                             <h3 class="text-base md:text-lg font-semibold text-white">My Resources</h3>
                         </div>
+                        <div id="action-syllabus-tracker-teacher" class="card dashboard-action-card p-4 md:p-6 text-center cursor-pointer">
+                           <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-3 text-cyan-300"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                            <h3 class="text-base md:text-lg font-semibold text-white">Syllabus Tracker</h3>
+                        </div>
                         <div id="late-entries-container" class="hidden">
                             <a id="action-late-entries" href="#" target="_blank" class="card dashboard-action-card p-4 md:p-6 text-center cursor-pointer flex flex-col items-center justify-center w-full h-full">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-3 text-orange-300"><path d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"></path></svg>
                                 <h3 class="text-base md:text-lg font-semibold text-white">My Statistics</h3>
                             </a>
                         </div>
-                        <div>
-                            <a href="https://lookerstudio.google.com/reporting/0c647c77-6b32-401a-b26f-f83953c97159" target="_blank" class="card dashboard-action-card p-4 md:p-6 text-center cursor-pointer flex flex-col items-center justify-center w-full h-full">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-3 text-cyan-300"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                                <h3 class="text-base md:text-lg font-semibold text-white">Syllabus Tracker</h3>
-                            </a>
-                        </div>
-                        <div>
-                            <a href="https://forms.gle/1Wz6Wh9CZgpVD4m37" target="_blank" class="card dashboard-action-card p-4 md:p-6 text-center cursor-pointer flex flex-col items-center justify-center w-full h-full">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-3 text-lime-300"><path d="M13.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8.5L13.5 2z"></path><polyline points="13.5 2 13.5 8.5 20 8.5"></polyline><path d="m9 18 2-2 4 4"></path><path d="m9 13 2 2 4-4"></path></svg>
-                                <h3 class="text-base md:text-lg font-semibold text-white">Update Syllabus Completion</h3>
-                            </a>
-                        </div>
+                        
                     </div>
                 </div>
             </div>
@@ -360,7 +467,7 @@
             <!-- Take Attendance View -->
             <div id="attendance-view" class="view">
                 <div class="card p-4 sm:p-6 md:p-8">
-                    <button class="back-to-teacher-dashboard text-blue-300 hover:underline mb-4">&larr; Back to Dashboard</button>
+                    <button class="back-to-teacher-dashboard btn text-blue-300 hover:underline mb-4">&larr; Back to Dashboard</button>
                     <h3 class="text-xl md:text-2xl font-semibold mb-4 border-b border-gray-500 pb-2 text-white">Take Attendance</h3>
                     <div class="space-y-4">
                         <div>
@@ -389,7 +496,7 @@
             <!-- Add Marks View -->
             <div id="marks-view" class="view">
                 <div class="card p-4 sm:p-6 md:p-8">
-                    <button class="back-to-teacher-dashboard text-blue-300 hover:underline mb-4">&larr; Back to Dashboard</button>
+                    <button class="back-to-teacher-dashboard btn text-blue-300 hover:underline mb-4">&larr; Back to Dashboard</button>
                     <h3 class="text-xl md:text-2xl font-semibold mb-4 border-b border-gray-500 pb-2 text-white">Add Test Marks</h3>
                     <div class="space-y-4">
                         <div>
@@ -415,7 +522,10 @@
                             </div>
                         </div>
                         <div id="student-list-marks" class="space-y-2 max-h-60 overflow-y-auto p-2 border border-gray-600 rounded-md bg-black bg-opacity-20"></div>
-                        <button id="generate-marks-btn" class="btn bg-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600 w-full">Prepare Marks Message</button>
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <button id="generate-marks-btn" class="btn bg-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600 w-full">Prepare Marks Message</button>
+                            <button id="visualize-marks-btn" class="btn bg-purple-500 text-white font-bold py-2 px-4 rounded-md hover:bg-purple-600 w-full hidden">Visualize Results</button>
+                        </div>
                         
                         <div id="marks-message-container" class="hidden mt-4 space-y-2">
                             <label class="block text-sm font-medium text-gray-300">Generated Message:</label>
@@ -432,7 +542,7 @@
             <!-- Request Class View -->
             <div id="request-class-view" class="view">
                 <div class="card p-4 sm:p-6 md:p-8">
-                    <button class="back-to-teacher-dashboard text-blue-300 hover:underline mb-4">&larr; Back to Dashboard</button>
+                    <button class="back-to-teacher-dashboard btn text-blue-300 hover:underline mb-4">&larr; Back to Dashboard</button>
                     <h3 class="text-xl md:text-2xl font-semibold mb-4 border-b border-gray-500 pb-2 text-white">Request an Extra Class</h3>
                     <div class="space-y-4">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -470,7 +580,7 @@
             <!-- Schedule Exam View -->
             <div id="schedule-exam-view" class="view">
                 <div class="card p-4 sm:p-6 md:p-8">
-                    <button class="back-to-teacher-dashboard text-blue-300 hover:underline mb-4">&larr; Back to Dashboard</button>
+                    <button class="back-to-teacher-dashboard btn text-blue-300 hover:underline mb-4">&larr; Back to Dashboard</button>
                     <h3 class="text-xl md:text-2xl font-semibold mb-4 border-b border-gray-500 pb-2 text-white">Request to Schedule an Exam</h3>
                     <div class="space-y-4">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -508,7 +618,7 @@
             <!-- AI Questions View -->
             <div id="gemini-questions-view" class="view">
                 <div class="card p-4 sm:p-6 md:p-8">
-                    <button class="back-to-teacher-dashboard text-blue-300 hover:underline mb-4">&larr; Back to Dashboard</button>
+                    <button class="back-to-teacher-dashboard btn text-blue-300 hover:underline mb-4">&larr; Back to Dashboard</button>
                     <h3 class="text-xl md:text-2xl font-semibold mb-4 border-b border-gray-500 pb-2 text-white">Generate Practice Questions with AI</h3>
                     <div class="space-y-4">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -525,11 +635,16 @@
                             <label for="gemini-topic" class="block text-sm font-medium text-gray-300">Topic</label>
                             <input type="text" id="gemini-topic" placeholder="e.g., Photosynthesis, Quadratic Equations" class="mt-1 block w-full p-2 rounded-md">
                         </div>
-                        <button id="generate-gemini-questions-btn" class="btn bg-pink-500 text-white font-bold py-2 px-4 rounded-md hover:bg-pink-600 w-full">Generate Questions</button>
+                        <button id="generate-gemini-questions-btn" class="btn bg-pink-500 text-white font-bold py-2 px-4 rounded-md hover:bg-pink-600 w-full flex justify-center items-center gap-2">
+                            <span data-original-content="Generate Questions">Generate Questions</span>
+                        </button>
                         
-                        <div id="gemini-loading" class="hidden">
-                            <div class="loader"></div>
-                            <p class="text-center text-gray-300">Generating questions... Please wait.</p>
+                        <div id="gemini-loading" class="hidden mt-4 p-4 rounded-md border border-gray-600 bg-black bg-opacity-20 skeleton-loader">
+                           <div class="skeleton-line" style="width: 80%;"></div>
+                           <div class="skeleton-line"></div>
+                           <div class="skeleton-line" style="width: 90%;"></div>
+                           <div class="skeleton-line" style="width: 60%;"></div>
+                           <div class="skeleton-line"></div>
                         </div>
 
                         <div id="gemini-result-container" class="hidden mt-6">
@@ -547,7 +662,7 @@
             <!-- Teacher Resources View -->
             <div id="teacher-resources-view" class="view">
                 <div class="card p-6 md:p-12">
-                    <button class="back-to-teacher-dashboard text-blue-300 hover:underline mb-6">&larr; Back to Dashboard</button>
+                    <button class="back-to-teacher-dashboard btn text-blue-300 hover:underline mb-6">&larr; Back to Dashboard</button>
                     <h2 class="text-2xl md:text-3xl font-bold text-center mb-8 text-white">Teacher Resources</h2>
                     <div class="space-y-6 max-w-md mx-auto">
                         <div id="cbse-questions-btn-container" class="hidden">
@@ -555,6 +670,17 @@
                                 CBSE Sample Questions & Marking Scheme
                             </a>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Syllabus Tracker View -->
+            <div id="syllabus-tracker-view" class="view">
+                <div class="card p-4 sm:p-6 md:p-8">
+                    <button class="back-to-teacher-dashboard btn text-blue-300 hover:underline mb-4">&larr; Back to Dashboard</button>
+                    <h3 class="text-xl md:text-2xl font-semibold text-white mb-6 text-center">Syllabus Completion Tracker</h3>
+                    <div id="syllabus-charts-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+                        <!-- Donut charts will be dynamically inserted here -->
                     </div>
                 </div>
             </div>
@@ -584,6 +710,14 @@
                             <p id="admin-student-count" class="text-3xl md:text-4xl font-bold text-white">0</p>
                             <p class="text-gray-300 mt-1 text-sm">Total Students</p>
                         </div>
+                    </div>
+
+                    <!-- Admin Chart -->
+                    <div class="card p-4 md:p-6 mb-6 md:mb-8 stat-card" style="animation-delay: 0.2s;">
+                         <h3 class="text-lg font-semibold text-white mb-4 text-center">Student Distribution by Class</h3>
+                         <div class="w-full h-64 md:h-80">
+                             <canvas id="class-distribution-chart"></canvas>
+                         </div>
                     </div>
                     
                     <!-- ADMIN ACTIONS GRID -->
@@ -623,7 +757,7 @@
             <!-- Admin Views (Replaced Tabs) -->
             <div id="admin-teacher-overview-view" class="view">
                 <div class="card p-4 sm:p-6 md:p-8">
-                    <button class="back-to-admin-dashboard text-blue-300 hover:underline mb-4">&larr; Back to Dashboard</button>
+                    <button class="back-to-admin-dashboard btn text-blue-300 hover:underline mb-4">&larr; Back to Dashboard</button>
                     <h3 class="text-xl md:text-2xl font-semibold text-white mb-4">Teacher Overview</h3>
                     <div id="teacher-overview-list-admin" class="space-y-4"></div>
                 </div>
@@ -631,7 +765,7 @@
 
             <div id="admin-structure-view" class="view">
                 <div class="card p-4 sm:p-6 md:p-8">
-                    <button class="back-to-admin-dashboard text-blue-300 hover:underline mb-4">&larr; Back to Dashboard</button>
+                    <button class="back-to-admin-dashboard btn text-blue-300 hover:underline mb-4">&larr; Back to Dashboard</button>
                     <h3 class="text-xl md:text-2xl font-semibold text-white mb-4">Institute Structure</h3>
                     <div id="institute-structure-list-admin" class="space-y-4"></div>
                 </div>
@@ -639,7 +773,7 @@
 
             <div id="admin-student-lookup-view" class="view">
                 <div class="card p-4 sm:p-6 md:p-8">
-                    <button class="back-to-admin-dashboard text-blue-300 hover:underline mb-4">&larr; Back to Dashboard</button>
+                    <button class="back-to-admin-dashboard btn text-blue-300 hover:underline mb-4">&larr; Back to Dashboard</button>
                     <h3 class="text-xl md:text-2xl font-semibold text-white mb-4">Student Lookup</h3>
                     <input type="text" id="student-search-input-admin" placeholder="Type a student's name..." class="w-full p-2 rounded-md">
                     <div id="student-lookup-results-admin" class="mt-4 p-4 bg-black bg-opacity-20 rounded-md min-h-[50px]"></div>
@@ -648,7 +782,7 @@
             
             <div id="admin-class-roster-view" class="view">
                 <div class="card p-4 sm:p-6 md:p-8">
-                    <button class="back-to-admin-dashboard text-blue-300 hover:underline mb-4">&larr; Back to Dashboard</button>
+                    <button class="back-to-admin-dashboard btn text-blue-300 hover:underline mb-4">&larr; Back to Dashboard</button>
                     <h3 class="text-xl md:text-2xl font-semibold text-white mb-4">Class Roster</h3>
                     <div id="class-roster-list-admin" class="space-y-4"></div>
                 </div>
@@ -656,7 +790,7 @@
 
             <div id="admin-teacher-records-view" class="view">
                 <div class="card p-4 sm:p-6 md:p-8">
-                    <button class="back-to-admin-dashboard text-blue-300 hover:underline mb-4">&larr; Back to Dashboard</button>
+                    <button class="back-to-admin-dashboard btn text-blue-300 hover:underline mb-4">&larr; Back to Dashboard</button>
                     <h3 class="text-xl md:text-2xl font-semibold text-white mb-4">Teacher Records</h3>
                     <div id="teacher-records-list-admin" class="space-y-3">
                         <!-- Teacher links will be dynamically inserted here -->
@@ -681,12 +815,16 @@
         </div>
     </div>
 
-    <!-- Login Loader Overlay -->
-    <div id="login-loader-overlay" class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm z-[1100] flex flex-col items-center justify-center hidden" style="animation: fadeIn 0.3s;">
-        <div class="w-16 h-16 border-4 border-t-4 border-gray-400 border-t-indigo-500 rounded-full animate-spin"></div>
-        <p class="text-white text-lg mt-4 font-semibold">Logging In...</p>
+    <!-- Chart Modal -->
+    <div id="chart-modal" class="modal-backdrop hidden">
+        <div class="modal-content" style="max-width: 800px;">
+            <h3 id="chart-modal-title" class="text-xl font-bold mb-4"></h3>
+            <div class="w-full h-80 bg-black bg-opacity-20 p-4 rounded-lg">
+                <canvas id="grade-chart"></canvas>
+            </div>
+            <button id="close-chart-modal" class="btn bg-indigo-600 text-white font-bold py-2 px-6 rounded-md mt-6">Close</button>
+        </div>
     </div>
-
 
     <script>
     // --- SCRIPT WRAPPER ---
@@ -768,11 +906,11 @@
         };
         
         const educationalQuotes = [
-            "The beautiful thing about learning is that no one can take it away from you.",
-            "Education is the most powerful weapon which you can use to change the world.",
-            "The roots of education are bitter, but the fruit is sweet.",
-            "Education is not the filling of a pail, but the lighting of a fire.",
-            "Live as if you were to die tomorrow. Learn as if you were to live forever."
+            { quote: "The beautiful thing about learning is that no one can take it away from you.", author: "B.B. King" },
+            { quote: "Education is the most powerful weapon which you can use to change the world.", author: "Nelson Mandela" },
+            { quote: "The roots of education are bitter, but the fruit is sweet.", author: "Aristotle" },
+            { quote: "Education is not the filling of a pail, but the lighting of a fire.", author: "W.B. Yeats" },
+            { quote: "Live as if you were to die tomorrow. Learn as if you were to live forever.", author: "Mahatma Gandhi" }
         ];
 
         const teacherGreetingQuotes = [
@@ -786,15 +924,22 @@
         let currentUser = null;
         let currentRole = null;
         let gradeChart = null;
+        let classChart = null;
         let wasLate = false;
+        let currentMarksData = [];
+        let syllabusCharts = [];
         
         // --- ANIMATION FUNCTION ---
         function animateCountUp(element, target, duration = 2000) {
+            let start = parseInt(element.textContent);
+            if (isNaN(start)) start = 0;
+            if (start === target) return;
+
             let startTimestamp = null;
             const step = (timestamp) => {
                 if (!startTimestamp) startTimestamp = timestamp;
                 const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                element.textContent = Math.floor(progress * target);
+                element.textContent = Math.floor(progress * (target - start) + start);
                 if (progress < 1) {
                     window.requestAnimationFrame(step);
                 } else {
@@ -806,9 +951,49 @@
 
         // --- VIEW MANAGEMENT ---
         function showView(viewId) {
-            document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
-            document.getElementById(viewId).classList.add('active');
+            const currentActive = document.querySelector('.view.active');
+            const newView = document.getElementById(viewId);
+
+            if (currentActive && newView && currentActive.id !== newView.id) {
+                currentActive.classList.add('slide-out');
+                
+                setTimeout(() => {
+                    currentActive.classList.remove('active', 'slide-out');
+                    currentActive.style.display = 'none'; // Ensure it's hidden
+
+                    newView.style.display = 'block';
+                    setTimeout(() => {
+                        newView.classList.add('active');
+                        // Trigger staggered animation if it's a dashboard
+                        if (newView.id === 'teacher-dashboard-view' || newView.id === 'admin-dashboard-view') {
+                            staggerDashboardEntrance(newView.id);
+                        }
+                        if (newView.id === 'syllabus-tracker-view') {
+                            setupSyllabusTracker();
+                        }
+                        if (newView.id === 'admin-dashboard-view') {
+                            createClassDistributionChart();
+                        }
+                    }, 20);
+
+                }, 600);
+            } else if (newView) {
+                 newView.style.display = 'block';
+                 setTimeout(() => {
+                    newView.classList.add('active');
+                }, 20);
+            }
         }
+
+        function staggerDashboardEntrance(viewId) {
+            const container = document.getElementById(viewId);
+            if (!container) return;
+            const cards = container.querySelectorAll('.dashboard-action-card, .stat-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 80}ms`;
+            });
+        }
+
 
         function showLogin(role) {
             currentRole = role;
@@ -839,9 +1024,13 @@
         // --- AUTHENTICATION ---
         function handleLogin(event) {
             event.preventDefault();
-            const loader = document.getElementById('login-loader-overlay');
+            const loginButton = event.currentTarget.querySelector('button[type="submit"]');
+            const buttonSpan = loginButton.querySelector('span');
+            const originalContent = buttonSpan.dataset.originalContent;
             
-            // Get form data immediately
+            loginButton.disabled = true;
+            buttonSpan.innerHTML = `<span class="loader-icon"></span> Logging in...`;
+
             const password = document.getElementById('password').value;
             let username;
             if (currentRole === 'teacher') {
@@ -850,16 +1039,12 @@
                 username = document.getElementById('admin-username').value;
             }
 
-            // Show loader and start the process
-            loader.classList.remove('hidden');
-
             setTimeout(() => {
                 const user = users[username];
                 
-                // Hide loader regardless of outcome
-                loader.classList.add('hidden');
+                loginButton.disabled = false;
+                buttonSpan.innerHTML = originalContent;
 
-                // Now process the outcome
                 if (user && user.password === password && user.role === currentRole) {
                     currentUser = { username: username, ...user };
                     if (user.role === 'teacher') {
@@ -884,7 +1069,6 @@
                     showModal('Invalid username or password. Please try again.');
                 }
 
-                // Reset form
                 document.getElementById('login-form').reset();
                 if(currentRole === 'admin') {
                     document.getElementById('username').required = false;
@@ -1045,9 +1229,9 @@
             Object.entries(structure).forEach(([className, subjects]) => {
                 let subjectHtml = Object.entries(subjects).map(([subjectName, teachers]) => {
                     return `<div class="ml-4 pl-4 border-l-2 border-gray-600">
-                                <p class="font-semibold text-white">${subjectName}</p>
-                                <p class="text-sm text-gray-400 pl-2">- ${teachers.join(', ')}</p>
-                            </div>`;
+                                    <p class="font-semibold text-white">${subjectName}</p>
+                                    <p class="text-sm text-gray-400 pl-2">- ${teachers.join(', ')}</p>
+                                </div>`;
                 }).join('');
 
                 container.innerHTML += `
@@ -1093,22 +1277,54 @@
 
             let found = false;
             let resultsHtml = '';
+            let studentFoundName = '';
             Object.entries(students).forEach(([className, studentArray]) => {
                 studentArray.forEach(student => {
                     const studentName = (typeof student === 'object') ? student.name : student;
-                    if (studentName.toLowerCase().includes(searchTerm)) {
+                    if (studentName.toLowerCase().includes(searchTerm) && !found) { // Only show the first match for progress bars
                         resultsHtml += `<p class="p-2 rounded-md bg-black bg-opacity-25">${studentName} - <span class="font-bold text-blue-300">Class ${className}</span></p>`;
+                        studentFoundName = studentName;
                         found = true;
                     }
                 });
             });
 
             if (found) {
+                resultsHtml += generateStudentProgressBars(studentFoundName);
                 resultsContainer.innerHTML = resultsHtml;
+                // Animate the progress bars into view
+                setTimeout(() => {
+                    resultsContainer.querySelectorAll('.progress-bar').forEach(bar => {
+                        bar.style.width = bar.dataset.width;
+                    });
+                }, 100);
             } else {
                 resultsContainer.innerHTML = `<p class="p-2 text-gray-400">No student found matching "${searchTerm}".</p>`;
             }
         }
+        
+        function generateStudentProgressBars(studentName) {
+            // This is a simulation. In a real app, you would fetch this from a database.
+            const subjects = ['Physics', 'Chemistry', 'Maths', 'English', 'Biology'];
+            let progressHtml = '<div class="mt-4 space-y-3">';
+            subjects.forEach(subject => {
+                const randomScore = Math.floor(Math.random() * 80 + 20); // Score between 20 and 100
+                const colorClasses = ['bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-lime-500', 'bg-green-500'];
+                const color = colorClasses[Math.floor((randomScore-1)/20)];
+
+                progressHtml += `
+                    <div class="text-left">
+                        <span class="text-sm font-medium text-gray-300">${subject}</span>
+                        <div class="progress-bar-container mt-1">
+                            <div class="progress-bar ${color}" data-width="${randomScore}%" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                `;
+            });
+            progressHtml += '</div>';
+            return progressHtml;
+        }
+
 
         function buildAdminTeacherRecords() {
             const container = document.getElementById('teacher-records-list-admin');
@@ -1207,6 +1423,7 @@
             const studentListDiv = document.getElementById('student-list-marks');
             studentListDiv.innerHTML = '';
             document.getElementById('marks-message-container').classList.add('hidden');
+            document.getElementById('visualize-marks-btn').classList.add('hidden');
             if (selectedClass && students[selectedClass]) {
                 students[selectedClass].forEach(student => {
                     const isConditional = typeof student === 'object';
@@ -1232,7 +1449,18 @@
         
         // --- MESSAGE GENERATION & COPY ---
 
-        function generateAttendanceMessage() {
+        function handleFormSuccess(button) {
+            const originalContent = button.innerHTML;
+            button.classList.add('success');
+            button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>`;
+            setTimeout(() => {
+                button.classList.remove('success');
+                button.innerHTML = originalContent;
+            }, 2000);
+        }
+
+        function generateAttendanceMessage(e) {
+            handleFormSuccess(e.target);
             const studentCheckboxes = document.querySelectorAll('#student-list-attendance input[type="checkbox"]');
             const subjectEl = document.getElementById('attendance-subject');
             const subjectValue = subjectEl.value;
@@ -1252,6 +1480,7 @@
                 .filter(cb => !cb.checked)
                 .map(cb => cb.nextElementSibling.textContent);
             const presentCount = totalCount - absentees.length;
+            
             const attendancePercentage = ((presentCount / totalCount) * 100);
             
             const now = new Date();
@@ -1294,7 +1523,8 @@
             return 'F';
         }
 
-        function generateMarksMessage() {
+        function generateMarksMessage(e) {
+            handleFormSuccess(e.target);
             const marksInputs = document.querySelectorAll('#student-list-marks input[type="number"]');
             const className = document.getElementById('marks-class').value;
             const subjectEl = document.getElementById('marks-subject');
@@ -1308,6 +1538,8 @@
                 showModal("Please fill in all fields: class, subject, test name, test date, and maximum marks.");
                 return;
             }
+            
+            currentMarksData = []; // Reset and gather new data
 
             const formattedDate = new Date(testDate).toLocaleDateString('en-GB');
 
@@ -1328,6 +1560,7 @@
                     const percentage = (marks / maxMarks) * 100;
                     const grade = getGrade(percentage);
                     message += `${studentName}: ${marks}/${maxMarks} (${percentage.toFixed(2)}%, Grade: ${grade})\n`;
+                    currentMarksData.push({ name: studentName, marks: parseInt(marks), maxMarks: parseInt(maxMarks) });
                     hasMarks = true;
                 }
             });
@@ -1340,9 +1573,11 @@
             document.getElementById('marks-message').value = message;
             document.getElementById('marks-whatsapp-link').href = whatsappLink;
             document.getElementById('marks-message-container').classList.remove('hidden');
+            document.getElementById('visualize-marks-btn').classList.remove('hidden');
         }
 
-        function generateRequestMessage(type) {
+        function generateRequestMessage(type, e) {
+            handleFormSuccess(e.target);
             const teacherName = currentUser.name;
             let message;
 
@@ -1419,11 +1654,14 @@
                 return;
             }
 
+            const genButton = document.getElementById('generate-gemini-questions-btn');
             const loadingDiv = document.getElementById('gemini-loading');
             const resultContainer = document.getElementById('gemini-result-container');
             const resultDiv = document.getElementById('gemini-result');
             
-            loadingDiv.style.display = 'block';
+            genButton.disabled = true;
+            genButton.querySelector('span').innerHTML = `<span class="loader-icon"></span> Generating...`;
+            loadingDiv.classList.remove('hidden');
             resultContainer.style.display = 'none';
             resultDiv.value = '';
 
@@ -1462,15 +1700,17 @@
                 showModal(`An error occurred while generating questions: ${error.message}. Please try again later.`);
                 resultContainer.style.display = 'none';
             } finally {
-                loadingDiv.style.display = 'none';
+                loadingDiv.classList.add('hidden');
+                genButton.disabled = false;
+                genButton.querySelector('span').innerHTML = genButton.querySelector('span').dataset.originalContent;
             }
         }
 
-        // --- MODAL ---
+        // --- MODALS (General & Chart) ---
         function showModal(message, title = '', onConfirm = null) {
+            const modal = document.getElementById('custom-modal');
             const titleEl = document.getElementById('modal-title');
             const messageEl = document.getElementById('modal-message');
-            const modal = document.getElementById('custom-modal');
             const buttonsContainer = document.getElementById('modal-buttons');
 
             if (title) {
@@ -1510,11 +1750,203 @@
             modal.classList.remove('hidden');
         }
 
-
         function closeModal() {
             document.getElementById('custom-modal').classList.add('hidden');
         }
+
+        function openChartModal() {
+            document.getElementById('chart-modal').classList.remove('hidden');
+        }
+
+        function closeChartModal() {
+            document.getElementById('chart-modal').classList.add('hidden');
+        }
+
+        // --- GRADE CHART VISUALIZATION ---
+        function generateGradeChart() {
+            if (currentMarksData.length === 0) {
+                showModal("No marks data available to visualize. Please generate a marks report first.");
+                return;
+            }
+            
+            const gradeCounts = { 'A+': 0, 'A': 0, 'B': 0, 'C': 0, 'D': 0, 'E': 0, 'F': 0 };
+
+            currentMarksData.forEach(student => {
+                const percentage = (student.marks / student.maxMarks) * 100;
+                const grade = getGrade(percentage);
+                if (gradeCounts.hasOwnProperty(grade)) {
+                    gradeCounts[grade]++;
+                }
+            });
+
+            const testName = document.getElementById('test-name').value || "Test";
+            document.getElementById('chart-modal-title').textContent = `Grade Distribution for ${testName}`;
+
+            const ctx = document.getElementById('grade-chart').getContext('2d');
+            
+            if (gradeChart) {
+                gradeChart.destroy();
+            }
+
+            gradeChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(gradeCounts),
+                    datasets: [{
+                        label: '# of Students',
+                        data: Object.values(gradeCounts),
+                        backgroundColor: [
+                            'rgba(75, 192, 192, 0.6)',
+                            'rgba(54, 162, 235, 0.6)',
+                            'rgba(255, 206, 86, 0.6)',
+                            'rgba(255, 159, 64, 0.6)',
+                            'rgba(153, 102, 255, 0.6)',
+                            'rgba(255, 99, 132, 0.6)',
+                            'rgba(201, 203, 207, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(255, 159, 64, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(201, 203, 207, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: '#e5e7eb',
+                                stepSize: 1
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#e5e7eb',
+                            },
+                             grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeInOutQuart'
+                    }
+                }
+            });
+
+            openChartModal();
+        }
+
+        function createClassDistributionChart() {
+            const container = document.getElementById('class-distribution-chart');
+            if (!container || classChart) return; // Don't re-create if it exists
+
+            const classLabels = Object.keys(students);
+            const studentCounts = classLabels.map(cls => students[cls].length);
+            
+            const ctx = container.getContext('2d');
+            classChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: classLabels,
+                    datasets: [{
+                        label: 'Number of Students',
+                        data: studentCounts,
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    scales: {
+                        y: { ticks: { color: '#e5e7eb' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } },
+                        x: { ticks: { color: '#e5e7eb' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } }
+                    },
+                    plugins: { legend: { display: false } },
+                    animation: { duration: 1200, easing: 'easeOutBounce' }
+                }
+            });
+        }
         
+        // --- SYLLABUS TRACKER ---
+        function setupSyllabusTracker() {
+            const container = document.getElementById('syllabus-charts-container');
+            container.innerHTML = '';
+            syllabusCharts.forEach(chart => chart.destroy()); // Clear old charts
+            syllabusCharts = [];
+
+            if (!currentUser || !teacherData[currentUser.username]) return;
+            const teacherSubjects = teacherData[currentUser.username].subjects;
+
+            teacherSubjects.forEach(subjectName => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'flex flex-col items-center gap-2';
+
+                const chartContainer = document.createElement('div');
+                chartContainer.className = 'syllabus-chart-container';
+                
+                const canvas = document.createElement('canvas');
+                const percentageSpan = document.createElement('span');
+                percentageSpan.className = 'syllabus-percentage';
+
+                chartContainer.appendChild(canvas);
+                chartContainer.appendChild(percentageSpan);
+
+                const label = document.createElement('p');
+                label.className = 'text-center text-sm font-medium';
+                label.textContent = subjectName;
+                
+                wrapper.appendChild(chartContainer);
+                wrapper.appendChild(label);
+                container.appendChild(wrapper);
+
+                // Simulate syllabus completion data
+                const completion = Math.floor(Math.random() * 70 + 30); // 30-100%
+                percentageSpan.textContent = `${completion}%`;
+                
+                const ctx = canvas.getContext('2d');
+                const newChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        datasets: [{
+                            data: [completion, 100 - completion],
+                            backgroundColor: ['#22c55e', 'rgba(255, 255, 255, 0.1)'],
+                            borderColor: '#1e293b',
+                            borderWidth: 2,
+                            cutout: '80%'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { tooltip: { enabled: false }, legend: { display: false } },
+                        animation: { animateRotate: true, animateScale: true, duration: 1500 }
+                    }
+                });
+                syllabusCharts.push(newChart);
+            });
+        }
+
         // --- CONFETTI ANIMATION ---
         function triggerConfettiAnimation(message) {
             const container = document.getElementById('confetti-container');
@@ -1592,12 +2024,82 @@
             }
             showView('attendance-view');
         }
+        
+        // --- HOLIDAY ANIMATIONS ---
+        function setupHolidayAnimations() {
+            const today = new Date();
+            const month = today.getMonth(); // 0-indexed (Jan=0, Sep=8, Nov=10)
+            const day = today.getDate();
+
+            // Independence Day (August 15th)
+            if (month === 7 && day === 15) {
+                const container = document.getElementById('independence-day-special');
+                container.classList.remove('hidden');
+                container.innerHTML = `<div class="waving-flag"></div>`;
+            }
+
+            // Teacher's Day (September 5th)
+            if (month === 8 && day === 5) {
+                const container = document.getElementById('teachers-day-special');
+                container.classList.remove('hidden');
+                triggerConfettiAnimation("Happy Teacher's Day!");
+                for (let i = 0; i < 30; i++) {
+                    const petal = document.createElement('div');
+                    petal.className = 'petal';
+                    petal.style.left = `${Math.random() * 100}vw`;
+                    petal.style.animationDuration = `${Math.random() * 5 + 5}s`;
+                    petal.style.animationDelay = `${Math.random() * 5}s`;
+                    container.appendChild(petal);
+                }
+            }
+
+            // Ganesh Chaturthi (September 7th)
+            if (month === 8 && day === 7) {
+                const container = document.getElementById('ganesh-chaturthi-special');
+                container.classList.remove('hidden');
+                triggerConfettiAnimation("Happy Ganesh Chaturthi!");
+            }
+
+            // Children's Day (November 14th)
+            if (month === 10 && day === 14) {
+                 const container = document.getElementById('childrens-day-special');
+                 container.classList.remove('hidden');
+                 const balloonColors = ['#ef4444', '#3b82f6', '#22c55e', '#f97316', '#eab308', '#8b5cf6'];
+                 for (let i = 0; i < 15; i++) {
+                    const balloon = document.createElement('div');
+                    balloon.className = 'balloon';
+                    balloon.style.background = balloonColors[Math.floor(Math.random() * balloonColors.length)];
+                    balloon.style.left = `${Math.random() * 90}%`; // Keep them within bounds
+                    balloon.style.animationDuration = `${Math.random() * 8 + 10}s`; // 10-18s
+                    balloon.style.animationDelay = `${Math.random() * 5}s`;
+                    container.appendChild(balloon);
+                 }
+            }
+
+            // Christmas (December 25th)
+            if (month === 11 && day === 25) {
+                const container = document.getElementById('christmas-special');
+                container.classList.remove('hidden');
+                for (let i = 0; i < 50; i++) {
+                    const snow = document.createElement('div');
+                    snow.innerHTML = '❄';
+                    snow.className = 'snowflake';
+                    snow.style.left = `${Math.random() * 100}vw`;
+                    snow.style.animationDuration = `${Math.random() * 3 + 2}s`;
+                    snow.style.animationDelay = `${Math.random() * 2}s`;
+                    snow.style.fontSize = `${Math.random() * 1 + 0.5}rem`;
+                    container.appendChild(snow);
+                }
+            }
+        }
+
 
         // --- INITIALIZATION & EVENT LISTENERS ---
         
         const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
         const quoteIndex = dayOfYear % educationalQuotes.length;
-        document.getElementById('daily-quote').textContent = `"${educationalQuotes[quoteIndex]}"`;
+        document.getElementById('daily-quote-text').textContent = `"${educationalQuotes[quoteIndex].quote}"`;
+        document.getElementById('daily-quote-author').textContent = `- ${educationalQuotes[quoteIndex].author}`;
 
         const totalStudents = Object.values(students).reduce((sum, classArray) => sum + classArray.length, 0);
         const totalTeachers = Object.keys(teacherData).length;
@@ -1614,12 +2116,81 @@
         animateCountUp(document.getElementById('teacher-count'), totalTeachers);
         animateCountUp(document.getElementById('subject-count'), totalSubjects);
         
-        const today = new Date();
-        if (today.getMonth() === 7 && today.getDate() === 26) {
-            document.getElementById('janmashtami-special').classList.remove('hidden');
+        setupHolidayAnimations();
+
+        // --- Interactive Background ---
+        const canvas = document.getElementById('bg-canvas');
+        if (window.matchMedia("(min-width: 768px)").matches) {
+            const ctx = canvas.getContext('2d');
+            let width, height, particles, mouse;
+
+            function init() {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+                particles = [];
+                mouse = { x: null, y: null };
+                for (let i = 0; i < 50; i++) {
+                    particles.push(new Particle());
+                }
+            }
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * width;
+                    this.y = Math.random() * height;
+                    this.size = Math.random() * 2 + 1;
+                    this.vx = Math.random() * 0.5 - 0.25;
+                    this.vy = Math.random() * 0.5 - 0.25;
+                }
+                update() {
+                    let dx = this.x - mouse.x;
+                    let dy = this.y - mouse.y;
+                    let dist = Math.sqrt(dx*dx + dy*dy);
+                    if (dist < 150) {
+                        this.x += dx / dist * 2;
+                        this.y += dy / dist * 2;
+                    } else {
+                        this.x += this.vx;
+                        this.y += this.vy;
+                    }
+                    if (this.x < 0 || this.x > width) this.vx *= -1;
+                    if (this.y < 0 || this.y > height) this.vy *= -1;
+                }
+                draw() {
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, width, height);
+                particles.forEach(p => {
+                    p.update();
+                    p.draw();
+                });
+                requestAnimationFrame(animate);
+            }
+            
+            window.addEventListener('resize', init);
+            window.addEventListener('mousemove', (e) => {
+                mouse.x = e.x;
+                mouse.y = e.y;
+            });
+            window.addEventListener('mouseout', () => {
+                mouse.x = null;
+                mouse.y = null;
+            });
+            init();
+            animate();
         }
 
+
         // --- Setup Event Listeners ---
+        document.getElementById('daily-quote-container').addEventListener('click', (e) => {
+            e.currentTarget.classList.toggle('is-flipped');
+        });
         document.getElementById('show-student-portal').addEventListener('click', () => showView('student-portal-view'));
         document.getElementById('portal-back-to-home').addEventListener('click', () => showView('initial-view'));
         document.getElementById('show-teacher-login').addEventListener('click', () => showLogin('teacher'));
@@ -1634,6 +2205,7 @@
         document.getElementById('action-schedule-exam').addEventListener('click', () => showView('schedule-exam-view'));
         document.getElementById('action-gemini-questions').addEventListener('click', () => showView('gemini-questions-view'));
         document.getElementById('action-my-resources').addEventListener('click', () => showView('teacher-resources-view'));
+        document.getElementById('action-syllabus-tracker-teacher').addEventListener('click', () => showView('syllabus-tracker-view'));
         document.querySelectorAll('.back-to-teacher-dashboard').forEach(btn => btn.addEventListener('click', () => showView('teacher-dashboard-view')));
         document.getElementById('attendance-class').addEventListener('change', () => populateSubjects('attendance'));
         document.getElementById('attendance-subject').addEventListener('change', populateStudentsForAttendance);
@@ -1644,12 +2216,35 @@
         document.getElementById('gemini-class').addEventListener('change', () => populateSubjects('gemini'));
         document.getElementById('generate-attendance-btn').addEventListener('click', generateAttendanceMessage);
         document.getElementById('generate-marks-btn').addEventListener('click', generateMarksMessage);
-        document.getElementById('generate-request-class-btn').addEventListener('click', () => generateRequestMessage('class'));
-        document.getElementById('generate-request-exam-btn').addEventListener('click', () => generateRequestMessage('exam'));
+        document.getElementById('visualize-marks-btn').addEventListener('click', generateGradeChart);
+        document.getElementById('close-chart-modal').addEventListener('click', closeChartModal);
+        document.getElementById('generate-request-class-btn').addEventListener('click', (e) => generateRequestMessage('class', e));
+        document.getElementById('generate-request-exam-btn').addEventListener('click', (e) => generateRequestMessage('exam', e));
         document.getElementById('generate-gemini-questions-btn').addEventListener('click', generatePracticeQuestions);
         document.querySelectorAll('.copy-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 copyMessage(e.currentTarget.dataset.copytarget);
+            });
+        });
+
+        // Add ripple effect to all buttons with the .btn class
+        document.querySelectorAll('.btn').forEach(button => {
+            button.addEventListener('click', function (e) {
+                if(this.disabled) return;
+                const rect = e.target.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple');
+                ripple.style.left = `${x}px`;
+                ripple.style.top = `${y}px`;
+
+                this.appendChild(ripple);
+
+                setTimeout(() => {
+                    ripple.remove();
+                }, 700);
             });
         });
 
@@ -1668,10 +2263,13 @@
         document.querySelectorAll('.back-to-admin-dashboard').forEach(btn => btn.addEventListener('click', () => showView('admin-dashboard-view')));
         document.getElementById('student-search-input-admin').addEventListener('keyup', lookupStudentAdmin);
 
+        document.getElementById('initial-view').style.transition = 'none';
+
     }); // End of DOMContentLoaded
     </script>
 </body>
 </html>
+
 
 
 
