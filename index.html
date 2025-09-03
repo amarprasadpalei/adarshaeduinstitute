@@ -17,30 +17,10 @@
         body {
             font-family: 'Inter', sans-serif;
             color: #e5e7eb;
-            background: #111827; /* Fallback for the canvas */
-            overflow-x: hidden;
-        }
-
-        #bg-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-        }
-
-        #bg-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
             background: linear-gradient(-45deg, #1d2b64, #f8cdda, #1d2b64, #f8cdda);
             background-size: 400% 400%;
             animation: gradient-animation 25s ease infinite;
-            z-index: -1;
-            opacity: 0.9;
+            overflow-x: hidden; /* Prevent horizontal scrollbars during transitions */
         }
         
         .main-container { 
@@ -254,17 +234,10 @@
         .quote-flipper.is-flipped .quote-card { transform: rotateY(180deg); }
         .quote-front, .quote-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; top: 0; left: 0; }
         .quote-back { transform: rotateY(180deg); }
-
-        /* --- Student Progress Bars --- */
-        .progress-bar-container { width: 100%; background: rgba(0,0,0,0.3); border-radius: 8px; overflow: hidden; }
-        .progress-bar { height: 10px; border-radius: 8px; width: 0; transition: width 1.5s cubic-bezier(0.25, 1, 0.5, 1); }
         
     </style>
 </head>
 <body class="antialiased">
-
-    <canvas id="bg-canvas"></canvas>
-    <div id="bg-overlay"></div>
 
     <!-- Holiday Theming Containers -->
     <div id="independence-day-special" class="holiday-container hidden"></div>
@@ -275,7 +248,6 @@
     <div id="monsoon-special" class="holiday-container hidden"></div>
     <div id="teachers-day-special" class="holiday-container hidden"></div>
     <div id="childrens-day-special" class="holiday-container hidden"></div>
-    <div id="ganesh-chaturthi-special" class="holiday-container hidden"></div>
 
 
     <div id="app" class="min-h-screen flex items-center justify-center p-4">
@@ -687,7 +659,7 @@
                     </div>
 
                     <!-- Admin Stats Cards -->
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
                         <div class="card p-4 md:p-6 text-center stat-card">
                             <div class="flex justify-center items-center mx-auto bg-green-500/20 rounded-full h-14 w-14 mb-3">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-300"><path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21v-1a6 6 0 00-5.176-5.973" /></svg>
@@ -701,13 +673,6 @@
                             </div>
                             <p id="admin-student-count" class="text-3xl md:text-4xl font-bold text-white">0</p>
                             <p class="text-gray-300 mt-1 text-sm">Total Students</p>
-                        </div>
-                         <div class="card p-4 md:p-6 text-center stat-card" style="animation-delay: 0.2s;">
-                            <div class="flex justify-center items-center mx-auto bg-teal-500/20 rounded-full h-14 w-14 mb-3">
-                               <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-teal-300"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect><path d="m9 14 2 2 4-4"></path></svg>
-                            </div>
-                            <p id="live-attendance-count" class="text-3xl md:text-4xl font-bold text-white">0</p>
-                            <p class="text-gray-300 mt-1 text-sm">Students Present</p>
                         </div>
                     </div>
                     
@@ -917,19 +882,14 @@
         let gradeChart = null;
         let wasLate = false;
         let currentMarksData = [];
-        let sessionAttendance = {}; // Simulate live attendance for a session
         
         // --- ANIMATION FUNCTION ---
         function animateCountUp(element, target, duration = 2000) {
-            let start = parseInt(element.textContent);
-            if (isNaN(start)) start = 0;
-            if (start === target) return;
-
             let startTimestamp = null;
             const step = (timestamp) => {
                 if (!startTimestamp) startTimestamp = timestamp;
                 const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                element.textContent = Math.floor(progress * (target - start) + start);
+                element.textContent = Math.floor(progress * target);
                 if (progress < 1) {
                     window.requestAnimationFrame(step);
                 } else {
@@ -1144,7 +1104,6 @@
 
             animateCountUp(document.getElementById('admin-teacher-count'), totalTeachers);
             animateCountUp(document.getElementById('admin-student-count'), totalStudents);
-            updateLiveAttendanceCounter();
 
             // Populate the content for each admin view once
             buildAdminTeacherOverview();
@@ -1155,18 +1114,6 @@
 
         // --- ADMIN PANEL FEATURES ---
         
-        function updateLiveAttendanceCounter() {
-            const liveCountEl = document.getElementById('live-attendance-count');
-            if (!liveCountEl) return;
-
-            let totalPresent = 0;
-            Object.values(sessionAttendance).forEach(classData => {
-                totalPresent += classData.present;
-            });
-
-            animateCountUp(liveCountEl, totalPresent, 1000);
-        }
-
         function buildAdminTeacherOverview() {
             const listContainer = document.getElementById('teacher-overview-list-admin');
             listContainer.innerHTML = '';
@@ -1274,54 +1221,22 @@
 
             let found = false;
             let resultsHtml = '';
-            let studentFoundName = '';
             Object.entries(students).forEach(([className, studentArray]) => {
                 studentArray.forEach(student => {
                     const studentName = (typeof student === 'object') ? student.name : student;
-                    if (studentName.toLowerCase().includes(searchTerm) && !found) { // Only show the first match for progress bars
+                    if (studentName.toLowerCase().includes(searchTerm)) {
                         resultsHtml += `<p class="p-2 rounded-md bg-black bg-opacity-25">${studentName} - <span class="font-bold text-blue-300">Class ${className}</span></p>`;
-                        studentFoundName = studentName;
                         found = true;
                     }
                 });
             });
 
             if (found) {
-                resultsHtml += generateStudentProgressBars(studentFoundName);
                 resultsContainer.innerHTML = resultsHtml;
-                // Animate the progress bars into view
-                setTimeout(() => {
-                    resultsContainer.querySelectorAll('.progress-bar').forEach(bar => {
-                        bar.style.width = bar.dataset.width;
-                    });
-                }, 100);
             } else {
                 resultsContainer.innerHTML = `<p class="p-2 text-gray-400">No student found matching "${searchTerm}".</p>`;
             }
         }
-        
-        function generateStudentProgressBars(studentName) {
-            // This is a simulation. In a real app, you would fetch this from a database.
-            const subjects = ['Physics', 'Chemistry', 'Maths', 'English', 'Biology'];
-            let progressHtml = '<div class="mt-4 space-y-3">';
-            subjects.forEach(subject => {
-                const randomScore = Math.floor(Math.random() * 80 + 20); // Score between 20 and 100
-                const colorClasses = ['bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-lime-500', 'bg-green-500'];
-                const color = colorClasses[Math.floor((randomScore-1)/20)];
-
-                progressHtml += `
-                    <div class="text-left">
-                        <span class="text-sm font-medium text-gray-300">${subject}</span>
-                        <div class="progress-bar-container mt-1">
-                            <div class="progress-bar ${color}" data-width="${randomScore}%" style="width: 0%;"></div>
-                        </div>
-                    </div>
-                `;
-            });
-            progressHtml += '</div>';
-            return progressHtml;
-        }
-
 
         function buildAdminTeacherRecords() {
             const container = document.getElementById('teacher-records-list-admin');
@@ -1477,11 +1392,6 @@
                 .filter(cb => !cb.checked)
                 .map(cb => cb.nextElementSibling.textContent);
             const presentCount = totalCount - absentees.length;
-            
-            // Update session attendance
-            sessionAttendance[className] = { present: presentCount, total: totalCount };
-            updateLiveAttendanceCounter();
-
             const attendancePercentage = ((presentCount / totalCount) * 100);
             
             const now = new Date();
@@ -1961,13 +1871,6 @@
                 }
             }
 
-            // Ganesh Chaturthi (September 7th)
-            if (month === 8 && day === 7) {
-                const container = document.getElementById('ganesh-chaturthi-special');
-                container.classList.remove('hidden');
-                triggerConfettiAnimation("Happy Ganesh Chaturthi!");
-            }
-
             // Children's Day (November 14th)
             if (month === 10 && day === 14) {
                  const container = document.getElementById('childrens-day-special');
@@ -1999,6 +1902,25 @@
                     container.appendChild(snow);
                 }
             }
+            
+            // Holi (Example: March 14th)
+            if (month === 2 && day === 14) {
+                 const container = document.getElementById('holi-special');
+                 container.classList.remove('hidden');
+                 const holiColors = ['#e6007e', '#f7931d', '#00a859', '#394ba0', '#f4d300'];
+                 setInterval(() => {
+                    const puff = document.createElement('div');
+                    puff.className = 'holi-puff';
+                    puff.style.left = `${Math.random() * 100}%`;
+                    puff.style.top = `${Math.random() * 100}%`;
+                    puff.style.width = `${Math.random() * 150 + 50}px`;
+                    puff.style.height = `${Math.random() * 150 + 50}px`;
+                    puff.style.background = `radial-gradient(circle, ${holiColors[Math.floor(Math.random() * holiColors.length)]} 0%, rgba(255,255,255,0) 70%)`;
+                    puff.style.animationDelay = `${Math.random() * 2}s`;
+                    container.appendChild(puff);
+                    setTimeout(() => puff.remove(), 3000);
+                 }, 400);
+            }
         }
 
 
@@ -2025,75 +1947,6 @@
         animateCountUp(document.getElementById('subject-count'), totalSubjects);
         
         setupHolidayAnimations();
-
-        // --- Interactive Background ---
-        const canvas = document.getElementById('bg-canvas');
-        if (window.matchMedia("(min-width: 768px)").matches) {
-            const ctx = canvas.getContext('2d');
-            let width, height, particles, mouse;
-
-            function init() {
-                width = canvas.width = window.innerWidth;
-                height = canvas.height = window.innerHeight;
-                particles = [];
-                mouse = { x: null, y: null };
-                for (let i = 0; i < 50; i++) {
-                    particles.push(new Particle());
-                }
-            }
-
-            class Particle {
-                constructor() {
-                    this.x = Math.random() * width;
-                    this.y = Math.random() * height;
-                    this.size = Math.random() * 2 + 1;
-                    this.vx = Math.random() * 0.5 - 0.25;
-                    this.vy = Math.random() * 0.5 - 0.25;
-                }
-                update() {
-                    let dx = this.x - mouse.x;
-                    let dy = this.y - mouse.y;
-                    let dist = Math.sqrt(dx*dx + dy*dy);
-                    if (dist < 150) {
-                        this.x += dx / dist * 2;
-                        this.y += dy / dist * 2;
-                    } else {
-                        this.x += this.vx;
-                        this.y += this.vy;
-                    }
-                    if (this.x < 0 || this.x > width) this.vx *= -1;
-                    if (this.y < 0 || this.y > height) this.vy *= -1;
-                }
-                draw() {
-                    ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-            }
-
-            function animate() {
-                ctx.clearRect(0, 0, width, height);
-                particles.forEach(p => {
-                    p.update();
-                    p.draw();
-                });
-                requestAnimationFrame(animate);
-            }
-            
-            window.addEventListener('resize', init);
-            window.addEventListener('mousemove', (e) => {
-                mouse.x = e.x;
-                mouse.y = e.y;
-            });
-            window.addEventListener('mouseout', () => {
-                mouse.x = null;
-                mouse.y = null;
-            });
-            init();
-            animate();
-        }
-
 
         // --- Setup Event Listeners ---
         document.getElementById('daily-quote-container').addEventListener('click', (e) => {
@@ -2176,6 +2029,9 @@
     </script>
 </body>
 </html>
+
+
+
 
 
 
