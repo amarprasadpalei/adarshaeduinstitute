@@ -681,6 +681,13 @@
         </div>
     </div>
 
+    <!-- Login Loader Overlay -->
+    <div id="login-loader-overlay" class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm z-[1100] flex flex-col items-center justify-center hidden" style="animation: fadeIn 0.3s;">
+        <div class="w-16 h-16 border-4 border-t-4 border-gray-400 border-t-indigo-500 rounded-full animate-spin"></div>
+        <p class="text-white text-lg mt-4 font-semibold">Logging In...</p>
+    </div>
+
+
     <script>
     // --- SCRIPT WRAPPER ---
     document.addEventListener('DOMContentLoaded', () => {
@@ -749,8 +756,8 @@
             'VI': ['Sujit Ku. Nayak', 'Monalisha Biswal', 'Kshyati Prangya Naik', 'Paripurna Rout', 'Subhashree Nayak', 'Pradnesh Sahoo', 'Twinkle Rana'],
             'VII': ['Debadutta Dandapat', 'Tarini Prasad Nayak', 'Giri Ranjan Naik', 'Padmanabha Nayak', 'Krushna Chandra Mahapatra', 'Anirban Mahanta', 'Shubham Shubhaprada Mahanta', 'Amit Ku. Nayak', 'Alok Ku. Mukhi', 'Lilamaya Nayak', 'Pruthiraj Patra', 'Priyaranjan Samad', 'Tanaya Rani Mahanta', 'Barsha Rani Nayak', 'Lipsa Priyadarshini Naik'],
             'VIII': ['Jeet Prakash Nayak', 'Tarzan Nayak', 'Babul Ku. Naik', 'Naren Ku. Dalei', 'Nagen Ku. Dalei', 'Deepak Naik', 'Chetna Aradhya Mahanta', 'Urmila Mahanta', 'Sujata Munda', 'Shibani Munda', 'Shubhalaxmi Munda', 'Anjali Nayak', 'Ankita Rana', 'Anushka Abhilipsa Naik', 'Sonali Nayak', 'Sonakshi Dehury', 'Debsita Nayak', 'Pritilipsa Das'],
-            'IX': ['Premananda Mahanta', 'Shubham Ku. Dehury', 'Aditya Ku. Mahanta', 'Kshirod Munda', 'Anirudha Naik', 'Satyajit Das', 'Debajit Dalei', 'Biswajit Naik', 'Saurabh Ku. Nayak', 'Suparna Singh', 'Hemangini Mahanta', 'Subhangi Giri', 'Hemamalini Nayak', 'Sipra Singh', 'Swati Mahanta', 'Tejaswini Naik', 'Saipriya Singh', 'Saumyashree Nayak', 'Seema Nayak'],
-            'X': ['Sonali Barik', 'Manisha Nayak', 'Rinki Behera', 'Srishti S. Dandapat', 'Suman S. Dalei', 'Gyana Ranjan Nayak', 'Mithun Munda', 'Saroj Ku. Sandil', 'Ayush Ku. Mudi', 'Jigyansu Naik', 'Rahul Khandei', 'Saumya Ranjan Sethy', 'Atreya Nandan Palei', 'Akash Ku. Nayak', 'Adarsh Ku. Nayak', 'Padma Bhusan Mahanta', 'Soumya Ranjan Nayak',
+            'IX': ['Premananda Mahanta', 'Shubham Ku. Dehury', 'Aditya Ku. Mahanta', 'Kshirod Munda', 'Anirudha Naik', 'Satyajit Das', 'Debajit Dalei', 'Biswajit Naik', 'Saurabh Ku. Nayak', 'Suparna Singh', 'Hemangini Mahanta', 'Hemamalini Nayak', 'Sipra Singh', 'Swati Mahanta', 'Tejaswini Naik', 'Saipriya Singh', 'Seema Nayak'],
+            'X': ['Sonali Barik', 'Manisha Nayak', 'Rinki Behera', 'Srishti S. Dandapat', 'Suman S. Dalei', 'Gyana Ranjan Nayak', 'Mithun Munda', 'Saroj Ku. Sandil', 'Ayush Ku. Mudi', 'Jigyansu Naik', 'Rahul Khandei', 'Saumya Ranjan Sethy', 'Atreya Nandan Palei', 'Akash Ku. Nayak', 'Padma Bhusan Mahanta', 'Soumya Ranjan Nayak',
                 { name: 'Sweety Patra', onlyForSubject: 'English' }, 
                 { name: 'Abhipsa Laha', onlyForSubject: 'English' }, 
                 { name: 'Deepika Mahapatra', onlyForSubject: 'English' }],
@@ -832,46 +839,59 @@
         // --- AUTHENTICATION ---
         function handleLogin(event) {
             event.preventDefault();
+            const loader = document.getElementById('login-loader-overlay');
+            
+            // Get form data immediately
             const password = document.getElementById('password').value;
             let username;
-
             if (currentRole === 'teacher') {
                 username = document.getElementById('username').value.toLowerCase().trim();
             } else { // admin
                 username = document.getElementById('admin-username').value;
             }
 
-            const user = users[username];
+            // Show loader and start the process
+            loader.classList.remove('hidden');
 
-            if (user && user.password === password && user.role === currentRole) {
-                currentUser = { username: username, ...user };
-                if (user.role === 'teacher') {
-                    const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
-                    const quoteIndex = dayOfYear % teacherGreetingQuotes.length;
-                    const quote = teacherGreetingQuotes[quoteIndex];
-                    let greetingMessage = `"${quote}"\n\nWe are grateful to have you with us and for your hard work, ${currentUser.name}.`;
+            setTimeout(() => {
+                const user = users[username];
+                
+                // Hide loader regardless of outcome
+                loader.classList.add('hidden');
 
-                    const today = new Date();
-                    if (today.getDate() === 1) {
-                        greetingMessage += `\n\n---\n\n*Monthly Reminder:*\nPlease check your statistics.`;
+                // Now process the outcome
+                if (user && user.password === password && user.role === currentRole) {
+                    currentUser = { username: username, ...user };
+                    if (user.role === 'teacher') {
+                        const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
+                        const quoteIndex = dayOfYear % teacherGreetingQuotes.length;
+                        const quote = teacherGreetingQuotes[quoteIndex];
+                        let greetingMessage = `"${quote}"\n\nWe are grateful to have you with us and for your hard work, ${currentUser.name}.`;
+
+                        const today = new Date();
+                        if (today.getDate() === 1) {
+                            greetingMessage += `\n\n---\n\n*Monthly Reminder:*\nPlease check your statistics.`;
+                        }
+                        
+                        showModal(greetingMessage, `Welcome, ${currentUser.name}!`);
+                        setupTeacherDashboard();
+                        showView('teacher-dashboard-view');
+                    } else {
+                        setupAdminDashboard();
+                        showView('admin-dashboard-view');
                     }
-                    
-                    showModal(greetingMessage, `Welcome, ${currentUser.name}!`);
-
-                    setupTeacherDashboard();
-                    showView('teacher-dashboard-view');
                 } else {
-                    setupAdminDashboard();
-                    showView('admin-dashboard-view');
+                    showModal('Invalid username or password. Please try again.');
                 }
-            } else {
-                showModal('Invalid username or password. Please try again.');
-            }
-            document.getElementById('login-form').reset();
-            if(currentRole === 'admin') {
-                document.getElementById('username').required = false;
-            }
+
+                // Reset form
+                document.getElementById('login-form').reset();
+                if(currentRole === 'admin') {
+                    document.getElementById('username').required = false;
+                }
+            }, 1200);
         }
+
 
         function logout() {
             currentUser = null;
@@ -1652,6 +1672,7 @@
     </script>
 </body>
 </html>
+
 
 
 
