@@ -105,22 +105,11 @@
         
         .dashboard-action-card {
             background: rgba(255, 255, 255, 0.1);
-            transition: background 0.3s ease, transform 0.3s ease;
+            transition: background 0.3s ease;
         }
         
-        .dashboard-action-card:hover { 
-            background: rgba(255, 255, 255, 0.2); 
-            transform: translateY(-4px);
-        }
+        .dashboard-action-card:hover { background: rgba(255, 255, 255, 0.2); }
         
-        /* --- Animated Icons on Hover --- */
-        .dashboard-action-card svg {
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .dashboard-action-card:hover svg {
-            transform: scale(1.2) rotate(-8deg);
-        }
-
         h1, h2, h3 { text-shadow: 0px 2px 4px rgba(0,0,0,0.3); }
 
         .modal-backdrop {
@@ -137,6 +126,11 @@
             text-align: center; border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
+        .loader {
+            border: 4px solid rgba(255,255,255,0.2); border-radius: 50%; border-top: 4px solid #fff;
+            width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto;
+        }
+        
         /* --- AI Button Loader Icon --- */
         .loader-icon {
             width: 1.25rem;
@@ -162,21 +156,6 @@
         #login-form > div { opacity: 0; animation: formFieldSlideIn 0.5s ease-out forwards; }
         @keyframes formFieldSlideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
         
-        /* --- Skeleton Loader for AI Questions --- */
-        .skeleton-loader .skeleton-line {
-            height: 1rem;
-            width: 100%;
-            background: linear-gradient(90deg, rgba(255,255,255,0.08), rgba(255,255,255,0.15), rgba(255,255,255,0.08));
-            background-size: 200% 100%;
-            animation: skeleton-pulse 1.5s infinite ease-in-out;
-            border-radius: 4px;
-            margin-bottom: 0.75rem;
-        }
-        @keyframes skeleton-pulse {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-
         .confetti-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1000; overflow: hidden; }
         .confetti { position: absolute; bottom: 0; opacity: 0; will-change: transform, opacity; animation: confetti-animation 3.5s ease-out forwards; }
         @keyframes confetti-animation {
@@ -196,7 +175,7 @@
             50% { transform: translate(-50%, -50%) scale(1.05); }
         }
 
-        /* --- Holiday Animations --- */
+        /* Holiday Animations */
         .holiday-container {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: -1; overflow: hidden;
@@ -224,58 +203,19 @@
         @keyframes float-diya {
             to { transform: translateY(-110vh) rotate(15deg); opacity: 0; }
         }
-
-        /* Christmas Snow */
-        .snowflake {
-            position: absolute;
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 1.5rem;
-            animation: fall linear infinite;
-        }
-        @keyframes fall {
-            to { transform: translateY(105vh) rotate(360deg); }
-        }
-
-        /* New Year Fireworks */
-        .firework {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background-color: #fff;
-            border-radius: 50%;
-            opacity: 1;
-            animation: firework-shoot linear forwards;
-        }
-        .firework::before {
-            content: '';
-            position: absolute;
-            left: -10px;
-            top: -10px;
-            width: 24px;
-            height: 24px;
-            border: 2px solid currentColor;
-            border-radius: 50%;
-            transform: scale(0);
-            opacity: 0;
-            animation: firework-explode 0.8s 1s ease-out forwards;
-        }
-        @keyframes firework-shoot {
-            to { transform: translateY(-300px); opacity: 0; }
-        }
-        @keyframes firework-explode {
-            from { transform: scale(0); opacity: 1; }
-            to { transform: scale(2); opacity: 0; }
-        }
         
     </style>
 </head>
 <body class="antialiased">
 
     <!-- Holiday Theming Containers -->
-    <div id="independence-day-special" class="holiday-container hidden"></div>
-    <div id="diwali-special" class="holiday-container hidden"></div>
-    <div id="christmas-special" class="holiday-container hidden"></div>
-    <div id="new-year-special" class="holiday-container hidden"></div>
+    <div id="independence-day-special" class="holiday-container hidden">
+        <div class="waving-flag"></div>
+    </div>
+    <div id="diwali-special" class="holiday-container hidden">
+        <!-- Diyas will be added here by JS -->
+    </div>
+
 
     <div id="app" class="min-h-screen flex items-center justify-center p-4">
 
@@ -395,9 +335,7 @@
                             <input type="password" id="password" name="password" required class="mt-1 block w-full px-4 py-3 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                         </div>
                         <div style="animation-delay: 0.3s;">
-                            <button type="submit" class="w-full btn bg-indigo-600 text-white font-bold py-3 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex justify-center items-center gap-2">
-                                <span data-original-content="Login">Login</span>
-                            </button>
+                            <button type="submit" class="w-full btn bg-indigo-600 text-white font-bold py-3 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Login</button>
                         </div>
                     </form>
                 </div>
@@ -626,15 +564,12 @@
                             <input type="text" id="gemini-topic" placeholder="e.g., Photosynthesis, Quadratic Equations" class="mt-1 block w-full p-2 rounded-md">
                         </div>
                         <button id="generate-gemini-questions-btn" class="btn bg-pink-500 text-white font-bold py-2 px-4 rounded-md hover:bg-pink-600 w-full flex justify-center items-center gap-2">
+                            <!-- Original content is stored in a data attribute -->
                             <span data-original-content="Generate Questions">Generate Questions</span>
                         </button>
                         
-                        <div id="gemini-loading" class="hidden mt-4 p-4 rounded-md border border-gray-600 bg-black bg-opacity-20 skeleton-loader">
-                           <div class="skeleton-line" style="width: 80%;"></div>
-                           <div class="skeleton-line"></div>
-                           <div class="skeleton-line" style="width: 90%;"></div>
-                           <div class="skeleton-line" style="width: 60%;"></div>
-                           <div class="skeleton-line"></div>
+                        <div id="gemini-loading" class="hidden">
+                            <!-- This is now handled by the button itself -->
                         </div>
 
                         <div id="gemini-result-container" class="hidden mt-6">
@@ -785,6 +720,13 @@
             </div>
         </div>
     </div>
+
+    <!-- Login Loader Overlay -->
+    <div id="login-loader-overlay" class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm z-[1100] flex flex-col items-center justify-center hidden" style="animation: fadeIn 0.3s;">
+        <div class="w-16 h-16 border-4 border-t-4 border-gray-400 border-t-indigo-500 rounded-full animate-spin"></div>
+        <p class="text-white text-lg mt-4 font-semibold">Logging In...</p>
+    </div>
+
 
     <script>
     // --- SCRIPT WRAPPER ---
@@ -959,15 +901,9 @@
         // --- AUTHENTICATION ---
         function handleLogin(event) {
             event.preventDefault();
-            const loginButton = event.currentTarget.querySelector('button[type="submit"]');
-            const buttonSpan = loginButton.querySelector('span');
-            const originalContent = buttonSpan.dataset.originalContent;
+            const loader = document.getElementById('login-loader-overlay');
             
-            // Transform login button
-            loginButton.disabled = true;
-            buttonSpan.innerHTML = `<span class="loader-icon"></span> Logging in...`;
-
-            // Get form data
+            // Get form data immediately
             const password = document.getElementById('password').value;
             let username;
             if (currentRole === 'teacher') {
@@ -976,14 +912,16 @@
                 username = document.getElementById('admin-username').value;
             }
 
+            // Show loader and start the process
+            loader.classList.remove('hidden');
+
             setTimeout(() => {
                 const user = users[username];
                 
-                // Revert login button
-                loginButton.disabled = false;
-                buttonSpan.innerHTML = originalContent;
+                // Hide loader regardless of outcome
+                loader.classList.add('hidden');
 
-                // Process the outcome
+                // Now process the outcome
                 if (user && user.password === password && user.role === currentRole) {
                     currentUser = { username: username, ...user };
                     if (user.role === 'teacher') {
@@ -1544,13 +1482,13 @@
             }
 
             const genButton = document.getElementById('generate-gemini-questions-btn');
-            const loadingDiv = document.getElementById('gemini-loading');
             const resultContainer = document.getElementById('gemini-result-container');
             const resultDiv = document.getElementById('gemini-result');
             
+            // --- AI Loader Animation ---
             genButton.disabled = true;
             genButton.querySelector('span').innerHTML = `<span class="loader-icon"></span> Generating...`;
-            loadingDiv.classList.remove('hidden');
+            
             resultContainer.style.display = 'none';
             resultDiv.value = '';
 
@@ -1589,7 +1527,7 @@
                 showModal(`An error occurred while generating questions: ${error.message}. Please try again later.`);
                 resultContainer.style.display = 'none';
             } finally {
-                loadingDiv.classList.add('hidden');
+                // --- Reset AI Loader Animation ---
                 genButton.disabled = false;
                 genButton.querySelector('span').innerHTML = genButton.querySelector('span').dataset.originalContent;
             }
@@ -1725,63 +1663,36 @@
         // --- HOLIDAY ANIMATIONS ---
         function setupHolidayAnimations() {
             const today = new Date();
-            const month = today.getMonth(); // 0-indexed (Jan=0)
+            const month = today.getMonth(); // 0-indexed (Jan=0, Aug=7)
             const day = today.getDate();
 
             // Independence Day (August 15th)
             if (month === 7 && day === 15) {
-                const container = document.getElementById('independence-day-special');
-                container.classList.remove('hidden');
-                container.innerHTML = `<div class="waving-flag"></div>`;
+                document.getElementById('independence-day-special').classList.remove('hidden');
             }
 
-            // Diwali (October 20th, 2025)
+            // Diwali (October 20th for 2025)
             if (month === 9 && day === 20) {
-                const container = document.getElementById('diwali-special');
-                container.classList.remove('hidden');
+                const diwaliContainer = document.getElementById('diwali-special');
+                diwaliContainer.classList.remove('hidden');
+                
+                // Create floating diyas
                 for (let i = 0; i < 15; i++) {
                     const diya = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
                     diya.setAttribute('class', 'diya');
                     diya.setAttribute('viewBox', '0 0 50 25');
-                    diya.setAttribute('width', Math.random() * 40 + 20);
-                    diya.innerHTML = `<path d="M 5,20 Q 25,0 45,20 Z" fill="#D2691E" /><ellipse cx="25" cy="10" rx="4" ry="8" fill="orange" transform="rotate(-15 25 10)"><animate attributeName="ry" values="8;10;8" dur="1s" repeatCount="indefinite" /></ellipse>`;
+                    diya.setAttribute('width', Math.random() * 40 + 20); // random size
+                    diya.innerHTML = `
+                        <path d="M 5,20 Q 25,0 45,20 Z" fill="#D2691E" />
+                        <ellipse cx="25" cy="10" rx="4" ry="8" fill="orange" transform="rotate(-15 25 10)">
+                            <animate attributeName="ry" values="8;10;8" dur="1s" repeatCount="indefinite" />
+                        </ellipse>
+                    `;
                     diya.style.left = `${Math.random() * 100}%`;
-                    diya.style.animationDuration = `${Math.random() * 5 + 8}s`;
+                    diya.style.animationDuration = `${Math.random() * 5 + 8}s`; // 8-13 seconds
                     diya.style.animationDelay = `${Math.random() * 5}s`;
-                    container.appendChild(diya);
+                    diwaliContainer.appendChild(diya);
                 }
-            }
-            
-            // Christmas (December 25th)
-            if (month === 11 && day === 25) {
-                const container = document.getElementById('christmas-special');
-                container.classList.remove('hidden');
-                for (let i = 0; i < 50; i++) {
-                    const snow = document.createElement('div');
-                    snow.innerHTML = '❄';
-                    snow.className = 'snowflake';
-                    snow.style.left = `${Math.random() * 100}vw`;
-                    snow.style.animationDuration = `${Math.random() * 3 + 2}s`; // 2-5 seconds
-                    snow.style.animationDelay = `${Math.random() * 2}s`;
-                    snow.style.fontSize = `${Math.random() * 1 + 0.5}rem`; // 0.5-1.5rem
-                    container.appendChild(snow);
-                }
-            }
-
-            // New Year's Eve (December 31st)
-            if (month === 11 && day === 31) {
-                const container = document.getElementById('new-year-special');
-                container.classList.remove('hidden');
-                setInterval(() => {
-                    const firework = document.createElement('div');
-                    firework.className = 'firework';
-                    firework.style.left = `${Math.random() * 90 + 5}%`; // 5-95%
-                    firework.style.bottom = 0;
-                    firework.style.animationDuration = `${Math.random() * 1 + 0.8}s`;
-                    firework.style.color = `hsl(${Math.random() * 360}, 100%, 50%)`;
-                    container.appendChild(firework);
-                    setTimeout(() => firework.remove(), 2000);
-                }, 500);
             }
         }
 
@@ -1846,9 +1757,6 @@
         // Add ripple effect to all buttons with the .btn class
         document.querySelectorAll('.btn').forEach(button => {
             button.addEventListener('click', function (e) {
-                // Prevent ripple on disabled buttons
-                if(this.disabled) return;
-                
                 const rect = e.target.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
@@ -1888,6 +1796,7 @@
     </script>
 </body>
 </html>
+
 
 
 
