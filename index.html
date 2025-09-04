@@ -21,37 +21,26 @@
             background-size: 400% 400%;
             animation: gradient-animation 25s ease infinite;
             overflow-x: hidden; /* Prevent horizontal scrollbars during transitions */
+            will-change: background-position;
         }
         
         .main-container { 
             position: relative;
             width: 100%;
             max-width: 55rem;
-            perspective: 1200px;
         }
 
         .view {
-            width: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            backface-visibility: hidden;
-            transform: translateX(100%);
-            opacity: 0;
-            display: none;
-            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            display: none; 
+            animation: slideInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
+        }
+        .view.active { 
+            display: block; 
         }
 
-        .view.active {
-            position: relative;
-            transform: translateX(0);
-            opacity: 1;
-            display: block;
-        }
-
-        .view.slide-out {
-            transform: translateX(-100%);
-            opacity: 0;
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
         }
        
         @keyframes pulse {
@@ -59,7 +48,7 @@
             50% { transform: scale(1.02); }
         }
 
-        /* --- Button Animations --- */
+        /* --- Button Ripple Effect --- */
         .btn {
             position: relative;
             overflow: hidden;
@@ -67,10 +56,12 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
+
         .btn:hover {
             transform: translateY(-3px) scale(1.05);
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
         }
+
         .ripple {
             position: absolute;
             border-radius: 50%;
@@ -78,11 +69,12 @@
             transform: scale(0);
             animation: ripple-animation 0.7s linear;
         }
-        @keyframes ripple-animation { to { transform: scale(4); opacity: 0; } }
 
-        .btn.success {
-            background: #22c55e !important;
-            transform: scale(1.05);
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
         }
         
         .card {
@@ -93,6 +85,7 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            will-change: transform, box-shadow;
         }
 
         .card:hover {
@@ -104,30 +97,10 @@
         .dashboard-action-card {
             background: rgba(255, 255, 255, 0.1);
             transition: background 0.3s ease, transform 0.3s ease;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: card-enter 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-        }
-        @keyframes card-enter {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
         
         .dashboard-action-card:hover { 
             background: rgba(255, 255, 255, 0.2); 
-            transform: translateY(-4px);
-        }
-        
-        .dashboard-action-card svg {
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .dashboard-action-card:hover svg {
-            transform: scale(1.2) rotate(-8deg);
-        }
-
-        h1, h2, h3 { text-shadow: 0px 2px 4px rgba(0,0,0,0.3); }
 
         .modal-backdrop {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -141,10 +114,15 @@
             background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(10px); color: white;
             padding: 2rem; border-radius: 12px; width: 90%; max-width: 500px;
             text-align: center; border: 1px solid rgba(255, 255, 255, 0.2);
-            animation: modal-content-appear 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            will-change: transform, opacity;
         }
-        @keyframes modal-content-appear { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
 
+        .loader {
+            border: 4px solid rgba(255,255,255,0.2); border-radius: 50%; border-top: 4px solid #fff;
+            width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto;
+        }
+        
+        /* --- AI Button Loader Icon --- */
         .loader-icon {
             width: 1.25rem;
             height: 1.25rem;
@@ -154,19 +132,11 @@
             display: inline-block;
             animation: spin 0.8s linear infinite;
         }
+
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        /* --- Input Focus Animation --- */
+
         input, select, textarea {
-            background: rgba(0, 0, 0, 0.2) !important; 
-            border: 1px solid rgba(255, 255, 255, 0.2) !important; 
-            color: white !important;
-            transition: box-shadow 0.3s ease, border-color 0.3s ease;
-        }
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.4) !important;
-            border-color: rgba(129, 140, 248, 0.8) !important;
+            background: rgba(0, 0, 0, 0.2) !important; border: 1px solid rgba(255, 255, 255, 0.2) !important; color: white !important;
         }
         input::placeholder, textarea::placeholder { color: #a1a1aa !important; }
         select option { background: #1e293b !important; color: white !important; }
@@ -177,16 +147,20 @@
         #login-form > div { opacity: 0; animation: formFieldSlideIn 0.5s ease-out forwards; }
         @keyframes formFieldSlideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
         
+        /* --- Optimized Skeleton Loader --- */
         .skeleton-loader .skeleton-line {
             height: 1rem;
             width: 100%;
-            background: linear-gradient(90deg, rgba(255,255,255,0.08), rgba(255,255,255,0.15), rgba(255,255,255,0.08));
-            background-size: 200% 100%;
+            background-color: rgba(255,255,255,0.1);
             animation: skeleton-pulse 1.5s infinite ease-in-out;
             border-radius: 4px;
             margin-bottom: 0.75rem;
         }
-        @keyframes skeleton-pulse { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        @keyframes skeleton-pulse {
+            50% {
+                opacity: 0.5;
+            }
+        }
 
         .confetti-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1000; overflow: hidden; }
         .confetti { position: absolute; bottom: 0; opacity: 0; will-change: transform, opacity; animation: confetti-animation 3.5s ease-out forwards; }
@@ -207,47 +181,50 @@
             50% { transform: translate(-50%, -50%) scale(1.05); }
         }
 
-        /* --- Holiday Animations --- */
-        .holiday-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; overflow: hidden; }
-        .waving-flag { position: absolute; top: 20px; right: 20px; width: 100px; height: 60px; background: linear-gradient(to bottom, #FF9933 33.3%, white 33.3%, white 66.6%, #138808 66.6%); border-left: 5px solid #8B4513; transform-origin: 0% 50%; animation: wave-flag 2.5s infinite ease-in-out; }
-        @keyframes wave-flag { 0%, 100% { transform: rotateY(0deg); } 50% { transform: rotateY(30deg); } }
-        .diya { position: absolute; bottom: -50px; animation: float-diya 10s linear infinite; }
-        @keyframes float-diya { to { transform: translateY(-110vh) rotate(15deg); opacity: 0; } }
-        .snowflake { position: absolute; color: rgba(255, 255, 255, 0.8); font-size: 1.5rem; animation: fall linear infinite; }
-        @keyframes fall { to { transform: translateY(105vh) rotate(360deg); } }
-        .firework { position: absolute; width: 4px; height: 4px; background-color: #fff; border-radius: 50%; opacity: 1; animation: firework-shoot linear forwards; }
-        .firework::before { content: ''; position: absolute; left: -10px; top: -10px; width: 24px; height: 24px; border: 2px solid currentColor; border-radius: 50%; transform: scale(0); opacity: 0; animation: firework-explode 0.8s 1s ease-out forwards; }
-        @keyframes firework-shoot { to { transform: translateY(-300px); opacity: 0; } }
-        @keyframes firework-explode { from { transform: scale(0); opacity: 1; } to { transform: scale(2); opacity: 0; } }
-        .holi-puff { position: absolute; border-radius: 50%; opacity: 0; animation: puff-animation 3s ease-out forwards; filter: blur(5px); }
-        @keyframes puff-animation { 0% { transform: scale(0); opacity: 0.8; } 100% { transform: scale(1.5); opacity: 0; } }
-        .raindrop { position: absolute; width: 2px; height: 15px; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.4)); animation: rain-fall 1s linear infinite; }
-        @keyframes rain-fall { from { transform: translateY(-100px); } to { transform: translateY(105vh); } }
-        .petal { position: absolute; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="%23f472b6"><path d="M10 2c-4 0-8 3-8 7s4 8 8 8 8-3 8-7-4-8-8-8zm0 13c-2.8 0-5-2.2-5-5s2.2-5 5-5 5 2.2 5 5-2.2 5-5 5z" fill-opacity="0.6"/><path d="M10 4c-3.3 0-6 2.7-6 6s2.7 6 6 6 6-2.7 6-6-2.7-6-6-6zm0 10c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4z" fill-opacity="0.8"/></svg>'); background-size: contain; width: 20px; height: 20px; animation: fall linear infinite; }
-        .balloon { position: absolute; width: 50px; height: 60px; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; animation: float-balloon 10s ease-in-out infinite; }
-        .balloon::after { content:''; position: absolute; bottom: -10px; left: 22.5px; width: 5px; height: 10px; background: inherit; border-radius: 0 0 2px 2px; }
-        @keyframes float-balloon { 0%, 100% { transform: translateY(0) rotate(-5deg); } 50% { transform: translateY(-110vh) rotate(5deg); } }
+        /* Holiday Animations */
+        .holiday-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: -1; overflow: hidden;
+        }
 
-        /* --- Quote Flip Animation --- */
-        .quote-flipper { perspective: 1000px; cursor: pointer; }
-        .quote-card { position: relative; transition: transform 0.8s; transform-style: preserve-3d; }
-        .quote-flipper.is-flipped .quote-card { transform: rotateY(180deg); }
-        .quote-front, .quote-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; top: 0; left: 0; }
-        .quote-back { transform: rotateY(180deg); }
+        /* Independence Day Flag */
+        .waving-flag {
+            position: absolute; top: 20px; right: 20px;
+            width: 100px; height: 60px;
+            background: linear-gradient(to bottom, #FF9933 33.3%, white 33.3%, white 66.6%, #138808 66.6%);
+            border-left: 5px solid #8B4513; /* flagpole */
+            transform-origin: 0% 50%;
+            animation: wave-flag 2.5s infinite ease-in-out;
+        }
+        @keyframes wave-flag {
+            0%, 100% { transform: rotateY(0deg); }
+            50% { transform: rotateY(30deg); }
+        }
+        
+        /* Diwali Diyas */
+        .diya {
+            position: absolute; bottom: -50px;
+            animation: float-diya 10s linear infinite;
+        }
+        @keyframes float-diya {
+            to { transform: translateY(-110vh) rotate(15deg); opacity: 0; }
+        }
+
+        /* Student Progress Bars */
+        .progress-bar-container { width: 100%; background: rgba(0,0,0,0.3); border-radius: 8px; overflow: hidden; }
+        .progress-bar { height: 10px; border-radius: 8px; transform: scaleX(0); transform-origin: left; transition: transform 1.5s cubic-bezier(0.25, 1, 0.5, 1); }
         
     </style>
 </head>
 <body class="antialiased">
 
     <!-- Holiday Theming Containers -->
-    <div id="independence-day-special" class="holiday-container hidden"></div>
-    <div id="diwali-special" class="holiday-container hidden"></div>
-    <div id="christmas-special" class="holiday-container hidden"></div>
-    <div id="new-year-special" class="holiday-container hidden"></div>
-    <div id="holi-special" class="holiday-container hidden"></div>
-    <div id="monsoon-special" class="holiday-container hidden"></div>
-    <div id="teachers-day-special" class="holiday-container hidden"></div>
-    <div id="childrens-day-special" class="holiday-container hidden"></div>
+    <div id="independence-day-special" class="holiday-container hidden">
+        <div class="waving-flag"></div>
+    </div>
+    <div id="diwali-special" class="holiday-container hidden">
+        <!-- Diyas will be added here by JS -->
+    </div>
 
 
     <div id="app" class="min-h-screen flex items-center justify-center p-4">
@@ -261,18 +238,9 @@
                     <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-2 animate-pulse">Adarsha Educational Institute</h1>
                     <p class="text-gray-300 mb-6 md:mb-8 text-base md:text-lg">Your Gateway to Excellence</p>
                     
-                    <div id="daily-quote-container" class="my-6 md:my-8 quote-flipper">
-                         <div class="quote-card bg-black bg-opacity-20 border-l-4 border-blue-400 rounded-r-lg p-4 md:p-6 min-h-[80px] flex items-center justify-center">
-                            <div class="quote-front">
-                                <p class="text-gray-200 italic text-sm sm:text-base md:text-lg" id="daily-quote-text"></p>
-                                <p class="text-xs text-gray-400 mt-2">(Click to reveal author)</p>
-                            </div>
-                            <div class="quote-back flex flex-col items-center justify-center">
-                                <p class="text-gray-200 font-bold text-sm sm:text-base md:text-lg" id="daily-quote-author"></p>
-                            </div>
-                         </div>
+                    <div class="my-6 md:my-8 p-4 md:p-6 bg-black bg-opacity-20 border-l-4 border-blue-400 rounded-r-lg">
+                        <p class="text-gray-200 italic text-sm sm:text-base md:text-lg" id="daily-quote"></p>
                     </div>
-
 
                     <!-- Feature Tiles Section -->
                     <div class="my-8 md:my-10 grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 text-center">
@@ -360,13 +328,13 @@
                         <div id="teacher-login-fields" style="animation-delay: 0.1s;">
                             <div>
                                 <label for="username" class="block text-sm font-medium text-gray-300">Username</label>
-                                <input type="text" id="username" name="username" required class="mt-1 block w-full px-4 py-3 rounded-md shadow-sm">
+                                <input type="text" id="username" name="username" required class="mt-1 block w-full px-4 py-3 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                             </div>
                         </div>
                         <div id="admin-login-fields" class="hidden" style="animation-delay: 0.1s;">
                             <div>
                                 <label for="admin-username" class="block text-sm font-medium text-gray-300">Username</label>
-                                <select id="admin-username" name="admin-username" class="mt-1 block w-full px-4 py-3 rounded-md shadow-sm">
+                                <select id="admin-username" name="admin-username" class="mt-1 block w-full px-4 py-3 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                                     <option value="akpalei_sir">A.K. Palei Sir</option>
                                     <option value="amar_admin">Amar</option>
                                 </select>
@@ -374,12 +342,10 @@
                         </div>
                         <div style="animation-delay: 0.2s;">
                             <label for="password" class="block text-sm font-medium text-gray-300">Password</label>
-                            <input type="password" id="password" name="password" required class="mt-1 block w-full px-4 py-3 rounded-md shadow-sm">
+                            <input type="password" id="password" name="password" required class="mt-1 block w-full px-4 py-3 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                         </div>
                         <div style="animation-delay: 0.3s;">
-                            <button type="submit" class="w-full btn bg-indigo-600 text-white font-bold py-3 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex justify-center items-center gap-2">
-                                <span data-original-content="Login">Login</span>
-                            </button>
+                            <button type="submit" class="w-full btn bg-indigo-600 text-white font-bold py-3 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Login</button>
                         </div>
                     </form>
                 </div>
@@ -497,10 +463,7 @@
                             </div>
                         </div>
                         <div id="student-list-marks" class="space-y-2 max-h-60 overflow-y-auto p-2 border border-gray-600 rounded-md bg-black bg-opacity-20"></div>
-                        <div class="flex flex-col sm:flex-row gap-4">
-                            <button id="generate-marks-btn" class="btn bg-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600 w-full">Prepare Marks Message</button>
-                            <button id="visualize-marks-btn" class="btn bg-purple-500 text-white font-bold py-2 px-4 rounded-md hover:bg-purple-600 w-full hidden">Visualize Results</button>
-                        </div>
+                        <button id="generate-marks-btn" class="btn bg-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600 w-full">Prepare Marks Message</button>
                         
                         <div id="marks-message-container" class="hidden mt-4 space-y-2">
                             <label class="block text-sm font-medium text-gray-300">Generated Message:</label>
@@ -611,15 +574,12 @@
                             <input type="text" id="gemini-topic" placeholder="e.g., Photosynthesis, Quadratic Equations" class="mt-1 block w-full p-2 rounded-md">
                         </div>
                         <button id="generate-gemini-questions-btn" class="btn bg-pink-500 text-white font-bold py-2 px-4 rounded-md hover:bg-pink-600 w-full flex justify-center items-center gap-2">
+                            <!-- Original content is stored in a data attribute -->
                             <span data-original-content="Generate Questions">Generate Questions</span>
                         </button>
                         
-                        <div id="gemini-loading" class="hidden mt-4 p-4 rounded-md border border-gray-600 bg-black bg-opacity-20 skeleton-loader">
-                           <div class="skeleton-line" style="width: 80%;"></div>
-                           <div class="skeleton-line"></div>
-                           <div class="skeleton-line" style="width: 90%;"></div>
-                           <div class="skeleton-line" style="width: 60%;"></div>
-                           <div class="skeleton-line"></div>
+                        <div id="gemini-loading" class="hidden">
+                            <!-- This is now handled by the button itself -->
                         </div>
 
                         <div id="gemini-result-container" class="hidden mt-6">
@@ -771,16 +731,12 @@
         </div>
     </div>
 
-    <!-- Chart Modal -->
-    <div id="chart-modal" class="modal-backdrop hidden">
-        <div class="modal-content" style="max-width: 800px;">
-            <h3 id="chart-modal-title" class="text-xl font-bold mb-4"></h3>
-            <div class="w-full h-80 bg-black bg-opacity-20 p-4 rounded-lg">
-                <canvas id="grade-chart"></canvas>
-            </div>
-            <button id="close-chart-modal" class="btn bg-indigo-600 text-white font-bold py-2 px-6 rounded-md mt-6">Close</button>
-        </div>
+    <!-- Login Loader Overlay -->
+    <div id="login-loader-overlay" class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm z-[1100] flex flex-col items-center justify-center hidden" style="animation: fadeIn 0.3s;">
+        <div class="w-16 h-16 border-4 border-t-4 border-gray-400 border-t-indigo-500 rounded-full animate-spin"></div>
+        <p class="text-white text-lg mt-4 font-semibold">Logging In...</p>
     </div>
+
 
     <script>
     // --- SCRIPT WRAPPER ---
@@ -862,11 +818,11 @@
         };
         
         const educationalQuotes = [
-            { quote: "The beautiful thing about learning is that no one can take it away from you.", author: "B.B. King" },
-            { quote: "Education is the most powerful weapon which you can use to change the world.", author: "Nelson Mandela" },
-            { quote: "The roots of education are bitter, but the fruit is sweet.", author: "Aristotle" },
-            { quote: "Education is not the filling of a pail, but the lighting of a fire.", author: "W.B. Yeats" },
-            { quote: "Live as if you were to die tomorrow. Learn as if you were to live forever.", author: "Mahatma Gandhi" }
+            "The beautiful thing about learning is that no one can take it away from you.",
+            "Education is the most powerful weapon which you can use to change the world.",
+            "The roots of education are bitter, but the fruit is sweet.",
+            "Education is not the filling of a pail, but the lighting of a fire.",
+            "Live as if you were to die tomorrow. Learn as if you were to live forever."
         ];
 
         const teacherGreetingQuotes = [
@@ -881,7 +837,6 @@
         let currentRole = null;
         let gradeChart = null;
         let wasLate = false;
-        let currentMarksData = [];
         
         // --- ANIMATION FUNCTION ---
         function animateCountUp(element, target, duration = 2000) {
@@ -901,43 +856,9 @@
 
         // --- VIEW MANAGEMENT ---
         function showView(viewId) {
-            const currentActive = document.querySelector('.view.active');
-            const newView = document.getElementById(viewId);
-
-            if (currentActive && newView && currentActive.id !== newView.id) {
-                currentActive.classList.add('slide-out');
-                
-                setTimeout(() => {
-                    currentActive.classList.remove('active', 'slide-out');
-                    currentActive.style.display = 'none'; // Ensure it's hidden
-
-                    newView.style.display = 'block';
-                    setTimeout(() => {
-                        newView.classList.add('active');
-                        // Trigger staggered animation if it's a dashboard
-                        if (newView.id === 'teacher-dashboard-view' || newView.id === 'admin-dashboard-view') {
-                            staggerDashboardEntrance(newView.id);
-                        }
-                    }, 20);
-
-                }, 600);
-            } else if (newView) {
-                 newView.style.display = 'block';
-                 setTimeout(() => {
-                    newView.classList.add('active');
-                }, 20);
-            }
+            document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
         }
-
-        function staggerDashboardEntrance(viewId) {
-            const container = document.getElementById(viewId);
-            if (!container) return;
-            const cards = container.querySelectorAll('.dashboard-action-card');
-            cards.forEach((card, index) => {
-                card.style.animationDelay = `${index * 80}ms`;
-            });
-        }
-
 
         function showLogin(role) {
             currentRole = role;
@@ -968,13 +889,9 @@
         // --- AUTHENTICATION ---
         function handleLogin(event) {
             event.preventDefault();
-            const loginButton = event.currentTarget.querySelector('button[type="submit"]');
-            const buttonSpan = loginButton.querySelector('span');
-            const originalContent = buttonSpan.dataset.originalContent;
+            const loader = document.getElementById('login-loader-overlay');
             
-            loginButton.disabled = true;
-            buttonSpan.innerHTML = `<span class="loader-icon"></span> Logging in...`;
-
+            // Get form data immediately
             const password = document.getElementById('password').value;
             let username;
             if (currentRole === 'teacher') {
@@ -983,12 +900,16 @@
                 username = document.getElementById('admin-username').value;
             }
 
+            // Show loader and start the process
+            loader.classList.remove('hidden');
+
             setTimeout(() => {
                 const user = users[username];
                 
-                loginButton.disabled = false;
-                buttonSpan.innerHTML = originalContent;
+                // Hide loader regardless of outcome
+                loader.classList.add('hidden');
 
+                // Now process the outcome
                 if (user && user.password === password && user.role === currentRole) {
                     currentUser = { username: username, ...user };
                     if (user.role === 'teacher') {
@@ -1013,6 +934,7 @@
                     showModal('Invalid username or password. Please try again.');
                 }
 
+                // Reset form
                 document.getElementById('login-form').reset();
                 if(currentRole === 'admin') {
                     document.getElementById('username').required = false;
@@ -1335,7 +1257,6 @@
             const studentListDiv = document.getElementById('student-list-marks');
             studentListDiv.innerHTML = '';
             document.getElementById('marks-message-container').classList.add('hidden');
-            document.getElementById('visualize-marks-btn').classList.add('hidden');
             if (selectedClass && students[selectedClass]) {
                 students[selectedClass].forEach(student => {
                     const isConditional = typeof student === 'object';
@@ -1361,18 +1282,7 @@
         
         // --- MESSAGE GENERATION & COPY ---
 
-        function handleFormSuccess(button) {
-            const originalContent = button.innerHTML;
-            button.classList.add('success');
-            button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>`;
-            setTimeout(() => {
-                button.classList.remove('success');
-                button.innerHTML = originalContent;
-            }, 2000);
-        }
-
-        function generateAttendanceMessage(e) {
-            handleFormSuccess(e.target);
+        function generateAttendanceMessage() {
             const studentCheckboxes = document.querySelectorAll('#student-list-attendance input[type="checkbox"]');
             const subjectEl = document.getElementById('attendance-subject');
             const subjectValue = subjectEl.value;
@@ -1434,8 +1344,7 @@
             return 'F';
         }
 
-        function generateMarksMessage(e) {
-            handleFormSuccess(e.target);
+        function generateMarksMessage() {
             const marksInputs = document.querySelectorAll('#student-list-marks input[type="number"]');
             const className = document.getElementById('marks-class').value;
             const subjectEl = document.getElementById('marks-subject');
@@ -1449,8 +1358,6 @@
                 showModal("Please fill in all fields: class, subject, test name, test date, and maximum marks.");
                 return;
             }
-            
-            currentMarksData = []; // Reset and gather new data
 
             const formattedDate = new Date(testDate).toLocaleDateString('en-GB');
 
@@ -1471,7 +1378,6 @@
                     const percentage = (marks / maxMarks) * 100;
                     const grade = getGrade(percentage);
                     message += `${studentName}: ${marks}/${maxMarks} (${percentage.toFixed(2)}%, Grade: ${grade})\n`;
-                    currentMarksData.push({ name: studentName, marks: parseInt(marks), maxMarks: parseInt(maxMarks) });
                     hasMarks = true;
                 }
             });
@@ -1484,11 +1390,9 @@
             document.getElementById('marks-message').value = message;
             document.getElementById('marks-whatsapp-link').href = whatsappLink;
             document.getElementById('marks-message-container').classList.remove('hidden');
-            document.getElementById('visualize-marks-btn').classList.remove('hidden');
         }
 
-        function generateRequestMessage(type, e) {
-            handleFormSuccess(e.target);
+        function generateRequestMessage(type) {
             const teacherName = currentUser.name;
             let message;
 
@@ -1566,13 +1470,13 @@
             }
 
             const genButton = document.getElementById('generate-gemini-questions-btn');
-            const loadingDiv = document.getElementById('gemini-loading');
             const resultContainer = document.getElementById('gemini-result-container');
             const resultDiv = document.getElementById('gemini-result');
             
+            // --- AI Loader Animation ---
             genButton.disabled = true;
             genButton.querySelector('span').innerHTML = `<span class="loader-icon"></span> Generating...`;
-            loadingDiv.classList.remove('hidden');
+            
             resultContainer.style.display = 'none';
             resultDiv.value = '';
 
@@ -1611,17 +1515,17 @@
                 showModal(`An error occurred while generating questions: ${error.message}. Please try again later.`);
                 resultContainer.style.display = 'none';
             } finally {
-                loadingDiv.classList.add('hidden');
+                // --- Reset AI Loader Animation ---
                 genButton.disabled = false;
                 genButton.querySelector('span').innerHTML = genButton.querySelector('span').dataset.originalContent;
             }
         }
 
-        // --- MODALS (General & Chart) ---
+        // --- MODAL ---
         function showModal(message, title = '', onConfirm = null) {
-            const modal = document.getElementById('custom-modal');
             const titleEl = document.getElementById('modal-title');
             const messageEl = document.getElementById('modal-message');
+            const modal = document.getElementById('custom-modal');
             const buttonsContainer = document.getElementById('modal-buttons');
 
             if (title) {
@@ -1661,108 +1565,9 @@
             modal.classList.remove('hidden');
         }
 
+
         function closeModal() {
             document.getElementById('custom-modal').classList.add('hidden');
-        }
-
-        function openChartModal() {
-            document.getElementById('chart-modal').classList.remove('hidden');
-        }
-
-        function closeChartModal() {
-            document.getElementById('chart-modal').classList.add('hidden');
-        }
-
-        // --- GRADE CHART VISUALIZATION ---
-        function generateGradeChart() {
-            if (currentMarksData.length === 0) {
-                showModal("No marks data available to visualize. Please generate a marks report first.");
-                return;
-            }
-            
-            const gradeCounts = { 'A+': 0, 'A': 0, 'B': 0, 'C': 0, 'D': 0, 'E': 0, 'F': 0 };
-
-            currentMarksData.forEach(student => {
-                const percentage = (student.marks / student.maxMarks) * 100;
-                const grade = getGrade(percentage);
-                if (gradeCounts.hasOwnProperty(grade)) {
-                    gradeCounts[grade]++;
-                }
-            });
-
-            const testName = document.getElementById('test-name').value || "Test";
-            document.getElementById('chart-modal-title').textContent = `Grade Distribution for ${testName}`;
-
-            const ctx = document.getElementById('grade-chart').getContext('2d');
-            
-            if (gradeChart) {
-                gradeChart.destroy();
-            }
-
-            gradeChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: Object.keys(gradeCounts),
-                    datasets: [{
-                        label: '# of Students',
-                        data: Object.values(gradeCounts),
-                        backgroundColor: [
-                            'rgba(75, 192, 192, 0.6)',
-                            'rgba(54, 162, 235, 0.6)',
-                            'rgba(255, 206, 86, 0.6)',
-                            'rgba(255, 159, 64, 0.6)',
-                            'rgba(153, 102, 255, 0.6)',
-                            'rgba(255, 99, 132, 0.6)',
-                            'rgba(201, 203, 207, 0.6)'
-                        ],
-                        borderColor: [
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(255, 159, 64, 1)',
-                            'rgba(153, 102, 255, 1)',
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(201, 203, 207, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                color: '#e5e7eb',
-                                stepSize: 1
-                            },
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            }
-                        },
-                        x: {
-                            ticks: {
-                                color: '#e5e7eb',
-                            },
-                             grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    animation: {
-                        duration: 1000,
-                        easing: 'easeInOutQuart'
-                    }
-                }
-            });
-
-            openChartModal();
         }
         
         // --- CONFETTI ANIMATION ---
@@ -1846,80 +1651,36 @@
         // --- HOLIDAY ANIMATIONS ---
         function setupHolidayAnimations() {
             const today = new Date();
-            const month = today.getMonth(); // 0-indexed (Jan=0, Sep=8, Nov=10)
+            const month = today.getMonth(); // 0-indexed (Jan=0, Aug=7)
             const day = today.getDate();
 
             // Independence Day (August 15th)
             if (month === 7 && day === 15) {
-                const container = document.getElementById('independence-day-special');
-                container.classList.remove('hidden');
-                container.innerHTML = `<div class="waving-flag"></div>`;
+                document.getElementById('independence-day-special').classList.remove('hidden');
             }
 
-            // Teacher's Day (September 5th)
-            if (month === 8 && day === 5) {
-                const container = document.getElementById('teachers-day-special');
-                container.classList.remove('hidden');
-                triggerConfettiAnimation("Happy Teacher's Day!");
-                for (let i = 0; i < 30; i++) {
-                    const petal = document.createElement('div');
-                    petal.className = 'petal';
-                    petal.style.left = `${Math.random() * 100}vw`;
-                    petal.style.animationDuration = `${Math.random() * 5 + 5}s`;
-                    petal.style.animationDelay = `${Math.random() * 5}s`;
-                    container.appendChild(petal);
+            // Diwali (October 20th for 2025)
+            if (month === 9 && day === 20) {
+                const diwaliContainer = document.getElementById('diwali-special');
+                diwaliContainer.classList.remove('hidden');
+                
+                // Create floating diyas
+                for (let i = 0; i < 15; i++) {
+                    const diya = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                    diya.setAttribute('class', 'diya');
+                    diya.setAttribute('viewBox', '0 0 50 25');
+                    diya.setAttribute('width', Math.random() * 40 + 20); // random size
+                    diya.innerHTML = `
+                        <path d="M 5,20 Q 25,0 45,20 Z" fill="#D2691E" />
+                        <ellipse cx="25" cy="10" rx="4" ry="8" fill="orange" transform="rotate(-15 25 10)">
+                            <animate attributeName="ry" values="8;10;8" dur="1s" repeatCount="indefinite" />
+                        </ellipse>
+                    `;
+                    diya.style.left = `${Math.random() * 100}%`;
+                    diya.style.animationDuration = `${Math.random() * 5 + 8}s`; // 8-13 seconds
+                    diya.style.animationDelay = `${Math.random() * 5}s`;
+                    diwaliContainer.appendChild(diya);
                 }
-            }
-
-            // Children's Day (November 14th)
-            if (month === 10 && day === 14) {
-                 const container = document.getElementById('childrens-day-special');
-                 container.classList.remove('hidden');
-                 const balloonColors = ['#ef4444', '#3b82f6', '#22c55e', '#f97316', '#eab308', '#8b5cf6'];
-                 for (let i = 0; i < 15; i++) {
-                    const balloon = document.createElement('div');
-                    balloon.className = 'balloon';
-                    balloon.style.background = balloonColors[Math.floor(Math.random() * balloonColors.length)];
-                    balloon.style.left = `${Math.random() * 90}%`; // Keep them within bounds
-                    balloon.style.animationDuration = `${Math.random() * 8 + 10}s`; // 10-18s
-                    balloon.style.animationDelay = `${Math.random() * 5}s`;
-                    container.appendChild(balloon);
-                 }
-            }
-
-            // Christmas (December 25th)
-            if (month === 11 && day === 25) {
-                const container = document.getElementById('christmas-special');
-                container.classList.remove('hidden');
-                for (let i = 0; i < 50; i++) {
-                    const snow = document.createElement('div');
-                    snow.innerHTML = '❄';
-                    snow.className = 'snowflake';
-                    snow.style.left = `${Math.random() * 100}vw`;
-                    snow.style.animationDuration = `${Math.random() * 3 + 2}s`;
-                    snow.style.animationDelay = `${Math.random() * 2}s`;
-                    snow.style.fontSize = `${Math.random() * 1 + 0.5}rem`;
-                    container.appendChild(snow);
-                }
-            }
-            
-            // Holi (Example: March 14th)
-            if (month === 2 && day === 14) {
-                 const container = document.getElementById('holi-special');
-                 container.classList.remove('hidden');
-                 const holiColors = ['#e6007e', '#f7931d', '#00a859', '#394ba0', '#f4d300'];
-                 setInterval(() => {
-                    const puff = document.createElement('div');
-                    puff.className = 'holi-puff';
-                    puff.style.left = `${Math.random() * 100}%`;
-                    puff.style.top = `${Math.random() * 100}%`;
-                    puff.style.width = `${Math.random() * 150 + 50}px`;
-                    puff.style.height = `${Math.random() * 150 + 50}px`;
-                    puff.style.background = `radial-gradient(circle, ${holiColors[Math.floor(Math.random() * holiColors.length)]} 0%, rgba(255,255,255,0) 70%)`;
-                    puff.style.animationDelay = `${Math.random() * 2}s`;
-                    container.appendChild(puff);
-                    setTimeout(() => puff.remove(), 3000);
-                 }, 400);
             }
         }
 
@@ -1928,8 +1689,7 @@
         
         const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
         const quoteIndex = dayOfYear % educationalQuotes.length;
-        document.getElementById('daily-quote-text').textContent = `"${educationalQuotes[quoteIndex].quote}"`;
-        document.getElementById('daily-quote-author').textContent = `- ${educationalQuotes[quoteIndex].author}`;
+        document.getElementById('daily-quote').textContent = `"${educationalQuotes[quoteIndex]}"`;
 
         const totalStudents = Object.values(students).reduce((sum, classArray) => sum + classArray.length, 0);
         const totalTeachers = Object.keys(teacherData).length;
@@ -1949,9 +1709,6 @@
         setupHolidayAnimations();
 
         // --- Setup Event Listeners ---
-        document.getElementById('daily-quote-container').addEventListener('click', (e) => {
-            e.currentTarget.classList.toggle('is-flipped');
-        });
         document.getElementById('show-student-portal').addEventListener('click', () => showView('student-portal-view'));
         document.getElementById('portal-back-to-home').addEventListener('click', () => showView('initial-view'));
         document.getElementById('show-teacher-login').addEventListener('click', () => showLogin('teacher'));
@@ -1976,10 +1733,8 @@
         document.getElementById('gemini-class').addEventListener('change', () => populateSubjects('gemini'));
         document.getElementById('generate-attendance-btn').addEventListener('click', generateAttendanceMessage);
         document.getElementById('generate-marks-btn').addEventListener('click', generateMarksMessage);
-        document.getElementById('visualize-marks-btn').addEventListener('click', generateGradeChart);
-        document.getElementById('close-chart-modal').addEventListener('click', closeChartModal);
-        document.getElementById('generate-request-class-btn').addEventListener('click', (e) => generateRequestMessage('class', e));
-        document.getElementById('generate-request-exam-btn').addEventListener('click', (e) => generateRequestMessage('exam', e));
+        document.getElementById('generate-request-class-btn').addEventListener('click', () => generateRequestMessage('class'));
+        document.getElementById('generate-request-exam-btn').addEventListener('click', () => generateRequestMessage('exam'));
         document.getElementById('generate-gemini-questions-btn').addEventListener('click', generatePracticeQuestions);
         document.querySelectorAll('.copy-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -1990,7 +1745,6 @@
         // Add ripple effect to all buttons with the .btn class
         document.querySelectorAll('.btn').forEach(button => {
             button.addEventListener('click', function (e) {
-                if(this.disabled) return;
                 const rect = e.target.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
@@ -2023,12 +1777,14 @@
         document.querySelectorAll('.back-to-admin-dashboard').forEach(btn => btn.addEventListener('click', () => showView('admin-dashboard-view')));
         document.getElementById('student-search-input-admin').addEventListener('keyup', lookupStudentAdmin);
 
+        // Make the first view active on load without transition
         document.getElementById('initial-view').style.transition = 'none';
 
     }); // End of DOMContentLoaded
     </script>
 </body>
 </html>
+
 
 
 
