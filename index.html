@@ -135,9 +135,7 @@
             background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(10px); color: white;
             padding: 2rem; border-radius: 12px; width: 90%; max-width: 500px;
             text-align: center; border: 1px solid rgba(255, 255, 255, 0.2);
-            animation: modal-content-appear 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        @keyframes modal-content-appear { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
 
         /* --- AI Button Loader Icon --- */
         .loader-icon {
@@ -151,18 +149,9 @@
         }
 
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        /* --- Input Focus Animation --- */
+
         input, select, textarea {
-            background: rgba(0, 0, 0, 0.2) !important; 
-            border: 1px solid rgba(255, 255, 255, 0.2) !important; 
-            color: white !important;
-            transition: box-shadow 0.3s ease, border-color 0.3s ease;
-        }
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.4) !important;
-            border-color: rgba(129, 140, 248, 0.8) !important;
+            background: rgba(0, 0, 0, 0.2) !important; border: 1px solid rgba(255, 255, 255, 0.2) !important; color: white !important;
         }
         input::placeholder, textarea::placeholder { color: #a1a1aa !important; }
         select option { background: #1e293b !important; color: white !important; }
@@ -277,32 +266,6 @@
             from { transform: scale(0); opacity: 1; }
             to { transform: scale(2); opacity: 0; }
         }
-
-        /* Holi Powder Puffs */
-        .holi-puff {
-            position: absolute;
-            border-radius: 50%;
-            opacity: 0;
-            animation: puff-animation 3s ease-out forwards;
-            filter: blur(5px);
-        }
-        @keyframes puff-animation {
-            0% { transform: scale(0); opacity: 0.8; }
-            100% { transform: scale(1.5); opacity: 0; }
-        }
-        
-        /* Monsoon Rain */
-        .raindrop {
-            position: absolute;
-            width: 2px;
-            height: 15px;
-            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.4));
-            animation: rain-fall 1s linear infinite;
-        }
-        @keyframes rain-fall {
-            from { transform: translateY(-100px); }
-            to { transform: translateY(105vh); }
-        }
         
     </style>
 </head>
@@ -313,8 +276,6 @@
     <div id="diwali-special" class="holiday-container hidden"></div>
     <div id="christmas-special" class="holiday-container hidden"></div>
     <div id="new-year-special" class="holiday-container hidden"></div>
-    <div id="holi-special" class="holiday-container hidden"></div>
-    <div id="monsoon-special" class="holiday-container hidden"></div>
 
     <div id="app" class="min-h-screen flex items-center justify-center p-4">
 
@@ -417,13 +378,13 @@
                         <div id="teacher-login-fields" style="animation-delay: 0.1s;">
                             <div>
                                 <label for="username" class="block text-sm font-medium text-gray-300">Username</label>
-                                <input type="text" id="username" name="username" required class="mt-1 block w-full px-4 py-3 rounded-md shadow-sm">
+                                <input type="text" id="username" name="username" required class="mt-1 block w-full px-4 py-3 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                             </div>
                         </div>
                         <div id="admin-login-fields" class="hidden" style="animation-delay: 0.1s;">
                             <div>
                                 <label for="admin-username" class="block text-sm font-medium text-gray-300">Username</label>
-                                <select id="admin-username" name="admin-username" class="mt-1 block w-full px-4 py-3 rounded-md shadow-sm">
+                                <select id="admin-username" name="admin-username" class="mt-1 block w-full px-4 py-3 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                                     <option value="akpalei_sir">A.K. Palei Sir</option>
                                     <option value="amar_admin">Amar</option>
                                 </select>
@@ -431,7 +392,7 @@
                         </div>
                         <div style="animation-delay: 0.2s;">
                             <label for="password" class="block text-sm font-medium text-gray-300">Password</label>
-                            <input type="password" id="password" name="password" required class="mt-1 block w-full px-4 py-3 rounded-md shadow-sm">
+                            <input type="password" id="password" name="password" required class="mt-1 block w-full px-4 py-3 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                         </div>
                         <div style="animation-delay: 0.3s;">
                             <button type="submit" class="w-full btn bg-indigo-600 text-white font-bold py-3 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex justify-center items-center gap-2">
@@ -554,10 +515,7 @@
                             </div>
                         </div>
                         <div id="student-list-marks" class="space-y-2 max-h-60 overflow-y-auto p-2 border border-gray-600 rounded-md bg-black bg-opacity-20"></div>
-                        <div class="flex flex-col sm:flex-row gap-4">
-                            <button id="generate-marks-btn" class="btn bg-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600 w-full">Prepare Marks Message</button>
-                            <button id="visualize-marks-btn" class="btn bg-purple-500 text-white font-bold py-2 px-4 rounded-md hover:bg-purple-600 w-full hidden">Visualize Results</button>
-                        </div>
+                        <button id="generate-marks-btn" class="btn bg-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600 w-full">Prepare Marks Message</button>
                         
                         <div id="marks-message-container" class="hidden mt-4 space-y-2">
                             <label class="block text-sm font-medium text-gray-300">Generated Message:</label>
@@ -828,17 +786,6 @@
         </div>
     </div>
 
-    <!-- Chart Modal -->
-    <div id="chart-modal" class="modal-backdrop hidden">
-        <div class="modal-content" style="max-width: 800px;">
-            <h3 id="chart-modal-title" class="text-xl font-bold mb-4"></h3>
-            <div class="w-full h-80 bg-black bg-opacity-20 p-4 rounded-lg">
-                <canvas id="grade-chart"></canvas>
-            </div>
-            <button id="close-chart-modal" class="btn bg-indigo-600 text-white font-bold py-2 px-6 rounded-md mt-6">Close</button>
-        </div>
-    </div>
-
     <script>
     // --- SCRIPT WRAPPER ---
     document.addEventListener('DOMContentLoaded', () => {
@@ -938,7 +885,6 @@
         let currentRole = null;
         let gradeChart = null;
         let wasLate = false;
-        let currentMarksData = [];
         
         // --- ANIMATION FUNCTION ---
         function animateCountUp(element, target, duration = 2000) {
@@ -1385,7 +1331,6 @@
             const studentListDiv = document.getElementById('student-list-marks');
             studentListDiv.innerHTML = '';
             document.getElementById('marks-message-container').classList.add('hidden');
-            document.getElementById('visualize-marks-btn').classList.add('hidden');
             if (selectedClass && students[selectedClass]) {
                 students[selectedClass].forEach(student => {
                     const isConditional = typeof student === 'object';
@@ -1487,8 +1432,6 @@
                 showModal("Please fill in all fields: class, subject, test name, test date, and maximum marks.");
                 return;
             }
-            
-            currentMarksData = []; // Reset and gather new data
 
             const formattedDate = new Date(testDate).toLocaleDateString('en-GB');
 
@@ -1509,7 +1452,6 @@
                     const percentage = (marks / maxMarks) * 100;
                     const grade = getGrade(percentage);
                     message += `${studentName}: ${marks}/${maxMarks} (${percentage.toFixed(2)}%, Grade: ${grade})\n`;
-                    currentMarksData.push({ name: studentName, marks: parseInt(marks), maxMarks: parseInt(maxMarks) });
                     hasMarks = true;
                 }
             });
@@ -1522,7 +1464,6 @@
             document.getElementById('marks-message').value = message;
             document.getElementById('marks-whatsapp-link').href = whatsappLink;
             document.getElementById('marks-message-container').classList.remove('hidden');
-            document.getElementById('visualize-marks-btn').classList.remove('hidden');
         }
 
         function generateRequestMessage(type) {
@@ -1654,11 +1595,11 @@
             }
         }
 
-        // --- MODALS (General & Chart) ---
+        // --- MODAL ---
         function showModal(message, title = '', onConfirm = null) {
-            const modal = document.getElementById('custom-modal');
             const titleEl = document.getElementById('modal-title');
             const messageEl = document.getElementById('modal-message');
+            const modal = document.getElementById('custom-modal');
             const buttonsContainer = document.getElementById('modal-buttons');
 
             if (title) {
@@ -1698,108 +1639,9 @@
             modal.classList.remove('hidden');
         }
 
+
         function closeModal() {
             document.getElementById('custom-modal').classList.add('hidden');
-        }
-
-        function openChartModal() {
-            document.getElementById('chart-modal').classList.remove('hidden');
-        }
-
-        function closeChartModal() {
-            document.getElementById('chart-modal').classList.add('hidden');
-        }
-
-        // --- GRADE CHART VISUALIZATION ---
-        function generateGradeChart() {
-            if (currentMarksData.length === 0) {
-                showModal("No marks data available to visualize. Please generate a marks report first.");
-                return;
-            }
-            
-            const gradeCounts = { 'A+': 0, 'A': 0, 'B': 0, 'C': 0, 'D': 0, 'E': 0, 'F': 0 };
-
-            currentMarksData.forEach(student => {
-                const percentage = (student.marks / student.maxMarks) * 100;
-                const grade = getGrade(percentage);
-                if (gradeCounts.hasOwnProperty(grade)) {
-                    gradeCounts[grade]++;
-                }
-            });
-
-            const testName = document.getElementById('test-name').value || "Test";
-            document.getElementById('chart-modal-title').textContent = `Grade Distribution for ${testName}`;
-
-            const ctx = document.getElementById('grade-chart').getContext('2d');
-            
-            if (gradeChart) {
-                gradeChart.destroy();
-            }
-
-            gradeChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: Object.keys(gradeCounts),
-                    datasets: [{
-                        label: '# of Students',
-                        data: Object.values(gradeCounts),
-                        backgroundColor: [
-                            'rgba(75, 192, 192, 0.6)',
-                            'rgba(54, 162, 235, 0.6)',
-                            'rgba(255, 206, 86, 0.6)',
-                            'rgba(255, 159, 64, 0.6)',
-                            'rgba(153, 102, 255, 0.6)',
-                            'rgba(255, 99, 132, 0.6)',
-                            'rgba(201, 203, 207, 0.6)'
-                        ],
-                        borderColor: [
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(255, 159, 64, 1)',
-                            'rgba(153, 102, 255, 1)',
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(201, 203, 207, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                color: '#e5e7eb',
-                                stepSize: 1
-                            },
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            }
-                        },
-                        x: {
-                            ticks: {
-                                color: '#e5e7eb',
-                            },
-                             grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    animation: {
-                        duration: 1000,
-                        easing: 'easeInOutQuart'
-                    }
-                }
-            });
-
-            openChartModal();
         }
         
         // --- CONFETTI ANIMATION ---
@@ -1893,7 +1735,7 @@
                 container.innerHTML = `<div class="waving-flag"></div>`;
             }
 
-            // Diwali (Using an example date: Oct 20th)
+            // Diwali (October 20th, 2025)
             if (month === 9 && day === 20) {
                 const container = document.getElementById('diwali-special');
                 container.classList.remove('hidden');
@@ -1940,39 +1782,6 @@
                     container.appendChild(firework);
                     setTimeout(() => firework.remove(), 2000);
                 }, 500);
-            }
-
-            // Holi (Example: March 14th)
-            if (month === 2 && day === 14) {
-                 const container = document.getElementById('holi-special');
-                 container.classList.remove('hidden');
-                 const holiColors = ['#e6007e', '#f7931d', '#00a859', '#394ba0', '#f4d300'];
-                 setInterval(() => {
-                    const puff = document.createElement('div');
-                    puff.className = 'holi-puff';
-                    puff.style.left = `${Math.random() * 100}%`;
-                    puff.style.top = `${Math.random() * 100}%`;
-                    puff.style.width = `${Math.random() * 150 + 50}px`;
-                    puff.style.height = `${Math.random() * 150 + 50}px`;
-                    puff.style.background = `radial-gradient(circle, ${holiColors[Math.floor(Math.random() * holiColors.length)]} 0%, rgba(255,255,255,0) 70%)`;
-                    puff.style.animationDelay = `${Math.random() * 2}s`;
-                    container.appendChild(puff);
-                    setTimeout(() => puff.remove(), 3000);
-                 }, 400);
-            }
-            
-            // Monsoon (July & August)
-            if (month === 6 || month === 7) {
-                 const container = document.getElementById('monsoon-special');
-                 container.classList.remove('hidden');
-                 for(let i=0; i<100; i++) {
-                    const drop = document.createElement('div');
-                    drop.className = 'raindrop';
-                    drop.style.left = `${Math.random() * 100}%`;
-                    drop.style.animationDuration = `${Math.random() * 0.5 + 0.5}s`; // 0.5-1s
-                    drop.style.animationDelay = `${Math.random() * 5}s`;
-                    container.appendChild(drop);
-                 }
             }
         }
 
@@ -2025,8 +1834,6 @@
         document.getElementById('gemini-class').addEventListener('change', () => populateSubjects('gemini'));
         document.getElementById('generate-attendance-btn').addEventListener('click', generateAttendanceMessage);
         document.getElementById('generate-marks-btn').addEventListener('click', generateMarksMessage);
-        document.getElementById('visualize-marks-btn').addEventListener('click', generateGradeChart);
-        document.getElementById('close-chart-modal').addEventListener('click', closeChartModal);
         document.getElementById('generate-request-class-btn').addEventListener('click', () => generateRequestMessage('class'));
         document.getElementById('generate-request-exam-btn').addEventListener('click', () => generateRequestMessage('exam'));
         document.getElementById('generate-gemini-questions-btn').addEventListener('click', generatePracticeQuestions);
@@ -2081,6 +1888,7 @@
     </script>
 </body>
 </html>
+
 
 
 
