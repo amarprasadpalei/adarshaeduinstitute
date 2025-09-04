@@ -130,6 +130,24 @@
         input::placeholder, textarea::placeholder { color: #a1a1aa !important; }
         select option { background: #1e293b !important; color: white !important; }
         
+        .confetti-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1000; overflow: hidden; }
+        .confetti { position: absolute; bottom: 0; opacity: 0; will-change: transform, opacity; animation: confetti-animation 3.5s ease-out forwards; }
+        @keyframes confetti-animation {
+            0% { transform: translateY(0) translateX(0) rotateZ(0) rotateY(0); opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(var(--x-drift)) rotateZ(var(--rotation)) rotateY(720deg); opacity: 0; }
+        }
+        .confetti-message {
+            position: fixed; top: 50%; left: 50%; color: white;
+            font-size: clamp(1.5rem, 5vw, 2.25rem); font-weight: bold; text-align: center;
+            text-shadow: 0 0 15px rgba(0,0,0,0.7); z-index: 1001; padding: 20px 30px;
+            background: rgba(0, 0, 0, 0.5); border-radius: 12px;
+            animation: fadeInOutPulse 3.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; opacity: 0;
+        }
+        @keyframes fadeInOutPulse {
+            0%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.7); }
+            15%, 85% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.05); }
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -1691,6 +1709,7 @@
     </script>
 </body>
 </html>
+
 
 
 
