@@ -105,14 +105,11 @@
             flex-shrink: 0;
         }
         
-        .sidebar.collapsed {
-            width: 72px;
-        }
-        
         .main-content {
             flex-grow: 1;
             overflow-y: auto;
             background-color: var(--background);
+            transition: margin-left 0.3s ease-in-out;
         }
 
         .sidebar-link {
@@ -124,19 +121,49 @@
             color: white;
         }
         
-        .sidebar.collapsed .sidebar-link span, .sidebar.collapsed .sidebar-link .badge {
-            display: none;
+        .sidebar.collapsed {
+            width: 72px;
         }
-        
-        .sidebar.collapsed .sidebar-logo .logo-text {
+        .sidebar.collapsed .sidebar-link span, 
+        .sidebar.collapsed .sidebar-link .badge,
+        .sidebar.collapsed .sidebar-logo .logo-text,
+        .sidebar.collapsed .sidebar-footer .user-name,
+        .sidebar.collapsed .sidebar-footer .user-role {
             display: none;
-        }
-        .sidebar.collapsed .sidebar-footer .user-name, .sidebar.collapsed .sidebar-footer .user-role {
-             display: none;
         }
         .sidebar.collapsed .sidebar-footer {
             justify-content: center;
         }
+
+        /* Responsive Sidebar for Mobile */
+        @media (max-width: 767px) {
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease-in-out;
+                z-index: 40;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .sidebar.collapsed {
+                width: 260px;
+            }
+            .sidebar.collapsed .sidebar-link span, 
+            .sidebar.collapsed .sidebar-link .badge,
+            .sidebar.collapsed .sidebar-logo .logo-text,
+            .sidebar.collapsed .sidebar-footer .user-name,
+            .sidebar.collapsed .sidebar-footer .user-role {
+                display: inline-block;
+            }
+            .sidebar.collapsed .sidebar-footer {
+                justify-content: flex-start;
+            }
+        }
+
 
         /* General Card/Panel Styling */
         .card {
@@ -248,13 +275,17 @@
         <!-- =================================================================== -->
         <div id="dashboard-container" class="app-container hidden">
             <!-- Sidebar is dynamically inserted here -->
+             <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-30 hidden md:hidden"></div>
             
             <!-- Main Content Area -->
             <main class="main-content">
-                <header class="p-4 md:p-6 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 dark:border-slate-700">
+                <header class="p-4 md:p-6 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm sticky top-0 z-20 flex items-center justify-between border-b border-slate-200 dark:border-slate-700">
                     <div class="flex items-center gap-4">
                         <button id="sidebar-toggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 md:hidden">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                            <i data-lucide="Menu" class="w-6 h-6"></i>
+                        </button>
+                        <button id="desktop-sidebar-toggle" class="hidden md:block p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700">
+                            <i data-lucide="PanelLeftClose" class="w-6 h-6"></i>
                         </button>
                         <h1 id="page-title" class="text-xl md:text-2xl font-bold">Dashboard</h1>
                     </div>
@@ -537,6 +568,10 @@
             } else {
                 console.error(`Section with id ${sectionId} not found.`);
             }
+             if (window.innerWidth < 768) {
+                document.getElementById('sidebar')?.classList.remove('open');
+                document.getElementById('sidebar-overlay')?.classList.add('hidden');
+            }
         };
 
         const cleanupListeners = () => {
@@ -613,7 +648,7 @@
             const userEmail = state.currentUser?.email || 'user@example.com';
             
             const sidebarHTML = `
-                <aside id="sidebar" class="sidebar flex flex-col h-full z-20">
+                <aside id="sidebar" class="sidebar flex flex-col h-full">
                     <div class="sidebar-logo p-4 flex items-center gap-3 border-b border-slate-700">
                          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-400"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>
                         <span class="logo-text text-xl font-bold text-white">Adarsha Inst.</span>
@@ -669,7 +704,7 @@
             document.getElementById('admin-marks').innerHTML = `<div class="card"><h2 class="text-xl font-bold mb-4">View Student Marks</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4"><select id="admin-marks-class" class="input-field"></select><button id="admin-view-marks-btn" class="btn-primary ripple">View Marks</button></div><div id="admin-marks-display" class="max-h-[60vh] overflow-y-auto"><p class="text-slate-500">Select a class to view marks.</p></div></div>`;
             document.getElementById('admin-notices').innerHTML = `<div class="grid grid-cols-1 lg:grid-cols-3 gap-6"><div class="lg:col-span-1"><div class="card"><h2 class="text-xl font-bold mb-4">Post a New Notice</h2><form id="add-notice-form" class="space-y-4"><input type="text" id="notice-title" placeholder="Notice Title" class="input-field" required><textarea id="notice-content" placeholder="Notice Content..." class="input-field h-32" required></textarea><button type="submit" class="btn-primary w-full ripple">Post Notice</button></form></div></div><div class="lg:col-span-2"><div class="card"><h2 class="text-xl font-bold mb-4">Active Notices</h2><div id="admin-notices-list" class="space-y-3 max-h-[60vh] overflow-y-auto"></div></div></div></div>`;
             document.getElementById('admin-teachers').innerHTML = `<div class="card"><h2 class="text-xl font-bold mb-4">Add New Teacher</h2><form id="add-teacher-form" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end"><input type="text" id="new-teacher-name" placeholder="Full Name" class="input-field" required><input type="email" id="new-teacher-email" placeholder="Email" class="input-field" required><input type="password" id="new-teacher-password" placeholder="Temporary Password" class="input-field" required><div class="md:col-span-3"><button type="submit" class="btn-primary ripple">Add Teacher</button></div></form></div><div class="card"><h2 class="text-xl font-bold mb-4">Teacher List</h2><div id="teacher-list-container" class="max-h-[500px] overflow-y-auto"></div></div>`;
-            document.getElementById('admin-students').innerHTML = `<div class="card"><h2 class="text-xl font-bold mb-4">Add New Student</h2><form id="add-student-form" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end"><input type="text" id="new-student-name" placeholder="Full Name" class="input-field" required><input type="text" id="new-student-class" placeholder="Class (e.g., 10th A)" class="input-field" required><input type="text" id="new-student-roll" placeholder="Roll Number" class="input-field" required><div><button type="submit" class="btn-primary ripple">Add Student</button></div></form></div><div class="card"><h2 class="text-xl font-bold mb-4">Student List</h2><div class="flex gap-4 mb-4"><input type="text" id="student-search-input" placeholder="Search students..." class="input-field flex-grow"><select id="student-class-filter" class="input-field w-auto"></select></div><div id="student-list-container" class="max-h-[500px] overflow-y-auto"></div></div>`;
+            document.getElementById('admin-students').innerHTML = `<div class="card"><h2 class="text-xl font-bold mb-4">Add New Student</h2><form id="add-student-form" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end"><input type="text" id="new-student-name" placeholder="Full Name" class="input-field md:col-span-1" required><input type="text" id="new-student-class" placeholder="Class (e.g., 10th A)" class="input-field md:col-span-1" required><div class="md:col-span-1"><button type="submit" class="btn-primary ripple w-full">Add Student</button></div></form></div><div class="card"><h2 class="text-xl font-bold mb-4">Student List</h2><div class="flex gap-4 mb-4"><input type="text" id="student-search-input" placeholder="Search students..." class="input-field flex-grow"><select id="student-class-filter" class="input-field w-auto"></select></div><div id="student-list-container" class="max-h-[500px] overflow-y-auto"></div></div>`;
             renderChatUI('admin-chat');
         };
 
@@ -730,7 +765,7 @@
             try {
                 const studentsQuery = query(collection(db, 'students'), where('class', '==', className));
                 const studentsSnapshot = await getDocs(studentsQuery);
-                const classStudents = studentsSnapshot.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => a.roll - b.roll);
+                const classStudents = studentsSnapshot.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => a.name.localeCompare(b.name));
 
                 if (classStudents.length === 0) {
                     sheetContainer.innerHTML = '<p class="text-slate-500">No students found in this class.</p>';
@@ -750,12 +785,11 @@
                     <div class="max-h-[50vh] overflow-y-auto">
                          <table class="w-full text-sm">
                             <thead class="bg-slate-50 dark:bg-slate-800 text-left sticky top-0">
-                                <tr><th class="p-2">Roll</th><th class="p-2">Name</th><th class="p-2 text-center">Status</th></tr>
+                                <tr><th class="p-2">Name</th><th class="p-2 text-center">Status</th></tr>
                             </thead>
                             <tbody id="attendance-tbody">
                             ${classStudents.map(student => `
-                                <tr class="border-b dark:border-slate-700" data-student-id="${student.id}" data-student-name="${student.name}" data-student-roll="${student.roll}">
-                                    <td class="p-2">${student.roll}</td>
+                                <tr class="border-b dark:border-slate-700" data-student-id="${student.id}" data-student-name="${student.name}">
                                     <td class="p-2 font-medium">${student.name}</td>
                                     <td class="p-2 text-center">
                                         <label class="mr-2"><input type="radio" name="status-${student.id}" value="present" ${existingAttendance[student.id] === 'present' || !existingAttendance[student.id] ? 'checked' : ''} required> Present</label>
@@ -783,7 +817,7 @@
             try {
                 const studentsQuery = query(collection(db, 'students'), where('class', '==', className));
                 const studentsSnapshot = await getDocs(studentsQuery);
-                const classStudents = studentsSnapshot.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => a.roll - b.roll);
+                const classStudents = studentsSnapshot.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => a.name.localeCompare(b.name));
 
                 if (classStudents.length === 0) {
                     sheetContainer.innerHTML = '<p class="text-slate-500">No students found in this class.</p>';
@@ -802,12 +836,11 @@
                      <div class="max-h-[50vh] overflow-y-auto">
                         <table class="w-full text-sm">
                             <thead class="bg-slate-50 dark:bg-slate-800 text-left sticky top-0">
-                                <tr><th class="p-2">Roll</th><th class="p-2">Name</th><th class="p-2">Marks</th></tr>
+                                <tr><th class="p-2">Name</th><th class="p-2">Marks</th></tr>
                             </thead>
                             <tbody id="marks-tbody">
                             ${classStudents.map(student => `
-                                <tr class="border-b dark:border-slate-700" data-student-id="${student.id}" data-student-name="${student.name}" data-student-roll="${student.roll}">
-                                    <td class="p-2">${student.roll}</td>
+                                <tr class="border-b dark:border-slate-700" data-student-id="${student.id}" data-student-name="${student.name}">
                                     <td class="p-2 font-medium">${student.name}</td>
                                     <td class="p-2"><input type="number" class="input-field" placeholder="0 - ${maxMarks}" value="${existingMarks[student.id] || ''}" max="${maxMarks}" min="0"></td>
                                 </tr>
@@ -1062,15 +1095,15 @@
             }
         };
 
-        const addStudent = async (name, studentClass, roll) => {
+        const addStudent = async (name, studentClass) => {
             showLoading();
             try {
-                const q = query(collection(db, 'students'), where('class', '==', studentClass), where('roll', '==', roll));
+                const q = query(collection(db, 'students'), where('class', '==', studentClass), where('name', '==', name));
                 if (!(await getDocs(q)).empty) {
-                    showToast('A student with this roll number already exists in this class.', 'error');
+                    showToast('A student with this name already exists in this class.', 'error');
                     return;
                 }
-                await addDoc(collection(db, 'students'), { name, class: studentClass, roll, createdAt: serverTimestamp() });
+                await addDoc(collection(db, 'students'), { name, class: studentClass, createdAt: serverTimestamp() });
                 showToast('Student added successfully!', 'success');
                 document.getElementById('add-student-form').reset();
             } catch (error) {
@@ -1136,7 +1169,7 @@
                  populateSelect('attendance-sheet-class', state.allClasses);
                  populateSelect('marks-class-select', state.allClasses);
                  const cont = document.getElementById('student-list-container');
-                 if(cont) cont.innerHTML = `<table class="w-full text-sm"><thead class="bg-slate-50 dark:bg-slate-800 text-left"><tr><th class="p-2">Name</th><th class="p-2">Class</th><th class="p-2">Roll</th><th class="p-2 text-center">Actions</th></tr></thead><tbody>${state.allStudents.map(s => `<tr class="border-b dark:border-slate-700"><td class="p-2 font-medium">${s.name}</td><td class="p-2">${s.class}</td><td class="p-2">${s.roll}</td><td class="p-2 text-center"><button class="delete-student-btn p-1 text-red-500" data-id="${s.id}"><i data-lucide="Trash2" class="w-4 h-4 pointer-events-none"></i></button></td></tr>`).join('')}</tbody></table>` || '<p class="text-slate-500">No students found.</p>';
+                 if(cont) cont.innerHTML = `<table class="w-full text-sm"><thead class="bg-slate-50 dark:bg-slate-800 text-left"><tr><th class="p-2">Name</th><th class="p-2">Class</th><th class="p-2 text-center">Actions</th></tr></thead><tbody>${state.allStudents.map(s => `<tr class="border-b dark:border-slate-700"><td class="p-2 font-medium">${s.name}</td><td class="p-2">${s.class}</td><td class="p-2 text-center"><button class="delete-student-btn p-1 text-red-500" data-id="${s.id}"><i data-lucide="Trash2" class="w-4 h-4 pointer-events-none"></i></button></td></tr>`).join('')}</tbody></table>` || '<p class="text-slate-500">No students found.</p>';
                  lucide.createIcons();
             });
             const unsubRequestsAdmin = onSnapshot(query(collection(db, 'requests'), orderBy('timestamp', 'desc')), snap => {
@@ -1342,7 +1375,7 @@
                 const formId = e.target.id;
                 
                 if (formId === 'add-teacher-form') addTeacher(e.target.querySelector('#new-teacher-name').value, e.target.querySelector('#new-teacher-email').value, e.target.querySelector('#new-teacher-password').value);
-                if (formId === 'add-student-form') addStudent(e.target.querySelector('#new-student-name').value, e.target.querySelector('#new-student-class').value, e.target.querySelector('#new-student-roll').value);
+                if (formId === 'add-student-form') addStudent(e.target.querySelector('#new-student-name').value, e.target.querySelector('#new-student-class').value);
                 
                 let collectionName, docData;
                 if (formId === 'add-notice-form') { collectionName = 'notices'; docData = { title: e.target.querySelector('#notice-title').value, content: e.target.querySelector('#notice-content').value, timestamp: serverTimestamp() }; }
@@ -1522,6 +1555,25 @@
         };
         const attachDashboardEventListeners = () => {
             const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            
+            document.getElementById('sidebar-toggle').addEventListener('click', () => {
+                sidebar?.classList.add('open');
+                overlay?.classList.remove('hidden');
+            });
+            
+            document.getElementById('desktop-sidebar-toggle').addEventListener('click', () => {
+                sidebar?.classList.toggle('collapsed');
+                 document.querySelector('.main-content').classList.toggle('md:ml-[72px]', sidebar?.classList.contains('collapsed'));
+                 document.querySelector('.main-content').classList.toggle('md:ml-[260px]', !sidebar?.classList.contains('collapsed'));
+
+            });
+
+            overlay?.addEventListener('click', () => {
+                 sidebar?.classList.remove('open');
+                 overlay.classList.add('hidden');
+            });
+            
             if (sidebar) {
                 sidebar.addEventListener('click', (e) => {
                     const link = e.target.closest('.sidebar-link');
@@ -1535,10 +1587,6 @@
             }
             
             document.getElementById('header-logout-btn').addEventListener('click', handleLogout);
-
-            document.getElementById('sidebar-toggle')?.addEventListener('click', () => {
-                document.getElementById('sidebar')?.classList.toggle('collapsed');
-            });
         };
         
         // ===================================================================
