@@ -27,7 +27,7 @@
     <style>
         /* Base Styling & Theme Variables */
         :root {
-            --background: #f0f2f5;
+            --background: #f1f5f9; /* A slightly cooler gray */
             --foreground: #ffffff;
             --sidebar: #1e293b;
             --sidebar-foreground: #cbd5e1;
@@ -37,35 +37,19 @@
             --text-primary: #1e293b;
             --text-secondary: #64748b;
             --border: #e2e8f0;
-            --input: #f1f5f9;
-        }
-
-        .dark {
-            --background: #0f172a;
-            --foreground: #1e293b;
-            --sidebar: #020617;
-            --sidebar-foreground: #94a3b8;
-            --sidebar-hover: #1e293b;
-            --primary: #6366f1;
-            --primary-hover: #4f46e5;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --border: #334155;
-            --input: #334155;
+            --input: #f8fafc;
         }
 
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--background);
             color: var(--text-primary);
-            transition: background-color 0.3s, color 0.3s;
         }
         
         /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: var(--background); }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        .dark ::-webkit-scrollbar-thumb { background: #475569; }
 
         /* Animations */
         @keyframes fadeIn {
@@ -218,10 +202,10 @@
         }
     </style>
 </head>
-<body class="bg-gray-100 dark:bg-slate-900">
+<body class="bg-slate-100">
 
     <!-- Loading Spinner -->
-    <div id="loading-spinner" class="fixed inset-0 bg-white/50 dark:bg-black/50 backdrop-blur-sm flex items-center justify-center z-[100] hidden">
+    <div id="loading-spinner" class="fixed inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center z-[100] hidden">
         <div class="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-indigo-600"></div>
     </div>
     
@@ -236,31 +220,31 @@
         <!-- =================================================================== -->
         <!-- ======================== LOGIN PAGE =============================== -->
         <!-- =================================================================== -->
-        <section id="login-page" class="page hidden flex items-center justify-center min-h-screen bg-slate-100 dark:bg-slate-900 fade-in">
+        <section id="login-page" class="page hidden flex items-center justify-center min-h-screen bg-slate-100 fade-in">
             <div class="w-full max-w-md">
                 <div class="text-center mb-8">
                      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto text-indigo-600"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>
-                    <h1 class="text-3xl font-bold text-slate-800 dark:text-white mt-2">Adarsha Educational Institute</h1>
-                    <p class="text-slate-500 dark:text-slate-400">Welcome back! Please sign in to your account.</p>
+                    <h1 class="text-3xl font-bold text-slate-800 mt-2">Adarsha Educational Institute</h1>
+                    <p class="text-slate-500">Welcome back! Please sign in to your account.</p>
                 </div>
 
-                <div class="card bg-white dark:bg-slate-800 p-8">
-                    <div class="flex border-b border-slate-200 dark:border-slate-700 mb-6">
+                <div class="card bg-white p-8">
+                    <div class="flex border-b border-slate-200 mb-6">
                         <button id="admin-login-tab" class="login-tab active flex-1 py-3 text-center font-semibold text-indigo-600 border-b-2 border-indigo-600 transition">Admin</button>
-                        <button id="teacher-login-tab" class="login-tab flex-1 py-3 text-center font-semibold text-slate-500 dark:text-slate-400 transition">Teacher</button>
+                        <button id="teacher-login-tab" class="login-tab flex-1 py-3 text-center font-semibold text-slate-500 transition">Teacher</button>
                     </div>
 
                     <!-- Admin Login Form -->
                     <form id="admin-login-form" class="space-y-4">
-                        <input type="email" id="admin-email" placeholder="Admin Email" class="input-field dark:bg-slate-700 dark:border-slate-600" required>
-                        <input type="password" id="admin-password" placeholder="Password" class="input-field dark:bg-slate-700 dark:border-slate-600" required>
+                        <input type="email" id="admin-email" placeholder="Admin Email" class="input-field" required>
+                        <input type="password" id="admin-password" placeholder="Password" class="input-field" required>
                         <button type="submit" class="btn-primary w-full ripple">Sign In as Admin</button>
                     </form>
 
                     <!-- Teacher Login Form -->
                     <form id="teacher-login-form" class="space-y-4 hidden">
-                        <input type="email" id="teacher-email" placeholder="Teacher Email" class="input-field dark:bg-slate-700 dark:border-slate-600" required>
-                        <input type="password" id="teacher-password" placeholder="Password" class="input-field dark:bg-slate-700 dark:border-slate-600" required>
+                        <input type="email" id="teacher-email" placeholder="Teacher Email" class="input-field" required>
+                        <input type="password" id="teacher-password" placeholder="Password" class="input-field" required>
                         <button type="submit" class="btn-primary w-full ripple">Sign In as Teacher</button>
                     </form>
                 </div>
@@ -279,24 +263,21 @@
             
             <!-- Main Content Area -->
             <main class="main-content">
-                <header class="p-4 md:p-6 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm sticky top-0 z-20 flex items-center justify-between border-b border-slate-200 dark:border-slate-700">
+                <header class="p-4 md:p-6 bg-white/80 backdrop-blur-sm sticky top-0 z-20 flex items-center justify-between border-b border-slate-200">
                     <div class="flex items-center gap-4">
-                        <button id="sidebar-toggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 md:hidden">
+                        <button id="sidebar-toggle" class="p-2 rounded-full hover:bg-slate-200 md:hidden">
                             <i data-lucide="Menu" class="w-6 h-6"></i>
                         </button>
-                        <button id="desktop-sidebar-toggle" class="hidden md:block p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700">
+                        <button id="desktop-sidebar-toggle" class="hidden md:block p-2 rounded-full hover:bg-slate-200">
                             <i data-lucide="PanelLeftClose" class="w-6 h-6"></i>
                         </button>
                         <h1 id="page-title" class="text-xl md:text-2xl font-bold">Dashboard</h1>
                     </div>
                     <div class="flex items-center gap-4">
-                         <button id="theme-toggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700">
-                            <!-- Sun and Moon icons will be toggled here -->
+                        <button id="header-logout-btn" class="p-2 rounded-full hover:bg-slate-200" title="Logout">
+                            <i data-lucide="LogOut" class="w-5 h-5 text-slate-600"></i>
                         </button>
-                        <button id="header-logout-btn" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700" title="Logout">
-                            <i data-lucide="LogOut" class="w-5 h-5 text-slate-600 dark:text-slate-400"></i>
-                        </button>
-                        <div class="w-10 h-10 rounded-full bg-indigo-200 dark:bg-indigo-900 flex items-center justify-center font-bold text-indigo-700 dark:text-indigo-300 border-2 border-indigo-400" id="user-avatar">
+                        <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center font-bold text-indigo-700 border-2 border-indigo-300" id="user-avatar">
                             A
                         </div>
                     </div>
@@ -334,9 +315,6 @@
                         </div>
                         <div class="flex items-center space-x-4">
                             <a href="#login-page" id="go-to-login" class="px-4 py-2 text-sm font-medium bg-white text-indigo-600 rounded-md hover:bg-indigo-50 transition">Admin/Teacher Login</a>
-                             <button id="student-theme-toggle" class="p-2 rounded-full hover:bg-white/20">
-                                <!-- Icons here -->
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -385,10 +363,10 @@
                             Published Attendance Sheets
                         </h2>
                         <div class="flex items-center gap-4 mb-4">
-                            <select id="attendance-sheet-month" class="input-field w-auto dark:bg-slate-700 dark:border-slate-600">
+                            <select id="attendance-sheet-month" class="input-field w-auto">
                                 <!-- Months will be populated here -->
                             </select>
-                             <select id="attendance-sheet-class" class="input-field w-auto dark:bg-slate-700 dark:border-slate-600">
+                             <select id="attendance-sheet-class" class="input-field w-auto">
                                 <!-- Classes will be populated here -->
                             </select>
                             <button id="view-attendance-sheet-btn" class="btn-primary ripple">View</button>
@@ -522,7 +500,7 @@
                     <div class="modal-content">
                         <div class="flex justify-between items-center mb-4">
                             <h2 class="text-xl font-bold">${title}</h2>
-                            <button id="modal-close-btn" class="p-1 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700">
+                            <button id="modal-close-btn" class="p-1 rounded-full hover:bg-slate-200">
                                 <i data-lucide="X"></i>
                             </button>
                         </div>
@@ -693,10 +671,10 @@
             `;
             document.getElementById('admin-overview').innerHTML = `
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div class="card flex items-center gap-4"><div class="p-3 rounded-full bg-blue-100 dark:bg-blue-900/50"><i data-lucide="Users" class="w-8 h-8 text-blue-500"></i></div><div><p class="text-sm text-slate-500 dark:text-slate-400">Total Teachers</p><p id="total-teachers-stat" class="text-2xl font-bold">0</p></div></div>
-                    <div class="card flex items-center gap-4"><div class="p-3 rounded-full bg-green-100 dark:bg-green-900/50"><i data-lucide="Contact" class="w-8 h-8 text-green-500"></i></div><div><p class="text-sm text-slate-500 dark:text-slate-400">Total Students</p><p id="total-students-stat" class="text-2xl font-bold">0</p></div></div>
-                    <div class="card flex items-center gap-4"><div class="p-3 rounded-full bg-amber-100 dark:bg-amber-900/50"><i data-lucide="Megaphone" class="w-8 h-8 text-amber-500"></i></div><div><p class="text-sm text-slate-500 dark:text-slate-400">Active Notices</p><p id="active-notices-stat" class="text-2xl font-bold">0</p></div></div>
-                    <div class="card flex items-center gap-4"><div class="p-3 rounded-full bg-red-100 dark:bg-red-900/50"><i data-lucide="Send" class="w-8 h-8 text-red-500"></i></div><div><p class="text-sm text-slate-500 dark:text-slate-400">Pending Requests</p><p id="pending-requests-stat" class="text-2xl font-bold">0</p></div></div>
+                    <div class="card flex items-center gap-4"><div class="p-3 rounded-full bg-blue-100"><i data-lucide="Users" class="w-8 h-8 text-blue-500"></i></div><div><p class="text-sm text-slate-500">Total Teachers</p><p id="total-teachers-stat" class="text-2xl font-bold">0</p></div></div>
+                    <div class="card flex items-center gap-4"><div class="p-3 rounded-full bg-green-100"><i data-lucide="Contact" class="w-8 h-8 text-green-500"></i></div><div><p class="text-sm text-slate-500">Total Students</p><p id="total-students-stat" class="text-2xl font-bold">0</p></div></div>
+                    <div class="card flex items-center gap-4"><div class="p-3 rounded-full bg-amber-100"><i data-lucide="Megaphone" class="w-8 h-8 text-amber-500"></i></div><div><p class="text-sm text-slate-500">Active Notices</p><p id="active-notices-stat" class="text-2xl font-bold">0</p></div></div>
+                    <div class="card flex items-center gap-4"><div class="p-3 rounded-full bg-red-100"><i data-lucide="Send" class="w-8 h-8 text-red-500"></i></div><div><p class="text-sm text-slate-500">Pending Requests</p><p id="pending-requests-stat" class="text-2xl font-bold">0</p></div></div>
                 </div>
             `;
             document.getElementById('admin-requests').innerHTML = `<div class="card"><h2 class="text-xl font-bold mb-4">Teacher Requests</h2><div id="admin-requests-list" class="space-y-3 max-h-[70vh] overflow-y-auto"></div></div>`;
@@ -722,10 +700,10 @@
             document.getElementById('teacher-marks').innerHTML = `<div class="card">
                 <h2 class="text-xl font-bold mb-4">Enter Marks</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4 items-end">
-                    <div><label class="text-sm font-medium text-slate-600 dark:text-slate-400">Test Name</label><input type="text" id="teacher-marks-test-name" placeholder="e.g., Chapter 5 Test" class="input-field"></div>
-                    <div><label class="text-sm font-medium text-slate-600 dark:text-slate-400">Class</label><select id="teacher-marks-class" class="input-field"></select></div>
-                    <div><label class="text-sm font-medium text-slate-600 dark:text-slate-400">Subject</label><select id="teacher-marks-subject" class="input-field"></select></div>
-                    <div><label class="text-sm font-medium text-slate-600 dark:text-slate-400">Max Marks</label><input type="number" id="teacher-marks-max" placeholder="e.g., 100" class="input-field"></div>
+                    <div><label class="text-sm font-medium text-slate-600">Test Name</label><input type="text" id="teacher-marks-test-name" placeholder="e.g., Chapter 5 Test" class="input-field"></div>
+                    <div><label class="text-sm font-medium text-slate-600">Class</label><select id="teacher-marks-class" class="input-field"></select></div>
+                    <div><label class="text-sm font-medium text-slate-600">Subject</label><select id="teacher-marks-subject" class="input-field"></select></div>
+                    <div><label class="text-sm font-medium text-slate-600">Max Marks</label><input type="number" id="teacher-marks-max" placeholder="e.g., 100" class="input-field"></div>
                     <div class="lg:col-span-4">
                         <button id="teacher-load-marks-sheet-btn" class="btn-primary ripple">Load Marks Sheet</button>
                     </div>
@@ -742,8 +720,8 @@
             if (!container) return;
             container.innerHTML = `
                 <div class="card h-[70vh] flex flex-col">
-                    <h2 class="text-xl font-bold mb-4 border-b pb-2 dark:border-slate-700">Internal Group Chat</h2>
-                    <div id="${containerId}-messages" class="flex-grow overflow-y-auto mb-4 p-2 space-y-4 bg-slate-50 dark:bg-slate-800/50 rounded-md">
+                    <h2 class="text-xl font-bold mb-4 border-b pb-2 border-slate-200">Internal Group Chat</h2>
+                    <div id="${containerId}-messages" class="flex-grow overflow-y-auto mb-4 p-2 space-y-4 bg-slate-50 rounded-md">
                         <!-- Messages will appear here -->
                     </div>
                     <form id="${containerId}-form" class="flex gap-2">
@@ -784,12 +762,12 @@
                     <h3 class="text-lg font-bold mt-4 mb-2">Attendance for ${className} - ${subject} on ${date}</h3>
                     <div class="max-h-[50vh] overflow-y-auto">
                          <table class="w-full text-sm">
-                            <thead class="bg-slate-50 dark:bg-slate-800 text-left sticky top-0">
+                            <thead class="bg-slate-50 text-left sticky top-0">
                                 <tr><th class="p-2">Name</th><th class="p-2 text-center">Status</th></tr>
                             </thead>
                             <tbody id="attendance-tbody">
                             ${classStudents.map(student => `
-                                <tr class="border-b dark:border-slate-700" data-student-id="${student.id}" data-student-name="${student.name}">
+                                <tr class="border-b border-slate-200" data-student-id="${student.id}" data-student-name="${student.name}">
                                     <td class="p-2 font-medium">${student.name}</td>
                                     <td class="p-2 text-center">
                                         <label class="mr-2"><input type="radio" name="status-${student.id}" value="present" ${existingAttendance[student.id] === 'present' || !existingAttendance[student.id] ? 'checked' : ''} required> Present</label>
@@ -835,12 +813,12 @@
                     <h3 class="text-lg font-bold mt-4 mb-2">Enter Marks for ${testName} (${subject}) - Class ${className} (Max: ${maxMarks})</h3>
                      <div class="max-h-[50vh] overflow-y-auto">
                         <table class="w-full text-sm">
-                            <thead class="bg-slate-50 dark:bg-slate-800 text-left sticky top-0">
+                            <thead class="bg-slate-50 text-left sticky top-0">
                                 <tr><th class="p-2">Name</th><th class="p-2">Marks</th></tr>
                             </thead>
                             <tbody id="marks-tbody">
                             ${classStudents.map(student => `
-                                <tr class="border-b dark:border-slate-700" data-student-id="${student.id}" data-student-name="${student.name}">
+                                <tr class="border-b border-slate-200" data-student-id="${student.id}" data-student-name="${student.name}">
                                     <td class="p-2 font-medium">${student.name}</td>
                                     <td class="p-2"><input type="number" class="input-field" placeholder="0 - ${maxMarks}" value="${existingMarks[student.id] || ''}" max="${maxMarks}" min="0"></td>
                                 </tr>
@@ -880,7 +858,7 @@
                 
                 display.innerHTML = `
                     <table class="w-full text-sm">
-                        <thead class="bg-slate-100 dark:bg-slate-800">
+                        <thead class="bg-slate-100">
                             <tr>
                                 <th class="p-2 text-left">Student Name</th>
                                 <th class="p-2 text-left">Status</th>
@@ -891,7 +869,7 @@
                         </thead>
                         <tbody>
                             ${attendanceData.map(a => `
-                                <tr class="border-b dark:border-slate-700">
+                                <tr class="border-b border-slate-200">
                                     <td class="p-2 font-medium">${a.studentName}</td>
                                     <td class="p-2">
                                         <span class="${a.status === 'present' ? 'text-green-600' : 'text-red-600'} font-semibold">${a.status.charAt(0).toUpperCase() + a.status.slice(1)}</span>
@@ -943,17 +921,17 @@
 
                 display.innerHTML = Object.entries(marksByTest).map(([testName, subjects]) => `
                     <div class="mb-8">
-                        <h3 class="text-xl font-bold mb-4 p-2 bg-slate-100 dark:bg-slate-800 rounded-md">${testName}</h3>
+                        <h3 class="text-xl font-bold mb-4 p-2 bg-slate-100 rounded-md">${testName}</h3>
                         ${Object.entries(subjects).map(([subject, data]) => `
                             <div class="mb-6 ml-4">
                                 <h4 class="font-bold text-lg mb-2">${subject} (Out of ${data.maxMarks || 'N/A'})</h4>
                                 <table class="w-full text-sm">
-                                    <thead class="bg-slate-50 dark:bg-slate-700">
+                                    <thead class="bg-slate-50">
                                         <tr><th class="p-2 text-left">Student Name</th><th class="p-2 text-left">Marks Obtained</th></tr>
                                     </thead>
                                     <tbody>
                                         ${data.marks.map(m => `
-                                            <tr class="border-b dark:border-slate-700">
+                                            <tr class="border-b border-slate-200">
                                                 <td class="p-2 font-medium">${m.studentName}</td>
                                                 <td class="p-2">${m.marks}</td>
                                             </tr>`).join('')}
@@ -1145,16 +1123,16 @@
                 const cont = document.getElementById('admin-notices-list');
                 if(!cont) return;
                 if (snap.empty) { cont.innerHTML = '<p class="text-slate-500">No active notices.</p>'; return; }
-                cont.innerHTML = snap.docs.map(d => `<div class="p-3 rounded-md bg-slate-50 dark:bg-slate-800/50 flex justify-between items-start"><div><h3 class="font-semibold">${d.data().title}</h3><p class="text-sm text-slate-500">${d.data().content}</p><p class="text-xs text-slate-400 mt-1">${formatDate(d.data().timestamp)}</p></div><button class="delete-notice-btn p-1 text-red-500 hover:bg-red-100 dark:hover:bg-red-900/50 rounded-full" data-id="${d.id}"><i data-lucide="Trash2" class="w-4 h-4 pointer-events-none"></i></button></div>`).join('');
+                cont.innerHTML = snap.docs.map(d => `<div class="p-3 rounded-md bg-slate-50 flex justify-between items-start"><div><h3 class="font-semibold">${d.data().title}</h3><p class="text-sm text-slate-500">${d.data().content}</p><p class="text-xs text-slate-400 mt-1">${formatDate(d.data().timestamp)}</p></div><button class="delete-notice-btn p-1 text-red-500 hover:bg-red-100 rounded-full" data-id="${d.id}"><i data-lucide="Trash2" class="w-4 h-4 pointer-events-none"></i></button></div>`).join('');
                 lucide.createIcons();
             });
             const unsubTeachersList = onSnapshot(query(collection(db, 'teachers'), orderBy('name')), snap => {
                  const cont = document.getElementById('teacher-list-container');
                  if(!cont) return;
                  if(snap.empty){ cont.innerHTML = '<p class="text-slate-500">No teachers found.</p>'; return; }
-                 cont.innerHTML = `<table class="w-full text-sm"><thead class="bg-slate-50 dark:bg-slate-800 text-left"><tr class="border-b dark:border-slate-700"><th class="p-2">Name</th><th class="p-2">Email</th><th class="p-2">Assigned Classes</th><th class="p-2 text-center">Actions</th></tr></thead><tbody>${snap.docs.map(d => {
+                 cont.innerHTML = `<table class="w-full text-sm"><thead class="bg-slate-50 text-left"><tr class="border-b border-slate-200"><th class="p-2">Name</th><th class="p-2">Email</th><th class="p-2">Assigned Classes</th><th class="p-2 text-center">Actions</th></tr></thead><tbody>${snap.docs.map(d => {
                      const t = d.data();
-                     return `<tr class="border-b dark:border-slate-700"><td class="p-2 font-medium">${t.name}</td><td class="p-2">${t.email}</td><td class="p-2">${t.assignedClasses.map(c => `<span class="bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">${c.class} (${c.subject})</span>`).join('') || 'None'}</td><td class="p-2 text-center"><button class="assign-class-btn text-blue-500 p-1" data-id="${d.id}" data-name="${t.name}">Assign</button><button class="delete-teacher-btn text-red-500 p-1" data-id="${d.id}"><i data-lucide="Trash2" class="w-4 h-4 pointer-events-none"></i></button></td></tr>`;
+                     return `<tr class="border-b border-slate-200"><td class="p-2 font-medium">${t.name}</td><td class="p-2">${t.email}</td><td class="p-2">${t.assignedClasses.map(c => `<span class="bg-indigo-100 text-indigo-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">${c.class} (${c.subject})</span>`).join('') || 'None'}</td><td class="p-2 text-center"><button class="assign-class-btn text-blue-500 p-1" data-id="${d.id}" data-name="${t.name}">Assign</button><button class="delete-teacher-btn text-red-500 p-1" data-id="${d.id}"><i data-lucide="Trash2" class="w-4 h-4 pointer-events-none"></i></button></td></tr>`;
                  }).join('')}</tbody></table>`;
                  lucide.createIcons();
             });
@@ -1169,17 +1147,17 @@
                  populateSelect('attendance-sheet-class', state.allClasses);
                  populateSelect('marks-class-select', state.allClasses);
                  const cont = document.getElementById('student-list-container');
-                 if(cont) cont.innerHTML = `<table class="w-full text-sm"><thead class="bg-slate-50 dark:bg-slate-800 text-left"><tr><th class="p-2">Name</th><th class="p-2">Class</th><th class="p-2 text-center">Actions</th></tr></thead><tbody>${state.allStudents.map(s => `<tr class="border-b dark:border-slate-700"><td class="p-2 font-medium">${s.name}</td><td class="p-2">${s.class}</td><td class="p-2 text-center"><button class="delete-student-btn p-1 text-red-500" data-id="${s.id}"><i data-lucide="Trash2" class="w-4 h-4 pointer-events-none"></i></button></td></tr>`).join('')}</tbody></table>` || '<p class="text-slate-500">No students found.</p>';
+                 if(cont) cont.innerHTML = `<table class="w-full text-sm"><thead class="bg-slate-50 text-left"><tr><th class="p-2">Name</th><th class="p-2">Class</th><th class="p-2 text-center">Actions</th></tr></thead><tbody>${state.allStudents.map(s => `<tr class="border-b border-slate-200"><td class="p-2 font-medium">${s.name}</td><td class="p-2">${s.class}</td><td class="p-2 text-center"><button class="delete-student-btn p-1 text-red-500" data-id="${s.id}"><i data-lucide="Trash2" class="w-4 h-4 pointer-events-none"></i></button></td></tr>`).join('')}</tbody></table>` || '<p class="text-slate-500">No students found.</p>';
                  lucide.createIcons();
             });
             const unsubRequestsAdmin = onSnapshot(query(collection(db, 'requests'), orderBy('timestamp', 'desc')), snap => {
                 const cont = document.getElementById('admin-requests-list');
                 if(!cont) return;
                 if(snap.empty){ cont.innerHTML = '<p class="text-slate-500">No requests found.</p>'; return; }
-                const statusColors = { pending: 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300', approved: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300', denied: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' };
+                const statusColors = { pending: 'bg-amber-100 text-amber-800', approved: 'bg-green-100 text-green-800', denied: 'bg-red-100 text-red-800' };
                 cont.innerHTML = snap.docs.map(d => {
                     const r = d.data();
-                    return `<div class="p-3 rounded-md bg-slate-50 dark:bg-slate-800/50"><div class="flex justify-between items-start"><div><h3 class="font-semibold">${r.title}</h3><p class="text-sm text-slate-600 dark:text-slate-400">From: ${r.teacherName}</p><p class="text-sm text-slate-500">${r.content}</p></div><span class="text-xs font-medium px-2.5 py-0.5 rounded-full ${statusColors[r.status]}">${r.status}</span></div><p class="text-xs text-slate-400 text-right mt-1">${formatDate(r.timestamp)}</p>${r.status === 'pending' ? `<div class="flex gap-2 mt-2 border-t dark:border-slate-700 pt-2"><button class="approve-request-btn text-sm bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded" data-id="${d.id}">Approve</button><button class="deny-request-btn text-sm bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded" data-id="${d.id}">Deny</button></div>` : ''}</div>`
+                    return `<div class="p-3 rounded-md bg-slate-50"><div class="flex justify-between items-start"><div><h3 class="font-semibold">${r.title}</h3><p class="text-sm text-slate-600">From: ${r.teacherName}</p><p class="text-sm text-slate-500">${r.content}</p></div><span class="text-xs font-medium px-2.5 py-0.5 rounded-full ${statusColors[r.status]}">${r.status}</span></div><p class="text-xs text-slate-400 text-right mt-1">${formatDate(r.timestamp)}</p>${r.status === 'pending' ? `<div class="flex gap-2 mt-2 border-t border-slate-200 pt-2"><button class="approve-request-btn text-sm bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded" data-id="${d.id}">Approve</button><button class="deny-request-btn text-sm bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded" data-id="${d.id}">Deny</button></div>` : ''}</div>`
                 }).join('');
             });
             const unsubChat = onSnapshot(query(collection(db, 'chat'), orderBy('timestamp', 'desc'), limit(50)), snap => {
@@ -1188,7 +1166,7 @@
                 cont.innerHTML = snap.docs.reverse().map(d => {
                     const msg = d.data();
                     const isMe = msg.senderId === state.currentUser.uid;
-                    return `<div class="flex ${isMe ? 'justify-end' : 'justify-start'}"><div class="max-w-xs lg:max-w-md p-3 rounded-lg ${isMe ? 'bg-indigo-500 text-white' : 'bg-slate-200 dark:bg-slate-700'}"><p class="text-sm">${msg.text}</p><p class="text-xs opacity-70 mt-1 text-right">${msg.senderEmail.split('@')[0]} at ${formatTime(msg.timestamp)}</p></div></div>`;
+                    return `<div class="flex ${isMe ? 'justify-end' : 'justify-start'}"><div class="max-w-xs lg:max-w-md p-3 rounded-lg ${isMe ? 'bg-indigo-500 text-white' : 'bg-slate-200'}"><p class="text-sm">${msg.text}</p><p class="text-xs opacity-70 mt-1 text-right">${msg.senderEmail.split('@')[0]} at ${formatTime(msg.timestamp)}</p></div></div>`;
                 }).join('');
                 cont.scrollTop = cont.scrollHeight;
             });
@@ -1200,7 +1178,7 @@
                     state.currentTeacherData = docSnap.data();
                     document.getElementById('teacher-welcome-name').textContent = state.currentTeacherData.name;
                     const classCont = document.getElementById('teacher-assigned-classes');
-                    if (classCont) classCont.innerHTML = state.currentTeacherData.assignedClasses.map(c => `<div class="p-3 bg-slate-100 dark:bg-slate-800 rounded-md font-medium">${c.class} - ${c.subject}</div>`).join('') || '<p>No classes assigned.</p>';
+                    if (classCont) classCont.innerHTML = state.currentTeacherData.assignedClasses.map(c => `<div class="p-3 bg-slate-100 rounded-md font-medium">${c.class} - ${c.subject}</div>`).join('') || '<p>No classes assigned.</p>';
                     populateSelect('teacher-attendance-class-subject', state.currentTeacherData.assignedClasses, c => `${c.class} - ${c.subject}`, c => `${c.class}|${c.subject}`);
                     
                     const uniqueClasses = [...new Set(state.currentTeacherData.assignedClasses.map(c => c.class))];
@@ -1226,8 +1204,8 @@
                 if (snap.empty) { cont.innerHTML = '<p class="text-slate-500">You have not submitted any requests.</p>'; return; }
                  cont.innerHTML = snap.docs.map(d => {
                     const r = d.data();
-                    const statusColors = { pending: 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300', approved: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300', denied: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' };
-                    return `<div class="p-3 rounded-md bg-slate-50 dark:bg-slate-800/50"><div class="flex justify-between items-start"><div><h3 class="font-semibold">${r.title}</h3><p class="text-sm text-slate-500">${r.content}</p></div><span class="text-xs font-medium px-2.5 py-0.5 rounded-full ${statusColors[r.status]}">${r.status}</span></div><p class="text-xs text-slate-400 text-right mt-1">${formatDate(r.timestamp)}</p></div>`;
+                    const statusColors = { pending: 'bg-amber-100 text-amber-800', approved: 'bg-green-100 text-green-800', denied: 'bg-red-100 text-red-800' };
+                    return `<div class="p-3 rounded-md bg-slate-50"><div class="flex justify-between items-start"><div><h3 class="font-semibold">${r.title}</h3><p class="text-sm text-slate-500">${r.content}</p></div><span class="text-xs font-medium px-2.5 py-0.5 rounded-full ${statusColors[r.status]}">${r.status}</span></div><p class="text-xs text-slate-400 text-right mt-1">${formatDate(r.timestamp)}</p></div>`;
                 }).join('');
             });
             const unsubChat = onSnapshot(query(collection(db, 'chat'), orderBy('timestamp', 'desc'), limit(50)), snap => {
@@ -1236,7 +1214,7 @@
                 cont.innerHTML = snap.docs.reverse().map(d => {
                     const msg = d.data();
                     const isMe = msg.senderId === state.currentUser.uid;
-                    return `<div class="flex ${isMe ? 'justify-end' : 'justify-start'}"><div class="max-w-xs lg:max-w-md p-3 rounded-lg ${isMe ? 'bg-indigo-500 text-white' : 'bg-slate-200 dark:bg-slate-700'}"><p class="text-sm">${msg.text}</p><p class="text-xs opacity-70 mt-1 text-right">${msg.senderEmail.split('@')[0]} at ${formatTime(msg.timestamp)}</p></div></div>`;
+                    return `<div class="flex ${isMe ? 'justify-end' : 'justify-start'}"><div class="max-w-xs lg:max-w-md p-3 rounded-lg ${isMe ? 'bg-indigo-500 text-white' : 'bg-slate-200'}"><p class="text-sm">${msg.text}</p><p class="text-xs opacity-70 mt-1 text-right">${msg.senderEmail.split('@')[0]} at ${formatTime(msg.timestamp)}</p></div></div>`;
                 }).join('');
                 cont.scrollTop = cont.scrollHeight;
             });
@@ -1272,7 +1250,7 @@
                 if (snapshot.empty) { container.innerHTML = `<p class="text-slate-500">No notices available at the moment.</p>`; return; }
                 container.innerHTML = snapshot.docs.map(doc => {
                     const notice = doc.data();
-                    return `<div class="p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700"><h3 class="font-bold text-md">${notice.title}</h3><p class="text-sm text-slate-600 dark:text-slate-400 mt-1">${notice.content}</p><p class="text-xs text-slate-400 dark:text-slate-500 mt-2 text-right">Posted on: ${formatDate(notice.timestamp)}</p></div>`;
+                    return `<div class="p-4 rounded-lg bg-slate-50 border border-slate-200"><h3 class="font-bold text-md">${notice.title}</h3><p class="text-sm text-slate-600 mt-1">${notice.content}</p><p class="text-xs text-slate-400 mt-2 text-right">Posted on: ${formatDate(notice.timestamp)}</p></div>`;
                 }).join('');
             });
             
@@ -1283,7 +1261,7 @@
                  if(!container) return;
                  if (snapshot.empty) { container.innerHTML = `<p class="text-slate-500">No absentees reported for today yet.</p>`; return; }
                 const absenteeData = snapshot.docs.map(doc => doc.data());
-                container.innerHTML = `<table class="w-full text-sm text-left"><thead class="bg-slate-100 dark:bg-slate-800"><tr><th class="p-2">Student Name</th><th class="p-2">Class</th><th class="p-2">Subject</th><th class="p-2">Marked By</th></tr></thead><tbody>${absenteeData.map(a => `<tr class="border-b dark:border-slate-700"><td class="p-2">${a.studentName}</td><td class="p-2">${a.class}</td><td class="p-2">${a.subject}</td><td class="p-2">${a.teacherName}</td></tr>`).join('')}</tbody></table>`;
+                container.innerHTML = `<table class="w-full text-sm text-left"><thead class="bg-slate-100"><tr><th class="p-2">Student Name</th><th class="p-2">Class</th><th class="p-2">Subject</th><th class="p-2">Marked By</th></tr></thead><tbody>${absenteeData.map(a => `<tr class="border-b border-slate-200"><td class="p-2">${a.studentName}</td><td class="p-2">${a.class}</td><td class="p-2">${a.subject}</td><td class="p-2">${a.teacherName}</td></tr>`).join('')}</tbody></table>`;
             });
             
             const marksQuery = query(collection(db, 'marks'));
@@ -1314,20 +1292,20 @@
                 display.innerHTML = Object.entries(marksByClass).map(([className, tests]) => {
                     return `
                     <div class="mb-10">
-                        <h2 class="text-2xl font-bold mb-4 p-3 bg-indigo-50 dark:bg-indigo-900/50 rounded-lg sticky top-0">${className}</h2>
+                        <h2 class="text-2xl font-bold mb-4 p-3 bg-indigo-50 rounded-lg sticky top-0">${className}</h2>
                         ${Object.entries(tests).map(([testName, subjects]) => `
                             <div class="mb-8 ml-4">
-                                <h3 class="text-xl font-semibold mb-4 p-2 bg-slate-100 dark:bg-slate-800 rounded-md">${testName}</h3>
+                                <h3 class="text-xl font-semibold mb-4 p-2 bg-slate-100 rounded-md">${testName}</h3>
                                 ${Object.entries(subjects).map(([subject, data]) => `
                                     <div class="mb-6 ml-4">
                                         <h4 class="font-bold text-lg mb-2">${subject} (Out of ${data.maxMarks || 'N/A'})</h4>
                                         <table class="w-full text-sm">
-                                            <thead class="bg-slate-50 dark:bg-slate-700">
+                                            <thead class="bg-slate-50">
                                                 <tr><th class="p-2 text-left">Student Name</th><th class="p-2 text-left">Marks Obtained</th></tr>
                                             </thead>
                                             <tbody>
                                                 ${data.marks.sort((a,b) => a.studentName.localeCompare(b.studentName)).map(m => `
-                                                    <tr class="border-b dark:border-slate-700">
+                                                    <tr class="border-b border-slate-200">
                                                         <td class="p-2 font-medium">${m.studentName}</td>
                                                         <td class="p-2">${m.marks}</td>
                                                     </tr>`).join('')}
@@ -1342,26 +1320,6 @@
             });
 
             state.unsubscribeListeners.push(unsubNotices, unsubAbsentees, unsubMarks);
-        };
-        
-        const initTheme = () => {
-            const themeToggle = document.getElementById('theme-toggle');
-            const studentThemeToggle = document.getElementById('student-theme-toggle');
-            const sunIcon = `<i data-lucide="Sun" class="w-6 h-6"></i>`, moonIcon = `<i data-lucide="Moon" class="w-6 h-6"></i>`;
-            const applyTheme = (theme) => {
-                document.documentElement.classList.toggle('dark', theme === 'dark');
-                themeToggle.innerHTML = studentThemeToggle.innerHTML = theme === 'dark' ? sunIcon : moonIcon;
-                lucide.createIcons();
-            };
-            const initialTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-            applyTheme(initialTheme);
-            const toggleTheme = () => {
-                const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
-                localStorage.setItem('theme', newTheme);
-                applyTheme(newTheme);
-            };
-            themeToggle.addEventListener('click', toggleTheme);
-            studentThemeToggle.addEventListener('click', toggleTheme);
         };
         
         // ===================================================================
@@ -1594,8 +1552,8 @@
         // ===================================================================
         
         const init = () => {
+            lucide.createIcons();
             attachLoginEventListeners();
-            initTheme();
             attachAllDashboardActionListeners(); 
             if (window.location.hash === '#login-page') showPage('login-page');
             else showPage('student-portal');
