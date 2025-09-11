@@ -274,12 +274,13 @@
                         <h1 id="page-title" class="text-xl md:text-2xl font-bold">Dashboard</h1>
                     </div>
                     <div class="flex items-center gap-4">
-                        <button id="header-logout-btn" class="p-2 rounded-full hover:bg-slate-200" title="Logout">
-                            <i data-lucide="LogOut" class="w-5 h-5 text-slate-600"></i>
-                        </button>
                         <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center font-bold text-indigo-700 border-2 border-indigo-300" id="user-avatar">
                             A
                         </div>
+                        <button id="header-logout-btn" class="flex items-center gap-2 px-3 py-2 rounded-md bg-slate-100 hover:bg-slate-200 transition-colors" title="Logout">
+                            <i data-lucide="LogOut" class="w-5 h-5 text-slate-600"></i>
+                            <span class="font-semibold text-slate-700 hidden sm:inline">Logout</span>
+                        </button>
                     </div>
                 </header>
                 
@@ -376,11 +377,11 @@
                         </div>
                     </div>
                     
-                     <!-- Published Marks Sheets -->
+                      <!-- Published Marks Sheets -->
                     <div class="card md:col-span-2 lg:col-span-3">
                         <h2 class="text-xl font-bold mb-4 flex items-center">
                             <i data-lucide="GraduationCap" class="w-6 h-6 mr-2 text-green-500"></i>
-                           All Published Marks
+                            All Published Marks
                         </h2>
                         <div id="student-marks-display" class="max-h-[60vh] overflow-y-auto">
                            <p class="text-slate-500">Loading all published marks...</p>
@@ -447,6 +448,11 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // --- NEW ---
+        // Automatically log out any existing user on every page load to ensure a fresh session.
+        signOut(auth).catch(error => console.log("No active session to log out or logout failed:", error));
+        // -----------
+
         // Global State
         const state = {
             currentUser: null,
@@ -505,14 +511,14 @@
                             </button>
                         </div>
                         <div class="modal-body">${contentHTML}</div>
-                        <div class="modal-footer mt-6 text-right">${footerHTML}</div>
+                        <div class="modal-footer mt-6 text-right space-x-2">${footerHTML}</div>
                     </div>
                 </div>
             `;
             DOMElements.modalContainer.innerHTML = modalHTML;
             lucide.createIcons();
             document.getElementById('modal-backdrop').addEventListener('click', (e) => {
-                if (e.target.id === 'modal-backdrop' || e.target.closest('#modal-close-btn')) {
+                if (e.target.id === 'modal-backdrop' || e.target.closest('#modal-close-btn') || e.target.closest('#cancel-delete')) {
                     closeModal();
                 }
             });
@@ -645,7 +651,7 @@
                     <div class="sidebar-footer p-3 border-t border-slate-700">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center font-bold text-white">${userInitial}</div>
-                            <div class="flex-grow">
+                            <div class="flex-grow min-w-0">
                                 <p class="font-semibold text-sm text-white user-name truncate" title="${userEmail}">${userEmail}</p>
                                 <p class="text-xs text-slate-400 user-role">${role.charAt(0).toUpperCase() + role.slice(1)}</p>
                             </div>
@@ -762,21 +768,21 @@
                     <h3 class="text-lg font-bold mt-4 mb-2">Attendance for ${className} - ${subject} on ${date}</h3>
                     <div class="max-h-[50vh] overflow-y-auto">
                          <table class="w-full text-sm">
-                            <thead class="bg-slate-50 text-left sticky top-0">
-                                <tr><th class="p-2">Name</th><th class="p-2 text-center">Status</th></tr>
-                            </thead>
-                            <tbody id="attendance-tbody">
+                             <thead class="bg-slate-50 text-left sticky top-0">
+                                 <tr><th class="p-2">Name</th><th class="p-2 text-center">Status</th></tr>
+                             </thead>
+                             <tbody id="attendance-tbody">
                             ${classStudents.map(student => `
-                                <tr class="border-b border-slate-200" data-student-id="${student.id}" data-student-name="${student.name}">
-                                    <td class="p-2 font-medium">${student.name}</td>
-                                    <td class="p-2 text-center">
-                                        <label class="mr-2"><input type="radio" name="status-${student.id}" value="present" ${existingAttendance[student.id] === 'present' || !existingAttendance[student.id] ? 'checked' : ''} required> Present</label>
-                                        <label><input type="radio" name="status-${student.id}" value="absent" ${existingAttendance[student.id] === 'absent' ? 'checked' : ''}> Absent</label>
-                                    </td>
-                                </tr>
+                                 <tr class="border-b border-slate-200" data-student-id="${student.id}" data-student-name="${student.name}">
+                                     <td class="p-2 font-medium">${student.name}</td>
+                                     <td class="p-2 text-center">
+                                         <label class="mr-2"><input type="radio" name="status-${student.id}" value="present" ${existingAttendance[student.id] === 'present' || !existingAttendance[student.id] ? 'checked' : ''} required> Present</label>
+                                         <label><input type="radio" name="status-${student.id}" value="absent" ${existingAttendance[student.id] === 'absent' ? 'checked' : ''}> Absent</label>
+                                     </td>
+                                 </tr>
                             `).join('')}
-                            </tbody>
-                        </table>
+                             </tbody>
+                         </table>
                     </div>
                     <div class="mt-4 flex justify-end gap-2"><button id="save-attendance-btn" class="btn-primary ripple">Save Attendance</button></div>
                 `;
@@ -812,19 +818,19 @@
                 sheetContainer.innerHTML = `
                     <h3 class="text-lg font-bold mt-4 mb-2">Enter Marks for ${testName} (${subject}) - Class ${className} (Max: ${maxMarks})</h3>
                      <div class="max-h-[50vh] overflow-y-auto">
-                        <table class="w-full text-sm">
-                            <thead class="bg-slate-50 text-left sticky top-0">
-                                <tr><th class="p-2">Name</th><th class="p-2">Marks</th></tr>
-                            </thead>
-                            <tbody id="marks-tbody">
+                         <table class="w-full text-sm">
+                             <thead class="bg-slate-50 text-left sticky top-0">
+                                 <tr><th class="p-2">Name</th><th class="p-2">Marks</th></tr>
+                             </thead>
+                             <tbody id="marks-tbody">
                             ${classStudents.map(student => `
-                                <tr class="border-b border-slate-200" data-student-id="${student.id}" data-student-name="${student.name}">
-                                    <td class="p-2 font-medium">${student.name}</td>
-                                    <td class="p-2"><input type="number" class="input-field" placeholder="0 - ${maxMarks}" value="${existingMarks[student.id] || ''}" max="${maxMarks}" min="0"></td>
-                                </tr>
+                                 <tr class="border-b border-slate-200" data-student-id="${student.id}" data-student-name="${student.name}">
+                                     <td class="p-2 font-medium">${student.name}</td>
+                                     <td class="p-2"><input type="number" class="input-field" placeholder="0 - ${maxMarks}" value="${existingMarks[student.id] || ''}" max="${maxMarks}" min="0"></td>
+                                 </tr>
                             `).join('')}
-                            </tbody>
-                        </table>
+                             </tbody>
+                         </table>
                     </div>
                     <div class="mt-4 flex justify-end gap-2"><button id="save-marks-btn" class="btn-primary ripple">Save Marks</button></div>
                 `;
@@ -1056,21 +1062,30 @@
             }
         };
         
-        const deleteTeacher = async (teacherId) => {
-             if (!confirm("Are you sure? This will delete their login and data.")) return;
-             showToast('For security, deleting user accounts must be done via a backend function. Deleting teacher data from Firestore only.', 'warning');
-            showLoading();
-            try {
-                const batch = writeBatch(db);
-                batch.delete(doc(db, 'teachers', teacherId));
-                batch.delete(doc(db, 'users', teacherId));
-                await batch.commit();
-                showToast('Teacher data deleted from Firestore.', 'success');
-            } catch(error) {
-                showToast(`Error: ${error.message}`, 'error');
-            } finally {
-                hideLoading();
-            }
+        const deleteTeacher = (teacherId) => {
+            showModal(
+                'Confirm Deletion',
+                `<p>Are you sure? This action will delete the teacher's data from Firestore.</p>
+                 <p class="text-sm text-slate-500 mt-2">Note: For security, their login account must be deleted manually from the Firebase Authentication console.</p>`,
+                `<button id="cancel-delete" class="px-4 py-2 rounded-md hover:bg-slate-100">Cancel</button>
+                 <button id="confirm-delete-teacher" class="btn-primary ripple bg-red-600 hover:bg-red-700">Delete Teacher Data</button>`
+            );
+
+            document.getElementById('confirm-delete-teacher').onclick = async () => {
+                closeModal();
+                showLoading();
+                try {
+                    const batch = writeBatch(db);
+                    batch.delete(doc(db, 'teachers', teacherId));
+                    batch.delete(doc(db, 'users', teacherId));
+                    await batch.commit();
+                    showToast('Teacher data deleted from Firestore.', 'success');
+                } catch (error) {
+                    showToast(`Error: ${error.message}`, 'error');
+                } finally {
+                    hideLoading();
+                }
+            };
         };
 
         const addStudent = async (name, studentClass) => {
@@ -1091,17 +1106,26 @@
             }
         };
         
-        const deleteStudent = async (studentId) => {
-            if (!confirm("Are you sure?")) return;
-            showLoading();
-            try {
-                await deleteDoc(doc(db, "students", studentId));
-                showToast("Student deleted successfully.", "success");
-            } catch (error) {
-                showToast("Failed to delete student.", "error");
-            } finally {
-                hideLoading();
-            }
+        const deleteStudent = (studentId) => {
+            showModal(
+                'Confirm Deletion',
+                '<p>Are you sure you want to delete this student? This action cannot be undone.</p>',
+                `<button id="cancel-delete" class="px-4 py-2 rounded-md hover:bg-slate-100">Cancel</button>
+                 <button id="confirm-delete-student" class="btn-primary ripple bg-red-600 hover:bg-red-700">Delete Student</button>`
+            );
+
+            document.getElementById('confirm-delete-student').onclick = async () => {
+                closeModal();
+                showLoading();
+                try {
+                    await deleteDoc(doc(db, "students", studentId));
+                    showToast("Student deleted successfully.", "success");
+                } catch (error) {
+                    showToast("Failed to delete student.", "error");
+                } finally {
+                    hideLoading();
+                }
+            };
         };
 
         // ===================================================================
@@ -1132,7 +1156,7 @@
                  if(snap.empty){ cont.innerHTML = '<p class="text-slate-500">No teachers found.</p>'; return; }
                  cont.innerHTML = `<table class="w-full text-sm"><thead class="bg-slate-50 text-left"><tr class="border-b border-slate-200"><th class="p-2">Name</th><th class="p-2">Email</th><th class="p-2">Assigned Classes</th><th class="p-2 text-center">Actions</th></tr></thead><tbody>${snap.docs.map(d => {
                      const t = d.data();
-                     return `<tr class="border-b border-slate-200"><td class="p-2 font-medium">${t.name}</td><td class="p-2">${t.email}</td><td class="p-2">${t.assignedClasses.map(c => `<span class="bg-indigo-100 text-indigo-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">${c.class} (${c.subject})</span>`).join('') || 'None'}</td><td class="p-2 text-center"><button class="assign-class-btn text-blue-500 p-1" data-id="${d.id}" data-name="${t.name}">Assign</button><button class="delete-teacher-btn text-red-500 p-1" data-id="${d.id}"><i data-lucide="Trash2" class="w-4 h-4 pointer-events-none"></i></button></td></tr>`;
+                     return `<tr class="border-b border-slate-200"><td class="p-2 font-medium">${t.name}</td><td class="p-2">${t.email}</td><td class="p-2">${t.assignedClasses.map(c => `<span class="bg-indigo-100 text-indigo-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">${c.class} (${c.subject})</span>`).join('') || 'None'}</td><td class="p-2 text-center"><button class="assign-class-btn text-blue-500 p-1" data-id="${d.id}" data-name="${t.name}">Assign</button><button class="delete-teacher-btn p-1 text-red-500 hover:bg-red-100 rounded-full" data-id="${d.id}"><i data-lucide="Trash2" class="w-4 h-4 pointer-events-none"></i></button></td></tr>`;
                  }).join('')}</tbody></table>`;
                  lucide.createIcons();
             });
@@ -1147,7 +1171,7 @@
                  populateSelect('attendance-sheet-class', state.allClasses);
                  populateSelect('marks-class-select', state.allClasses);
                  const cont = document.getElementById('student-list-container');
-                 if(cont) cont.innerHTML = `<table class="w-full text-sm"><thead class="bg-slate-50 text-left"><tr><th class="p-2">Name</th><th class="p-2">Class</th><th class="p-2 text-center">Actions</th></tr></thead><tbody>${state.allStudents.map(s => `<tr class="border-b border-slate-200"><td class="p-2 font-medium">${s.name}</td><td class="p-2">${s.class}</td><td class="p-2 text-center"><button class="delete-student-btn p-1 text-red-500" data-id="${s.id}"><i data-lucide="Trash2" class="w-4 h-4 pointer-events-none"></i></button></td></tr>`).join('')}</tbody></table>` || '<p class="text-slate-500">No students found.</p>';
+                 if(cont) cont.innerHTML = `<table class="w-full text-sm"><thead class="bg-slate-50 text-left"><tr><th class="p-2">Name</th><th class="p-2">Class</th><th class="p-2 text-center">Actions</th></tr></thead><tbody>${state.allStudents.map(s => `<tr class="border-b border-slate-200"><td class="p-2 font-medium">${s.name}</td><td class="p-2">${s.class}</td><td class="p-2 text-center"><button class="delete-student-btn p-1 text-red-500 hover:bg-red-100 rounded-full" data-id="${s.id}"><i data-lucide="Trash2" class="w-4 h-4 pointer-events-none"></i></button></td></tr>`).join('')}</tbody></table>` || '<p class="text-slate-500">No students found.</p>';
                  lucide.createIcons();
             });
             const unsubRequestsAdmin = onSnapshot(query(collection(db, 'requests'), orderBy('timestamp', 'desc')), snap => {
@@ -1353,19 +1377,24 @@
 
             app.addEventListener('click', async (e) => {
                 const target = e.target;
-                const classList = target.classList;
+
+                // Universal logout button check
+                if (target.closest('#header-logout-btn')) {
+                    handleLogout();
+                    return;
+                }
 
                 // Admin buttons
-                if (classList.contains('delete-notice-btn')) deleteDoc(doc(db, 'notices', target.dataset.id));
-                if (classList.contains('delete-teacher-btn')) deleteTeacher(target.dataset.id);
-                if (classList.contains('delete-student-btn')) deleteStudent(target.dataset.id);
-                if (classList.contains('approve-request-btn')) updateDoc(doc(db, 'requests', target.dataset.id), { status: 'approved' });
-                if (classList.contains('deny-request-btn')) updateDoc(doc(db, 'requests', target.dataset.id), { status: 'denied' });
-                if (classList.contains('assign-class-btn')) {
+                if (target.classList.contains('delete-notice-btn')) deleteDoc(doc(db, 'notices', target.dataset.id));
+                if (target.closest('.delete-teacher-btn')) deleteTeacher(target.closest('.delete-teacher-btn').dataset.id);
+                if (target.closest('.delete-student-btn')) deleteStudent(target.closest('.delete-student-btn').dataset.id);
+                if (target.classList.contains('approve-request-btn')) updateDoc(doc(db, 'requests', target.dataset.id), { status: 'approved' });
+                if (target.classList.contains('deny-request-btn')) updateDoc(doc(db, 'requests', target.dataset.id), { status: 'denied' });
+                if (target.classList.contains('assign-class-btn')) {
                     const teacherId = target.dataset.id, teacherName = target.dataset.name;
                     showModal(`Assign Class to ${teacherName}`, 
                         `<div class="space-y-4"><input type="text" id="assign-class-name" placeholder="Class Name (e.g., 10th A)" class="input-field"><input type="text" id="assign-subject-name" placeholder="Subject Name (e.g., Mathematics)" class="input-field"></div>`, 
-                        `<button id="confirm-assign-btn" class="btn-primary ripple">Assign</button>`);
+                        `<button id="cancel-delete" class="px-4 py-2 rounded-md hover:bg-slate-100">Cancel</button><button id="confirm-assign-btn" class="btn-primary ripple">Assign</button>`);
                     document.getElementById('confirm-assign-btn').onclick = async () => {
                         const className = document.getElementById('assign-class-name').value, subjectName = document.getElementById('assign-subject-name').value;
                         if (!className || !subjectName) { showToast('All fields required.', 'error'); return; }
@@ -1543,8 +1572,6 @@
                     }
                 });
             }
-            
-            document.getElementById('header-logout-btn').addEventListener('click', handleLogout);
         };
         
         // ===================================================================
@@ -1555,6 +1582,7 @@
             lucide.createIcons();
             attachLoginEventListeners();
             attachAllDashboardActionListeners(); 
+            // onAuthStateChanged will handle showing the correct initial page after the auto-logout
             if (window.location.hash === '#login-page') showPage('login-page');
             else showPage('student-portal');
         };
@@ -1564,4 +1592,5 @@
 
 </body>
 </html>
+
 
