@@ -333,10 +333,10 @@
                     <div class="flex items-center justify-between h-20">
                         <div class="flex items-center min-w-0">
                             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>
-                            <span class="ml-3 text-xl sm:text-2xl font-bold truncate">Adarsha Educational Institute</span>
+                            <span class="ml-3 text-lg sm:text-xl font-bold">Adarsha Educational Institute</span>
                         </div>
                         <div class="flex items-center space-x-4 flex-shrink-0">
-                            <a href="#login-page" id="go-to-login" class="px-4 py-2 text-sm font-medium bg-white text-indigo-600 rounded-md hover:bg-indigo-50 transition">Admin/Teacher Login</a>
+                            <a href="#login-page" id="go-to-login" class="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium bg-white text-indigo-600 rounded-md hover:bg-indigo-50 transition whitespace-nowrap">Admin/Teacher Login</a>
                         </div>
                     </div>
                 </div>
@@ -344,19 +344,19 @@
 
             <main class="container mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
                  <div id="student-stats-grid">
-                    <div class="card interactive lg:col-span-3">
-                         <div class="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-slate-200 -m-6">
-                            <div class="p-6 flex items-center justify-center gap-4">
-                                <div class="p-3 rounded-full bg-green-100"><i data-lucide="Contact" class="w-8 h-8 text-green-500"></i></div>
-                                <div><p class="text-sm text-slate-500">Total Students</p><p id="portal-student-count" class="text-2xl font-bold">0</p></div>
+                    <div class="card interactive">
+                         <div class="grid grid-cols-3 divide-x divide-slate-200 -m-4">
+                            <div class="p-4 flex flex-col items-center justify-center gap-2 text-center">
+                                <div class="p-2 rounded-full bg-green-100"><i data-lucide="Contact" class="w-6 h-6 text-green-500"></i></div>
+                                <div><p id="portal-student-count" class="text-xl font-bold">0</p><p class="text-xs text-slate-500">Students</p></div>
                             </div>
-                             <div class="p-6 flex items-center justify-center gap-4">
-                                <div class="p-3 rounded-full bg-blue-100"><i data-lucide="Users" class="w-8 h-8 text-blue-500"></i></div>
-                                <div><p class="text-sm text-slate-500">Total Teachers</p><p id="portal-teacher-count" class="text-2xl font-bold">0</p></div>
+                             <div class="p-4 flex flex-col items-center justify-center gap-2 text-center">
+                                <div class="p-2 rounded-full bg-blue-100"><i data-lucide="Users" class="w-6 h-6 text-blue-500"></i></div>
+                                <div><p id="portal-teacher-count" class="text-xl font-bold">0</p><p class="text-xs text-slate-500">Total Teachers</p></div>
                             </div>
-                             <div class="p-6 flex items-center justify-center gap-4">
-                                <div class="p-3 rounded-full bg-purple-100"><i data-lucide="Book" class="w-8 h-8 text-purple-500"></i></div>
-                                <div><p class="text-sm text-slate-500">Subjects Taught</p><p id="portal-subject-count" class="text-2xl font-bold">0</p></div>
+                             <div class="p-4 flex flex-col items-center justify-center gap-2 text-center">
+                                <div class="p-2 rounded-full bg-purple-100"><i data-lucide="Book" class="w-6 h-6 text-purple-500"></i></div>
+                                <div><p id="portal-subject-count" class="text-xl font-bold">0</p><p class="text-xs text-slate-500">Subjects</p></div>
                             </div>
                          </div>
                     </div>
@@ -1961,6 +1961,18 @@
                         const startValue = parseInt(classCountEl.textContent.replace(/,/g, '')) || 0;
                         animateValue(classCountEl, startValue, state.currentTeacherData.assignedClasses.length, 1000);
                     }
+
+                    const profilePicPreview = document.getElementById('profile-pic-preview');
+                    const headerAvatar = document.getElementById('user-avatar');
+                    if (state.currentTeacherData.photoURL) {
+                        profilePicPreview.src = state.currentTeacherData.photoURL;
+                        headerAvatar.innerHTML = `<img src="${state.currentTeacherData.photoURL}" class="w-full h-full rounded-full object-cover">`;
+                    } else {
+                        const userInitial = state.currentUser.email.charAt(0).toUpperCase();
+                         profilePicPreview.src = `https://placehold.co/80x80/e0e7ff/4f46e5?text=${userInitial}`;
+                         headerAvatar.innerHTML = userInitial;
+                    }
+                    
                     populateSelect('teacher-attendance-class-subject', state.currentTeacherData.assignedClasses, c => `${c.class} - ${c.subject}`, c => `${c.class}|${c.subject}`);
                     
                     const uniqueClasses = [...new Set(state.currentTeacherData.assignedClasses.map(c => c.class))];
