@@ -464,6 +464,7 @@
             allStudents: [],
             currentTeacherData: null,
             marksChart: null,
+            teacherStatuses: {},
         };
 
         // DOM Elements
@@ -968,6 +969,18 @@
                 const userDocSnap = await getDoc(userDocRef);
 
                 if (userDocSnap.exists() && userDocSnap.data().role === role) {
+                    if (role === 'teacher') {
+                        const teacherDoc = await getDoc(doc(db, 'teachers', user.uid));
+                        if (teacherDoc.exists()) {
+                            const teacherData = teacherDoc.data();
+                             await setDoc(doc(db, 'status', user.uid), {
+                                state: 'online',
+                                last_changed: serverTimestamp(),
+                                teacherName: teacherData.name,
+                                teacherEmail: teacherData.email
+                            });
+                        }
+                    }
                     state.currentUser = user;
                     state.userRole = userDocSnap.data().role;
                     initializeAppUI(state.userRole);
@@ -990,6 +1003,12 @@
         const handleLogout = async () => {
             showLoading();
             try {
+                if (state.currentUser && state.userRole === 'teacher') {
+                    await setDoc(doc(db, 'status', state.currentUser.uid), {
+                        state: 'offline',
+                        last_changed: serverTimestamp()
+                    }, { merge: true });
+                }
                 await signOut(auth);
             } catch (error) {
                 console.error("Logout Error: ", error);
@@ -1078,6 +1097,8 @@
                     const batch = writeBatch(db);
                     batch.delete(doc(db, 'teachers', teacherId));
                     batch.delete(doc(db, 'users', teacherId));
+                    // Also delete their status
+                    batch.delete(doc(db, 'status', teacherId));
                     await batch.commit();
                     showToast('Teacher data deleted from Firestore.', 'success');
                 } catch (error) {
@@ -1150,16 +1171,41 @@
                 cont.innerHTML = snap.docs.map(d => `<div class="p-3 rounded-md bg-slate-50 flex justify-between items-start"><div><h3 class="font-semibold">${d.data().title}</h3><p class="text-sm text-slate-500">${d.data().content}</p><p class="text-xs text-slate-400 mt-1">${formatDate(d.data().timestamp)}</p></div><button class="delete-notice-btn p-1 text-red-500 hover:bg-red-100 rounded-full" data-id="${d.id}"><i data-lucide="Trash2" class="w-4 h-4 pointer-events-none"></i></button></div>`).join('');
                 lucide.createIcons();
             });
-            const unsubTeachersList = onSnapshot(query(collection(db, 'teachers'), orderBy('name')), snap => {
-                 const cont = document.getElementById('teacher-list-container');
-                 if(!cont) return;
-                 if(snap.empty){ cont.innerHTML = '<p class="text-slate-500">No teachers found.</p>'; return; }
-                 cont.innerHTML = `<table class="w-full text-sm"><thead class="bg-slate-50 text-left"><tr class="border-b border-slate-200"><th class="p-2">Name</th><th class="p-2">Email</th><th class="p-2">Assigned Classes</th><th class="p-2 text-center">Actions</th></tr></thead><tbody>${snap.docs.map(d => {
-                     const t = d.data();
-                     return `<tr class="border-b border-slate-200"><td class="p-2 font-medium">${t.name}</td><td class="p-2">${t.email}</td><td class="p-2">${t.assignedClasses.map(c => `<span class="bg-indigo-100 text-indigo-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">${c.class} (${c.subject})</span>`).join('') || 'None'}</td><td class="p-2 text-center"><button class="assign-class-btn text-blue-500 p-1" data-id="${d.id}" data-name="${t.name}">Assign</button><button class="delete-teacher-btn p-1 text-red-500 hover:bg-red-100 rounded-full" data-id="${d.id}"><i data-lucide="Trash2" class="w-4 h-4 pointer-events-none"></i></button></td></tr>`;
-                 }).join('')}</tbody></table>`;
-                 lucide.createIcons();
+
+            // Listen to teacher statuses
+            const unsubStatuses = onSnapshot(collection(db, 'status'), (snapshot) => {
+                snapshot.docChanges().forEach((change) => {
+                    state.teacherStatuses[change.doc.id] = change.doc.data();
+                });
+                // This will trigger the teacher list to re-render with new statuses.
+                if (state.activePage === 'admin-dashboard' && document.getElementById('admin-teachers')?.classList.contains('dashboard-section') && !document.getElementById('admin-teachers')?.classList.contains('hidden')) {
+                     renderTeacherList();
+                }
             });
+
+            const renderTeacherList = () => {
+                const cont = document.getElementById('teacher-list-container');
+                if(!cont) return;
+
+                 getDocs(query(collection(db, 'teachers'), orderBy('name'))).then(snap => {
+                     if(snap.empty){ cont.innerHTML = '<p class="text-slate-500">No teachers found.</p>'; return; }
+                     cont.innerHTML = `<table class="w-full text-sm"><thead class="bg-slate-50 text-left"><tr class="border-b border-slate-200"><th class="p-2">Name</th><th class="p-2">Status</th><th class="p-2">Email</th><th class="p-2">Assigned Classes</th><th class="p-2 text-center">Actions</th></tr></thead><tbody>${snap.docs.map(d => {
+                         const t = d.data();
+                         const statusData = state.teacherStatuses[d.id];
+                         const isOnline = statusData && statusData.state === 'online';
+                         const statusIndicator = isOnline
+                            ? `<div class="flex items-center gap-2 text-green-600"><div class="w-2.5 h-2.5 bg-green-500 rounded-full"></div><span>Online</span></div>`
+                            : `<div class="flex items-center gap-2 text-slate-500"><div class="w-2.5 h-2.5 bg-slate-400 rounded-full"></div><span>Offline</span></div>`;
+
+                         return `<tr class="border-b border-slate-200"><td class="p-2 font-medium">${t.name}</td><td class="p-2">${statusIndicator}</td><td class="p-2">${t.email}</td><td class="p-2">${t.assignedClasses.map(c => `<span class="bg-indigo-100 text-indigo-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">${c.class} (${c.subject})</span>`).join('') || 'None'}</td><td class="p-2 text-center"><button class="assign-class-btn text-blue-500 p-1" data-id="${d.id}" data-name="${t.name}">Assign</button><button class="delete-teacher-btn p-1 text-red-500 hover:bg-red-100 rounded-full" data-id="${d.id}"><i data-lucide="Trash2" class="w-4 h-4 pointer-events-none"></i></button></td></tr>`;
+                     }).join('')}</tbody></table>`;
+                     lucide.createIcons();
+                 });
+            };
+            
+            // Initial render and listen for changes
+            const unsubTeachersList = onSnapshot(query(collection(db, 'teachers'), orderBy('name')), renderTeacherList);
+
             const unsubStudentsList = onSnapshot(query(collection(db, 'students')), snap => {
                  const studentsData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                  studentsData.sort((a, b) => a.class.localeCompare(b.class) || a.name.localeCompare(b.name));
@@ -1194,7 +1240,7 @@
                 }).join('');
                 cont.scrollTop = cont.scrollHeight;
             });
-            state.unsubscribeListeners.push(unsubT, unsubS, unsubN, unsubR, unsubNoticesList, unsubTeachersList, unsubStudentsList, unsubRequestsAdmin, unsubChat);
+            state.unsubscribeListeners.push(unsubT, unsubS, unsubN, unsubR, unsubNoticesList, unsubTeachersList, unsubStudentsList, unsubRequestsAdmin, unsubChat, unsubStatuses);
         };
         const setupTeacherListeners = () => {
             const unsubTeacherData = onSnapshot(doc(db, 'teachers', state.currentUser.uid), docSnap => {
@@ -1242,7 +1288,20 @@
                 }).join('');
                 cont.scrollTop = cont.scrollHeight;
             });
-            state.unsubscribeListeners.push(unsubTeacherData, unsubRequests, unsubChat);
+
+             const handleBeforeUnload = (e) => {
+                if (state.currentUser && state.userRole === 'teacher') {
+                    setDoc(doc(db, 'status', state.currentUser.uid), {
+                        state: 'offline',
+                        last_changed: serverTimestamp()
+                    }, { merge: true });
+                }
+            };
+            window.addEventListener('beforeunload', handleBeforeUnload);
+
+            state.unsubscribeListeners.push(unsubTeacherData, unsubRequests, unsubChat, () => {
+                window.removeEventListener('beforeunload', handleBeforeUnload);
+            });
         };
         
         // ===================================================================
@@ -1592,5 +1651,4 @@
 
 </body>
 </html>
-
 
