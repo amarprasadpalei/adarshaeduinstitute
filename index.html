@@ -678,8 +678,8 @@
             `;
             document.getElementById('admin-overview').innerHTML = `
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div class="card flex items-center gap-4"><div class="p-3 rounded-full bg-blue-100"><i data-lucide="Users" class="w-8 h-8 text-blue-500"></i></div><div><p class="text-sm text-slate-500">Total Teachers</p><p id="total-teachers-stat" class="text-2xl font-bold">0</p></div></div>
-                    <div class="card flex items-center gap-4"><div class="p-3 rounded-full bg-green-100"><i data-lucide="Contact" class="w-8 h-8 text-green-500"></i></div><div><p class="text-sm text-slate-500">Total Students</p><p id="total-students-stat" class="text-2xl font-bold">0</p></div></div>
+                    <div id="total-teachers-card" class="card flex items-center gap-4 cursor-pointer hover:bg-slate-50 transition-colors"><div class="p-3 rounded-full bg-blue-100"><i data-lucide="Users" class="w-8 h-8 text-blue-500"></i></div><div><p class="text-sm text-slate-500">Total Teachers</p><p id="total-teachers-stat" class="text-2xl font-bold">0</p></div></div>
+                    <div id="total-students-card" class="card flex items-center gap-4 cursor-pointer hover:bg-slate-50 transition-colors"><div class="p-3 rounded-full bg-green-100"><i data-lucide="Contact" class="w-8 h-8 text-green-500"></i></div><div><p class="text-sm text-slate-500">Total Students</p><p id="total-students-stat" class="text-2xl font-bold">0</p></div></div>
                     <div class="card flex items-center gap-4"><div class="p-3 rounded-full bg-amber-100"><i data-lucide="Megaphone" class="w-8 h-8 text-amber-500"></i></div><div><p class="text-sm text-slate-500">Active Notices</p><p id="active-notices-stat" class="text-2xl font-bold">0</p></div></div>
                     <div class="card flex items-center gap-4"><div class="p-3 rounded-full bg-red-100"><i data-lucide="Send" class="w-8 h-8 text-red-500"></i></div><div><p class="text-sm text-slate-500">Pending Requests</p><p id="pending-requests-stat" class="text-2xl font-bold">0</p></div></div>
                 </div>
@@ -738,6 +738,99 @@
                 </div>
             `;
             lucide.createIcons();
+        };
+
+        const showTeacherStatusModal = async () => {
+            showLoading();
+            try {
+                const teachersQuery = query(collection(db, 'teachers'), orderBy('name'));
+                const teachersSnapshot = await getDocs(teachersQuery);
+                const teachers = teachersSnapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+
+                if (teachers.length === 0) {
+                    showModal('All Teachers', '<p class="text-slate-500">No teachers found.</p>', `<button id="cancel-delete" class="px-4 py-2 rounded-md bg-slate-100 hover:bg-slate-200">Close</button>`);
+                    return;
+                }
+
+                const contentHTML = `
+                    <div class="max-h-[60vh] overflow-y-auto pr-2">
+                        <ul class="space-y-3">
+                            ${teachers.map(teacher => {
+                                const statusData = state.teacherStatuses[teacher.id];
+                                const isOnline = statusData && statusData.state === 'online';
+                                const statusIndicator = isOnline
+                                    ? `<div class="flex items-center gap-2 text-green-600"><div class="w-2.5 h-2.5 bg-green-500 rounded-full"></div><span>Online</span></div>`
+                                    : `<div class="flex items-center gap-2 text-slate-500"><div class="w-2.5 h-2.5 bg-slate-400 rounded-full"></div><span>Offline</span></div>`;
+                                return `
+                                    <li class="flex items-center justify-between p-3 rounded-md bg-slate-50">
+                                        <div>
+                                            <p class="font-medium text-slate-800">${teacher.name}</p>
+                                            <p class="text-sm text-slate-500">${teacher.email}</p>
+                                        </div>
+                                        ${statusIndicator}
+                                    </li>
+                                `;
+                            }).join('')}
+                        </ul>
+                    </div>
+                `;
+
+                showModal('Teacher Status', contentHTML, `<button id="cancel-delete" class="px-4 py-2 rounded-md bg-slate-100 hover:bg-slate-200">Close</button>`);
+            } catch (error) {
+                console.error("Error fetching teachers for status modal:", error);
+                showToast("Could not load teacher statuses.", "error");
+            } finally {
+                hideLoading();
+            }
+        };
+
+        const showStudentListModal = async () => {
+            showLoading();
+            try {
+                // state.allStudents is already populated and sorted by class by the listener
+                if (state.allStudents.length === 0) {
+                    showModal('All Students', '<p class="text-slate-500">No students found.</p>', `<button id="cancel-delete" class="px-4 py-2 rounded-md bg-slate-100 hover:bg-slate-200">Close</button>`);
+                    return;
+                }
+
+                // Group students by class
+                const studentsByClass = state.allStudents.reduce((acc, student) => {
+                    const className = student.class || 'No Class Assigned';
+                    if (!acc[className]) {
+                        acc[className] = [];
+                    }
+                    acc[className].push(student);
+                    return acc;
+                }, {});
+
+                // Sort class names
+                const sortedClasses = Object.keys(studentsByClass).sort();
+
+                const contentHTML = `
+                    <div class="max-h-[60vh] overflow-y-auto pr-2">
+                        ${sortedClasses.map(className => `
+                            <div class="mb-4">
+                                <h3 class="font-bold text-lg p-2 bg-slate-100 rounded-md sticky top-0">${className}</h3>
+                                <ul class="space-y-2 mt-2">
+                                    ${studentsByClass[className].map(student => `
+                                        <li class="p-3 rounded-md bg-slate-50">
+                                            <p class="font-medium text-slate-800">${student.name}</p>
+                                        </li>
+                                    `).join('')}
+                                </ul>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+
+                showModal('All Students By Class', contentHTML, `<button id="cancel-delete" class="px-4 py-2 rounded-md bg-slate-100 hover:bg-slate-200">Close</button>`);
+
+            } catch (error) {
+                console.error("Error fetching students for list modal:", error);
+                showToast("Could not load student list.", "error");
+            } finally {
+                hideLoading();
+            }
         };
 
         // ===================================================================
@@ -1177,34 +1270,24 @@
                 snapshot.docChanges().forEach((change) => {
                     state.teacherStatuses[change.doc.id] = change.doc.data();
                 });
-                // This will trigger the teacher list to re-render with new statuses.
-                if (state.activePage === 'admin-dashboard' && document.getElementById('admin-teachers')?.classList.contains('dashboard-section') && !document.getElementById('admin-teachers')?.classList.contains('hidden')) {
-                     renderTeacherList();
-                }
             });
 
-            const renderTeacherList = () => {
+            const renderManageTeachersTable = () => {
                 const cont = document.getElementById('teacher-list-container');
                 if(!cont) return;
 
                  getDocs(query(collection(db, 'teachers'), orderBy('name'))).then(snap => {
                      if(snap.empty){ cont.innerHTML = '<p class="text-slate-500">No teachers found.</p>'; return; }
-                     cont.innerHTML = `<table class="w-full text-sm"><thead class="bg-slate-50 text-left"><tr class="border-b border-slate-200"><th class="p-2">Name</th><th class="p-2">Status</th><th class="p-2">Email</th><th class="p-2">Assigned Classes</th><th class="p-2 text-center">Actions</th></tr></thead><tbody>${snap.docs.map(d => {
+                     cont.innerHTML = `<table class="w-full text-sm"><thead class="bg-slate-50 text-left"><tr class="border-b border-slate-200"><th class="p-2">Name</th><th class="p-2">Email</th><th class="p-2">Assigned Classes</th><th class="p-2 text-center">Actions</th></tr></thead><tbody>${snap.docs.map(d => {
                          const t = d.data();
-                         const statusData = state.teacherStatuses[d.id];
-                         const isOnline = statusData && statusData.state === 'online';
-                         const statusIndicator = isOnline
-                            ? `<div class="flex items-center gap-2 text-green-600"><div class="w-2.5 h-2.5 bg-green-500 rounded-full"></div><span>Online</span></div>`
-                            : `<div class="flex items-center gap-2 text-slate-500"><div class="w-2.5 h-2.5 bg-slate-400 rounded-full"></div><span>Offline</span></div>`;
-
-                         return `<tr class="border-b border-slate-200"><td class="p-2 font-medium">${t.name}</td><td class="p-2">${statusIndicator}</td><td class="p-2">${t.email}</td><td class="p-2">${t.assignedClasses.map(c => `<span class="bg-indigo-100 text-indigo-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">${c.class} (${c.subject})</span>`).join('') || 'None'}</td><td class="p-2 text-center"><button class="assign-class-btn text-blue-500 p-1" data-id="${d.id}" data-name="${t.name}">Assign</button><button class="delete-teacher-btn p-1 text-red-500 hover:bg-red-100 rounded-full" data-id="${d.id}"><i data-lucide="Trash2" class="w-4 h-4 pointer-events-none"></i></button></td></tr>`;
+                         return `<tr class="border-b border-slate-200"><td class="p-2 font-medium">${t.name}</td><td class="p-2">${t.email}</td><td class="p-2">${t.assignedClasses.map(c => `<span class="bg-indigo-100 text-indigo-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">${c.class} (${c.subject})</span>`).join('') || 'None'}</td><td class="p-2 text-center"><button class="assign-class-btn text-blue-500 p-1" data-id="${d.id}" data-name="${t.name}">Assign</button><button class="delete-teacher-btn p-1 text-red-500 hover:bg-red-100 rounded-full" data-id="${d.id}"><i data-lucide="Trash2" class="w-4 h-4 pointer-events-none"></i></button></td></tr>`;
                      }).join('')}</tbody></table>`;
                      lucide.createIcons();
                  });
             };
             
-            // Initial render and listen for changes
-            const unsubTeachersList = onSnapshot(query(collection(db, 'teachers'), orderBy('name')), renderTeacherList);
+            // Listen for changes to render the manage teachers table
+            const unsubTeachersList = onSnapshot(query(collection(db, 'teachers'), orderBy('name')), renderManageTeachersTable);
 
             const unsubStudentsList = onSnapshot(query(collection(db, 'students')), snap => {
                  const studentsData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -1443,6 +1526,14 @@
                     return;
                 }
 
+                if (target.closest('#total-teachers-card')) {
+                    showTeacherStatusModal();
+                }
+
+                if (target.closest('#total-students-card')) {
+                    showStudentListModal();
+                }
+
                 // Admin buttons
                 if (target.classList.contains('delete-notice-btn')) deleteDoc(doc(db, 'notices', target.dataset.id));
                 if (target.closest('.delete-teacher-btn')) deleteTeacher(target.closest('.delete-teacher-btn').dataset.id);
@@ -1651,6 +1742,4 @@
 
 </body>
 </html>
-
-
 
