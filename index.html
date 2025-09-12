@@ -215,6 +215,22 @@
             width: 90%;
             animation: fadeIn 0.3s;
         }
+
+        .digital-clock {
+            font-family: 'Courier New', Courier, monospace;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            font-size: 1.1rem;
+            font-weight: bold;
+            letter-spacing: 0.1em;
+            background: #e2e8f0; /* slate-200 */
+            color: #334155; /* slate-700 */
+        }
+        #student-portal .digital-clock {
+            background: rgba(0,0,0,0.2);
+            color: #e0e7ff; /* indigo-200 */
+        }
     </style>
 </head>
 <body class="bg-slate-100">
@@ -295,6 +311,7 @@
                         <h1 id="page-title" class="text-xl md:text-2xl font-bold">Dashboard</h1>
                     </div>
                     <div class="flex items-center gap-4 flex-shrink-0">
+                        <div id="digital-clock" class="digital-clock hidden sm:block">00:00:00</div>
                         <div id="user-avatar" class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center font-bold text-indigo-700 border-2 border-indigo-300">
                             A
                         </div>
@@ -336,6 +353,7 @@
                             <span class="ml-3 text-lg sm:text-xl font-bold">Adarsha Educational Institute</span>
                         </div>
                         <div class="flex items-center space-x-4 flex-shrink-0">
+                            <div id="portal-digital-clock" class="digital-clock hidden sm:block">00:00:00</div>
                             <a href="#login-page" id="go-to-login" class="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium bg-white text-indigo-600 rounded-md hover:bg-indigo-50 transition whitespace-nowrap">Admin/Teacher Login</a>
                         </div>
                     </div>
@@ -387,13 +405,16 @@
                     </div>
 
                     <!-- Daily Absentees -->
-                    <div class="card interactive md:col-span-2 lg:col-span-3">
-                        <h2 class="text-xl font-bold mb-4 flex items-center">
-                            <i data-lucide="UserX" class="w-6 h-6 mr-2 text-red-500"></i>
-                            Today's Absentee List
-                        </h2>
-                        <div id="student-absentees-list" class="max-h-[400px] overflow-y-auto">
-                           <p class="text-slate-500">Attendance for today has not been marked yet.</p>
+                    <div id="absentee-card" class="card interactive cursor-pointer md:col-span-2 lg:col-span-3">
+                         <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div class="p-3 rounded-full bg-red-100"><i data-lucide="UserX" class="w-8 h-8 text-red-500"></i></div>
+                                <div>
+                                    <p class="text-sm text-slate-500">Today's Absentees</p>
+                                    <p id="absentee-count" class="text-2xl font-bold">0</p>
+                                </div>
+                            </div>
+                            <i data-lucide="ArrowRight" class="text-slate-400"></i>
                         </div>
                     </div>
                     
@@ -511,6 +532,7 @@
             marksChart: null,
             teacherStatuses: {},
             charts: {},
+            clockInterval: null,
         };
 
         // DOM Elements
@@ -608,6 +630,8 @@
         const cleanupListeners = () => {
             state.unsubscribeListeners.forEach(unsub => unsub());
             state.unsubscribeListeners = [];
+            if(state.clockInterval) clearInterval(state.clockInterval);
+            state.clockInterval = null;
         };
         
         const formatDate = (timestamp) => {
@@ -658,6 +682,31 @@
             window.requestAnimationFrame(step);
         };
 
+        const startClock = () => {
+            if (state.clockInterval) clearInterval(state.clockInterval);
+
+            const clockElDashboard = document.getElementById('digital-clock');
+            const clockElPortal = document.getElementById('portal-digital-clock');
+
+            const updateClocks = () => {
+                const now = new Date();
+                const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+                const istOffset = 5.5 * 3600000;
+                const istTime = new Date(utc + istOffset);
+
+                const hours = String(istTime.getHours()).padStart(2, '0');
+                const minutes = String(istTime.getMinutes()).padStart(2, '0');
+                const seconds = String(istTime.getSeconds()).padStart(2, '0');
+                const timeString = `${hours}:${minutes}:${seconds}`;
+
+                if (clockElDashboard) clockElDashboard.textContent = timeString;
+                if (clockElPortal) clockElPortal.textContent = timeString;
+            };
+
+            updateClocks();
+            state.clockInterval = setInterval(updateClocks, 1000);
+        };
+
 
         // ===================================================================
         // ====================== DYNAMIC HTML RENDERERS =====================
@@ -680,7 +729,7 @@
                     const { ctx, chartArea: { top, width, height } } = chart;
                     ctx.save();
                     const text = percentage.toFixed(0) + '%';
-                    ctx.font = `bold ${chart.chartArea.width / 4}px Inter, sans-serif`;
+                    ctx.font = `bold ${chart.chartArea.width / 5}px Inter, sans-serif`;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
                     ctx.fillStyle = '#16a34a'; // green-600
@@ -713,7 +762,7 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    cutout: '80%',
+                    cutout: '75%',
                     plugins: {
                         legend: { display: false },
                         tooltip: { enabled: false },
@@ -727,8 +776,10 @@
                         }
                     },
                     animation: {
-                        duration: 1200,
-                        easing: 'easeOutCubic',
+                        duration: 1500,
+                        easing: 'easeOutQuart',
+                        animateScale: true,
+                        animateRotate: true
                     }
                 },
                 plugins: [centerTextPlugin]
@@ -830,8 +881,8 @@
                     <h2 class="text-2xl font-bold mb-4 text-slate-700">Live Statistics</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         <div class="card"><div class="flex justify-between items-center mb-2"><p class="text-sm font-medium text-slate-500">Today's Attendance</p><i data-lucide="BarChart3" class="w-5 h-5 text-slate-400"></i></div><p id="live-attendance-stat" class="text-3xl font-bold">0%</p></div>
-                        <div class="card"><div class="flex justify-between items-center mb-2"><p class="text-sm font-medium text-slate-500">Ongoing Classes</p><i data-lucide="Presentation" class="w-5 h-5 text-slate-400"></i></div><p id="live-classes-stat" class="text-3xl font-bold">0</p></div>
-                        <div class="card"><div class="flex justify-between items-center mb-2"><p class="text-sm font-medium text-slate-500">Upcoming Tests (7d)</p><i data-lucide="ClipboardList" class="w-5 h-5 text-slate-400"></i></div><p id="live-tests-stat" class="text-3xl font-bold">0</p></div>
+                        <div class="card interactive cursor-pointer" id="ongoing-classes-card"><div class="flex justify-between items-center mb-2"><p class="text-sm font-medium text-slate-500">Ongoing Classes</p><i data-lucide="Presentation" class="w-5 h-5 text-slate-400"></i></div><p id="live-classes-stat" class="text-3xl font-bold">0</p></div>
+                        <div class="card interactive cursor-pointer" id="upcoming-tests-card"><div class="flex justify-between items-center mb-2"><p class="text-sm font-medium text-slate-500">Upcoming Tests (7d)</p><i data-lucide="ClipboardList" class="w-5 h-5 text-slate-400"></i></div><p id="live-tests-stat" class="text-3xl font-bold">0</p></div>
                         <div class="card"><div class="flex justify-between items-center mb-2"><p class="text-sm font-medium text-slate-500">Recent Teacher Activity</p><i data-lucide="UserCheck" class="w-5 h-5 text-slate-400"></i></div><p id="live-teacher-activity-stat" class="text-lg font-bold truncate">N/A</p></div>
                     </div>
                 </div>
@@ -907,7 +958,7 @@
                     <h2 class="text-2xl font-bold">Welcome, <span id="teacher-welcome-name"></span>!</h2>
                     <p class="text-slate-500">Here's a summary of your dashboard. Click on the cards to view details.</p>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div id="view-assigned-classes-card" class="card interactive flex items-center gap-4 cursor-pointer hover:bg-slate-50 transition-colors">
                         <div class="p-3 rounded-full bg-indigo-100">
                             <i data-lucide="BookOpenCheck" class="w-8 h-8 text-indigo-500"></i>
@@ -917,14 +968,23 @@
                             <p id="assigned-classes-count" class="text-2xl font-bold">0</p>
                         </div>
                     </div>
-                    <div id="teacher-attendance-recap-card" class="card lg:col-span-2">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-lg font-bold text-slate-700">Today's Attendance Recap</h3>
-                            <i data-lucide="CheckCircle2" class="w-5 h-5 text-slate-400"></i>
+                     <div id="view-upcoming-exams-card" class="card interactive flex items-center gap-4 cursor-pointer hover:bg-slate-50 transition-colors">
+                        <div class="p-3 rounded-full bg-amber-100">
+                            <i data-lucide="ClipboardList" class="w-8 h-8 text-amber-500"></i>
                         </div>
-                        <div id="teacher-attendance-recap-list" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <p class="text-slate-500 text-sm sm:col-span-3">No classes taken yet today.</p>
+                        <div>
+                            <p class="text-sm text-slate-500">Upcoming Exams</p>
+                            <p id="upcoming-exams-count" class="text-2xl font-bold">0</p>
                         </div>
+                    </div>
+                </div>
+                <div id="teacher-attendance-recap-card" class="card">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold text-slate-700">Today's Attendance Recap</h3>
+                        <i data-lucide="CheckCircle2" class="w-5 h-5 text-slate-400"></i>
+                    </div>
+                    <div id="teacher-attendance-recap-list" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <p class="text-slate-500 text-sm sm:col-span-3">No classes taken yet today.</p>
                     </div>
                 </div>`;
             document.getElementById('teacher-exam-request').innerHTML = `
@@ -1082,7 +1142,7 @@
                                                 ? `<div class="grid grid-cols-3 gap-4">
                                                     ${teacher.lastThreeSessions.map((session, index) => `
                                                         <div class="text-center">
-                                                            <div class="w-full h-24 mx-auto">
+                                                            <div class="w-20 h-20 mx-auto">
                                                                 <canvas id="admin-teacher-chart-${teacher.id}-${index}"></canvas>
                                                             </div>
                                                         </div>
@@ -1119,8 +1179,50 @@
         const showStudentListModal = async () => {
             showLoading();
             try {
+                // Time Check Logic
+                const now = new Date();
+                const day = now.getDay(); // 0 = Sunday, 6 = Saturday
+                const hour = now.getHours();
+                const minute = now.getMinutes();
+                let isLiveTime = false;
+
+                if (day === 0) { // Sunday
+                    // Live during the morning/day until 5:30 PM
+                    if (hour < 17 || (hour === 17 && minute < 30)) {
+                        isLiveTime = true;
+                    }
+                } else { // Monday to Saturday
+                    const currentTimeInMinutes = hour * 60 + minute;
+                    const startTimeInMinutes = 17 * 60 + 30; // 5:30 PM
+                    const endTimeInMinutes = 20 * 60 + 30; // 8:30 PM
+                    if (currentTimeInMinutes >= startTimeInMinutes && currentTimeInMinutes <= endTimeInMinutes) {
+                        isLiveTime = true;
+                    }
+                }
+
+                if (!isLiveTime) {
+                    const messageHTML = `
+                        <div class="text-center p-4">
+                            <i data-lucide="Clock" class="w-12 h-12 mx-auto text-amber-500 mb-4"></i>
+                            <p class="font-semibold text-slate-700">Live Status Unavailable</p>
+                            <p class="text-sm text-slate-500 mt-2">
+                                Live student attendance is only shown during scheduled class hours:
+                            </p>
+                            <ul class="text-sm text-slate-500 mt-2 list-disc list-inside">
+                                <li><strong>Mon - Sat:</strong> 5:30 PM - 8:30 PM IST</li>
+                                <li><strong>Sunday:</strong> Morning hours</li>
+                            </ul>
+                            <p class="text-sm text-slate-500 mt-3">Please check back during these times.</p>
+                        </div>
+                    `;
+                    showModal('Student Status', messageHTML, `<button id="cancel-delete" class="px-4 py-2 rounded-md bg-slate-100 hover:bg-slate-200">Close</button>`);
+                    hideLoading();
+                    return;
+                }
+                
                 if (state.allStudents.length === 0) {
                     showModal('All Students', '<p class="text-slate-500">No students found.</p>', `<button id="cancel-delete" class="px-4 py-2 rounded-md bg-slate-100 hover:bg-slate-200">Close</button>`);
+                    hideLoading();
                     return;
                 }
 
@@ -1937,7 +2039,7 @@
 
                 listEl.innerHTML = lastThreeSessions.map((session, index) => {
                     const canvasId = `teacher-recap-chart-${index}`;
-                    return `<div class="text-center"><div class="w-full h-32 mx-auto"><canvas id="${canvasId}"></canvas></div></div>`;
+                    return `<div class="text-center"><div class="w-full h-28 mx-auto"><canvas id="${canvasId}"></canvas></div></div>`;
                 }).join('');
 
                 lastThreeSessions.forEach((session, index) => {
@@ -2078,6 +2180,7 @@
             }
             attachDashboardEventListeners();
             lucide.createIcons();
+            startClock();
             
             const sidebarLinks = document.querySelectorAll('.sidebar-link');
             sidebarLinks.forEach((link, index) => {
@@ -2087,6 +2190,7 @@
         };
 
         const initializeStudentPortal = async () => {
+            startClock();
             // Animate cards
             document.querySelectorAll('#student-portal .card, #student-stats-grid .card').forEach((card, index) => {
                 card.classList.add('fade-in');
