@@ -359,7 +359,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>
                             <span class="ml-3 text-lg sm:text-xl font-bold">Adarsha Educational Institute</span>
                         </div>
-                        <div class="flex items-center space-x-2 sm:space-x-4 flex-shrink-0">
+                        <div class="flex flex-col items-end gap-2 flex-shrink-0">
                              <div id="portal-digital-clock" class="digital-clock">00:00:00</div>
                             <a href="#login-page" id="go-to-login" class="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium bg-white text-indigo-600 rounded-md hover:bg-indigo-50 transition whitespace-nowrap">Admin/Teacher Login</a>
                         </div>
@@ -1618,22 +1618,16 @@
                     }, { merge: true });
                 }
                 await signOut(auth);
+                // The onAuthStateChanged listener will now handle all UI changes and toast notifications.
             } catch (error) {
                 console.error("Logout Error: ", error);
-            } finally {
-                state.currentUser = null;
-                state.userRole = null;
-                cleanupListeners();
-                const sidebar = document.getElementById('sidebar');
-                if (sidebar) sidebar.remove();
-                showPage('student-portal');
-                initializeStudentPortal();
-                showToast('Logged out successfully.', 'success');
-                hideLoading();
+                showToast("Logout failed. Please try again.", "error");
+                hideLoading(); // Hide loading only if there's an error
             }
         };
 
         onAuthStateChanged(auth, async (user) => {
+            const wasLoggedIn = !!state.currentUser; // Check if user was logged in before this state change
             showLoading();
             cleanupListeners();
             if (user) {
@@ -1648,10 +1642,15 @@
                     showPage('login-page');
                  }
             } else { 
-                if(state.activePage !== 'student-portal') {
-                    showPage('login-page');
-                }
+                state.currentUser = null;
+                state.userRole = null;
+                const sidebar = document.getElementById('sidebar');
+                if (sidebar) sidebar.remove();
+                showPage('student-portal');
                 initializeStudentPortal();
+                if(wasLoggedIn){
+                    showToast('Logged out successfully.', 'success');
+                }
             }
             hideLoading();
         });
@@ -2235,7 +2234,7 @@
             teacherCountQuery.forEach(doc => {
                 const teacher = doc.data();
                 if (teacher.assignedClasses) {
-                    teacher.assignedClasses.forEach(c => allSubjects.add(c.subject));
+                    teacher.assignedClasses.forEach(c => allSubjects.add(c.subject.toLowerCase()));
                 }
             });
              animateValue(document.getElementById('portal-subject-count'), 0, allSubjects.size, 1500);
