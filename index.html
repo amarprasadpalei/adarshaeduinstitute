@@ -379,7 +379,7 @@
 
             <main class="container mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
                  <div id="student-stats-grid">
-                    <div class="card interactive">
+                     <div class="card interactive">
                          <div class="grid grid-cols-3 divide-x divide-slate-200 -m-4">
                              <div class="p-4 flex flex-col items-center justify-center gap-2 text-center">
                                  <div class="p-2 rounded-full bg-green-100"><i data-lucide="Contact" class="w-6 h-6 text-green-500"></i></div>
@@ -394,7 +394,7 @@
                                  <div><p id="portal-subject-count" class="text-xl font-bold">0</p><p class="text-xs text-slate-500">Subjects</p></div>
                              </div>
                          </div>
-                    </div>
+                     </div>
                  </div>
 
                  <div id="student-main-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -437,7 +437,7 @@
                         </div>
                     </div>
                     
-                    <!-- Published Attendance Sheets -->
+                     <!-- Published Attendance Sheets -->
                     <div class="card interactive md:col-span-2 lg:col-span-3">
                         <h2 class="text-xl font-bold mb-4 flex items-center">
                             <i data-lucide="Sheet" class="w-6 h-6 mr-2 text-sky-500"></i>
@@ -457,7 +457,7 @@
                         </div>
                     </div>
                     
-                     <!-- Published Marks Sheets -->
+                      <!-- Published Marks Sheets -->
                     <div class="card interactive md:col-span-2 lg:grid-cols-3">
                         <h2 class="text-xl font-bold mb-4 flex items-center">
                             <i data-lucide="GraduationCap" class="w-6 h-6 mr-2 text-green-500"></i>
@@ -554,6 +554,14 @@
             clockInterval: null,
         };
 
+        const calendarState = {
+            holiday: { year: new Date().getFullYear(), month: new Date().getMonth() },
+            student: { year: new Date().getFullYear(), month: new Date().getMonth() },
+            teacher: { year: new Date().getFullYear(), month: new Date().getMonth() }, // For teacher's own calendar
+            modalTeacher: { year: new Date().getFullYear(), month: new Date().getMonth() }, // For admin's view of a teacher's calendar
+            holidays: new Set(), // Store 'YYYY-MM-DD' strings
+        };
+
         // DOM Elements
         const DOMElements = {
             loadingSpinner: document.getElementById('loading-spinner'),
@@ -638,26 +646,39 @@
                     link.classList.toggle('active', link.dataset.target === sectionId);
                 });
 
-                // --- NEW: Trigger calendar rendering on navigation ---
+                // Trigger calendar rendering on navigation
                 if (sectionId === 'admin-holidays') {
                     renderHolidayCalendar(calendarState.holiday.year, calendarState.holiday.month);
                 }
                 if (sectionId === 'admin-student-calendar') {
-                    // Just ensures the dropdowns are populated, user action will trigger the calendar render
                     populateSelect('calendar-class-select', state.allClasses);
-                    // Clear previous views
                     document.getElementById('calendar-student-select').innerHTML = '<option value="">-- Select Class First --</option>';
                     document.getElementById('student-attendance-calendar-container').innerHTML = `<p class="text-slate-500">Please select a class and student to view their attendance calendar.</p>`;
-
+                }
+                 if (sectionId === 'admin-teacher-attendance') {
+                    const teacherSelect = document.getElementById('admin-teacher-select');
+                    getDocs(query(collection(db, 'teachers'), orderBy('name'))).then(snap => {
+                        const teachers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                        populateSelect('admin-teacher-select', teachers, 'name', 'id');
+                    });
+                    document.getElementById('admin-teacher-calendar-container').innerHTML = `<p class="text-slate-500">Please select a teacher to view their calendar.</p>`;
+                }
+                 if (sectionId === 'teacher-my-attendance') {
+                    renderTeacherCalendar(state.currentUser.uid, calendarState.teacher.year, calendarState.teacher.month, 'teacher-attendance-calendar-container', 'teacher');
+                }
+                 if (sectionId === 'admin-reports') {
+                    populateSelect('report-attendance-class', state.allClasses);
+                    populateSelect('report-marks-class', state.allClasses);
+                    populateSelect('report-low-perf-class', state.allClasses);
                 }
 
             } else {
                 console.error(`Section with id ${sectionId} not found.`);
             }
              if (window.innerWidth < 768) {
-                document.getElementById('sidebar')?.classList.remove('open');
-                document.getElementById('sidebar-overlay')?.classList.add('hidden');
-            }
+                 document.getElementById('sidebar')?.classList.remove('open');
+                 document.getElementById('sidebar-overlay')?.classList.add('hidden');
+             }
         };
 
         const cleanupListeners = () => {
@@ -830,10 +851,12 @@
 
             const adminLinks = [
                 { id: 'admin-overview', icon: 'LayoutDashboard', text: 'Overview' },
+                { id: 'admin-reports', icon: 'FileText', text: 'Advanced Reporting' },
                 { id: 'admin-requests', icon: 'Send', text: 'Teacher Requests', badgeKey: 'requests' },
                 { id: 'admin-exams', icon: 'FilePenLine', text: 'Manage Exams' },
-                { id: 'admin-attendance', icon: 'CalendarCheck', text: 'View Attendance' },
-                { id: 'admin-student-calendar', icon: 'CalendarDays', text: 'Attendance Calendar' },
+                { id: 'admin-attendance', icon: 'UserCheck', text: 'View Attendance' },
+                { id: 'admin-student-calendar', icon: 'CalendarDays', text: 'Student Calendar' },
+                { id: 'admin-teacher-attendance', icon: 'UserCheck', text: 'Teacher Attendance' },
                 { id: 'admin-holidays', icon: 'PartyPopper', text: 'Manage Holidays' },
                 { id: 'admin-marks', icon: 'GraduationCap', text: 'View Marks' },
                 { id: 'admin-notices', icon: 'Megaphone', text: 'Manage Notices' },
@@ -844,6 +867,7 @@
 
             const teacherLinks = [
                 { id: 'teacher-overview', icon: 'LayoutDashboard', text: 'Overview' },
+                { id: 'teacher-my-attendance', icon: 'CalendarCheck', text: 'My Attendance' },
                 { id: 'teacher-exam-request', icon: 'FilePlus', text: 'Request Exam' },
                 { id: 'teacher-attendance', icon: 'CalendarPlus', text: 'Mark Attendance' },
                 { id: 'teacher-marks', icon: 'ClipboardEdit', text: 'Enter Marks' },
@@ -900,10 +924,12 @@
         const renderAdminDashboardSections = () => {
              DOMElements.adminDashboard.innerHTML = `
                 <div id="admin-overview" class="dashboard-section space-y-6"></div>
+                <div id="admin-reports" class="dashboard-section hidden"></div>
                 <div id="admin-requests" class="dashboard-section hidden"></div>
                 <div id="admin-exams" class="dashboard-section hidden"></div>
                 <div id="admin-attendance" class="dashboard-section hidden"></div>
                 <div id="admin-student-calendar" class="dashboard-section hidden"></div>
+                <div id="admin-teacher-attendance" class="dashboard-section hidden"></div>
                 <div id="admin-holidays" class="dashboard-section hidden"></div>
                 <div id="admin-marks" class="dashboard-section hidden"></div>
                 <div id="admin-notices" class="dashboard-section hidden"></div>
@@ -925,6 +951,46 @@
                         <div class="card interactive cursor-pointer" id="ongoing-classes-card"><div class="flex justify-between items-center mb-2"><p class="text-sm font-medium text-slate-500">Ongoing Classes</p><i data-lucide="Presentation" class="w-5 h-5 text-slate-400"></i></div><p id="live-classes-stat" class="text-3xl font-bold">0</p></div>
                         <div class="card interactive cursor-pointer" id="upcoming-tests-card"><div class="flex justify-between items-center mb-2"><p class="text-sm font-medium text-slate-500">Upcoming Tests (7d)</p><i data-lucide="ClipboardList" class="w-5 h-5 text-slate-400"></i></div><p id="live-tests-stat" class="text-3xl font-bold">0</p></div>
                         <div class="card"><div class="flex justify-between items-center mb-2"><p class="text-sm font-medium text-slate-500">Recent Teacher Activity</p><i data-lucide="UserCheck" class="w-5 h-5 text-slate-400"></i></div><p id="live-teacher-activity-stat" class="text-lg font-bold truncate">N/A</p></div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('admin-reports').innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Monthly Attendance Report -->
+                    <div class="card">
+                        <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i data-lucide="CalendarCheck" class="text-blue-500"></i>Monthly Attendance Report</h2>
+                        <div class="space-y-4">
+                            <select id="report-attendance-class" class="input-field"></select>
+                            <input type="month" id="report-attendance-month" class="input-field" value="${new Date().toISOString().slice(0, 7)}">
+                            <button id="generate-attendance-report-btn" class="btn-primary w-full ripple">Generate Report</button>
+                        </div>
+                    </div>
+                    <!-- Final Marks Sheet -->
+                    <div class="card">
+                        <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i data-lucide="GraduationCap" class="text-green-500"></i>Final Marks Sheet</h2>
+                        <div class="space-y-4">
+                            <select id="report-marks-class" class="input-field"></select>
+                            <button id="generate-marks-report-btn" class="btn-primary w-full ripple">Generate Marksheet</button>
+                        </div>
+                    </div>
+                    <!-- Low Performance List -->
+                    <div class="card">
+                        <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i data-lucide="TrendingDown" class="text-red-500"></i>Low Performance List</h2>
+                        <div class="space-y-4">
+                            <select id="report-low-perf-class" class="input-field"></select>
+                             <div>
+                                <label class="text-sm font-medium">Report Type:</label>
+                                <div class="flex gap-4 mt-1">
+                                    <label class="flex items-center gap-2"><input type="radio" name="low-perf-type" value="attendance" checked> Attendance</label>
+                                    <label class="flex items-center gap-2"><input type="radio" name="low-perf-type" value="marks"> Marks</label>
+                                </div>
+                            </div>
+                            <div>
+                               <label for="low-perf-threshold" class="text-sm font-medium">Threshold (% below):</label>
+                               <input type="number" id="low-perf-threshold" class="input-field" value="75" min="1" max="99">
+                           </div>
+                            <button id="generate-low-perf-report-btn" class="btn-primary w-full ripple">Generate List</button>
+                        </div>
                     </div>
                 </div>
             `;
@@ -955,6 +1021,7 @@
             `;
             document.getElementById('admin-attendance').innerHTML = `<div class="card"><h2 class="text-xl font-bold mb-4">View Attendance Records</h2><div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4"><input type="date" id="admin-attendance-date" class="input-field" value="${getTodayDateString()}"><select id="admin-attendance-class" class="input-field"></select><input type="text" id="admin-attendance-subject" placeholder="Subject (Optional)" class="input-field"><button id="admin-view-attendance-btn" class="btn-primary ripple">View</button></div><div id="admin-attendance-display" class="max-h-[60vh] overflow-y-auto"><p class="text-slate-500">Select filters to view attendance.</p></div></div>`;
             document.getElementById('admin-student-calendar').innerHTML = `<div class="card"><h2 class="text-xl font-bold mb-4">Student Monthly Attendance</h2><div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4"><select id="calendar-class-select" class="input-field"></select><select id="calendar-student-select" class="input-field" disabled><option value="">-- Select Class First --</option></select></div><div id="student-attendance-calendar-container" class="mt-4"><p class="text-slate-500">Please select a class and student to view their attendance calendar.</p></div></div>`;
+            document.getElementById('admin-teacher-attendance').innerHTML = `<div class="card"><h2 class="text-xl font-bold mb-4">Teacher Attendance Calendar</h2><div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4"><select id="admin-teacher-select" class="input-field"></select></div><div id="admin-teacher-calendar-container" class="mt-4"><p class="text-slate-500">Please select a teacher to view their calendar.</p></div></div>`;
             document.getElementById('admin-holidays').innerHTML = `<div class="card"><h2 class="text-xl font-bold mb-4">Manage Holidays</h2><p class="text-slate-500 mb-4">Click on a date to mark or unmark it as a holiday. Sundays are now treated as regular working days.</p><div id="holiday-calendar-container"></div></div>`;
             document.getElementById('admin-marks').innerHTML = `<div class="card"><h2 class="text-xl font-bold mb-4">View Student Marks</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4"><select id="admin-marks-class" class="input-field"></select><button id="admin-view-marks-btn" class="btn-primary ripple">View Marks</button></div><div id="admin-marks-display" class="max-h-[60vh] overflow-y-auto"><p class="text-slate-500">Select a class to view marks.</p></div></div>`;
             document.getElementById('admin-notices').innerHTML = `<div class="grid grid-cols-1 lg:grid-cols-3 gap-6"><div class="lg:col-span-1"><div class="card"><h2 class="text-xl font-bold mb-4">Post a New Notice</h2><form id="add-notice-form" class="space-y-4"><input type="text" id="notice-title" placeholder="Notice Title" class="input-field" required><textarea id="notice-content" placeholder="Notice Content..." class="input-field h-32" required></textarea><button type="submit" class="btn-primary w-full ripple">Post Notice</button></form></div></div><div class="lg:col-span-2"><div class="card"><h2 class="text-xl font-bold mb-4">Active Notices</h2><div id="admin-notices-list" class="space-y-3 max-h-[60vh] overflow-y-auto"></div></div></div></div>`;
@@ -988,6 +1055,7 @@
         const renderTeacherDashboardSections = () => {
             DOMElements.teacherDashboard.innerHTML = `
                 <div id="teacher-overview" class="dashboard-section space-y-6"></div>
+                <div id="teacher-my-attendance" class="dashboard-section hidden"></div>
                 <div id="teacher-exam-request" class="dashboard-section hidden"></div>
                 <div id="teacher-attendance" class="dashboard-section hidden"></div>
                 <div id="teacher-marks" class="dashboard-section hidden"></div>
@@ -997,39 +1065,43 @@
                 <div id="teacher-chat" class="dashboard-section hidden"></div>
             `;
             document.getElementById('teacher-overview').innerHTML = `
-                <div class="card">
-                    <h2 class="text-2xl font-bold">Welcome, <span id="teacher-welcome-name"></span>!</h2>
-                    <p class="text-slate-500">Here's a summary of your dashboard. Click on the cards to view details.</p>
+                <div class="space-y-6">
+                    <div class="card">
+                        <h2 class="text-2xl font-bold">Welcome, <span id="teacher-welcome-name"></span>!</h2>
+                        <p class="text-slate-500">Here's a summary of your dashboard.</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div id="view-assigned-classes-card" class="card interactive flex items-center gap-4 cursor-pointer hover:bg-slate-50 transition-colors">
+                            <div class="p-3 rounded-full bg-indigo-100">
+                                <i data-lucide="BookOpenCheck" class="w-8 h-8 text-indigo-500"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-slate-500">My Assigned Classes</p>
+                                <p id="assigned-classes-count" class="text-2xl font-bold">0</p>
+                            </div>
+                        </div>
+                        <div id="view-upcoming-exams-card" class="card interactive flex items-center gap-4 cursor-pointer hover:bg-slate-50 transition-colors">
+                            <div class="p-3 rounded-full bg-amber-100">
+                                <i data-lucide="ClipboardList" class="w-8 h-8 text-amber-500"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-slate-500">Upcoming Exams</p>
+                                <p id="upcoming-exams-count" class="text-2xl font-bold">0</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="teacher-attendance-recap-card" class="card">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-bold text-slate-700">Today's Attendance Recap</h3>
+                            <i data-lucide="CheckCircle2" class="w-5 h-5 text-slate-400"></i>
+                        </div>
+                        <div id="teacher-attendance-recap-list" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <p class="text-slate-500 text-sm sm:col-span-3">No classes taken yet today.</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div id="view-assigned-classes-card" class="card interactive flex items-center gap-4 cursor-pointer hover:bg-slate-50 transition-colors">
-                        <div class="p-3 rounded-full bg-indigo-100">
-                            <i data-lucide="BookOpenCheck" class="w-8 h-8 text-indigo-500"></i>
-                        </div>
-                        <div>
-                            <p class="text-sm text-slate-500">My Assigned Classes</p>
-                            <p id="assigned-classes-count" class="text-2xl font-bold">0</p>
-                        </div>
-                    </div>
-                     <div id="view-upcoming-exams-card" class="card interactive flex items-center gap-4 cursor-pointer hover:bg-slate-50 transition-colors">
-                        <div class="p-3 rounded-full bg-amber-100">
-                            <i data-lucide="ClipboardList" class="w-8 h-8 text-amber-500"></i>
-                        </div>
-                        <div>
-                            <p class="text-sm text-slate-500">Upcoming Exams</p>
-                            <p id="upcoming-exams-count" class="text-2xl font-bold">0</p>
-                        </div>
-                    </div>
-                </div>
-                <div id="teacher-attendance-recap-card" class="card">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-bold text-slate-700">Today's Attendance Recap</h3>
-                        <i data-lucide="CheckCircle2" class="w-5 h-5 text-slate-400"></i>
-                    </div>
-                    <div id="teacher-attendance-recap-list" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <p class="text-slate-500 text-sm sm:col-span-3">No classes taken yet today.</p>
-                    </div>
-                </div>`;
+            `;
+            document.getElementById('teacher-my-attendance').innerHTML = `<div class="card"><h2 class="text-xl font-bold mb-4">My Attendance Calendar</h2><div id="teacher-attendance-calendar-container"></div></div>`;
             document.getElementById('teacher-exam-request').innerHTML = `
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div class="lg:col-span-1">
@@ -1183,14 +1255,14 @@
                                             <p class="text-xs font-semibold text-slate-400 mb-2 uppercase">Recent Attendance</p>
                                             ${teacher.lastThreeSessions.length > 0
                                                 ? `<div class="grid grid-cols-3 gap-4">
-                                                   ${teacher.lastThreeSessions.map((session, index) => `
-                                                       <div class="text-center">
-                                                           <div class="w-20 h-20 mx-auto">
-                                                               <canvas id="admin-teacher-chart-${teacher.id}-${index}"></canvas>
-                                                           </div>
-                                                       </div>
-                                                   `).join('')}
-                                                   </div>`
+                                                    ${teacher.lastThreeSessions.map((session, index) => `
+                                                        <div class="text-center">
+                                                            <div class="w-20 h-20 mx-auto">
+                                                                <canvas id="admin-teacher-chart-${teacher.id}-${index}"></canvas>
+                                                            </div>
+                                                        </div>
+                                                    `).join('')}
+                                                    </div>`
                                                 : '<p class="text-slate-500 text-sm">No classes taken yet today.</p>'
                                             }
                                         </div>
@@ -1219,53 +1291,14 @@
             }
         };
 
-        const showStudentListModal = async () => {
-            showLoading();
+        const showStudentListModal = async (containerId) => {
+            const container = document.getElementById(containerId);
+            if(!container) return;
+            container.innerHTML = `<div class="text-center"><div class="w-8 h-8 border-2 border-dashed rounded-full animate-spin border-indigo-600 mx-auto"></div><p class="mt-2 text-slate-500">Loading live data...</p></div>`
+            
             try {
-                // Time Check Logic
-                const now = new Date();
-                const day = now.getDay(); // 0 = Sunday, 6 = Saturday
-                const hour = now.getHours();
-                const minute = now.getMinutes();
-                let isLiveTime = false;
-
-                if (day === 0) { // Sunday
-                    // Live during the morning/day until 5:30 PM
-                    if (hour < 17 || (hour === 17 && minute < 30)) {
-                        isLiveTime = true;
-                    }
-                } else { // Monday to Saturday
-                    const currentTimeInMinutes = hour * 60 + minute;
-                    const startTimeInMinutes = 17 * 60 + 30; // 5:30 PM
-                    const endTimeInMinutes = 20 * 60 + 30; // 8:30 PM
-                    if (currentTimeInMinutes >= startTimeInMinutes && currentTimeInMinutes <= endTimeInMinutes) {
-                        isLiveTime = true;
-                    }
-                }
-
-                if (!isLiveTime) {
-                    const messageHTML = `
-                        <div class="text-center p-4">
-                            <i data-lucide="Clock" class="w-12 h-12 mx-auto text-amber-500 mb-4"></i>
-                            <p class="font-semibold text-slate-700">Live Status Unavailable</p>
-                            <p class="text-sm text-slate-500 mt-2">
-                                Live student attendance is only shown during scheduled class hours:
-                            </p>
-                            <ul class="text-sm text-slate-500 mt-2 list-disc list-inside">
-                                <li><strong>Mon - Sat:</strong> 5:30 PM - 8:30 PM IST</li>
-                                <li><strong>Sunday:</strong> Morning hours</li>
-                            </ul>
-                            <p class="text-sm text-slate-500 mt-3">Please check back during these times.</p>
-                        </div>
-                    `;
-                    showModal('Student Status', messageHTML, `<button id="cancel-delete" class="px-4 py-2 rounded-md bg-slate-100 hover:bg-slate-200">Close</button>`);
-                    hideLoading();
-                    return;
-                }
-                
                 if (state.allStudents.length === 0) {
-                    showModal('All Students', '<p class="text-slate-500">No students found.</p>', `<button id="cancel-delete" class="px-4 py-2 rounded-md bg-slate-100 hover:bg-slate-200">Close</button>`);
-                    hideLoading();
+                    container.innerHTML = '<p class="text-slate-500">No students found.</p>';
                     return;
                 }
 
@@ -1292,8 +1325,8 @@
 
                 const sortedClasses = Object.keys(studentsByClass).sort();
 
-                const contentHTML = `
-                    <div class="max-h-[70vh] overflow-y-auto pr-2">
+                container.innerHTML = `
+                    <div class="max-h-[60vh] overflow-y-auto pr-2">
                         ${sortedClasses.map(className => `
                             <div class="mb-4">
                                 <h3 class="font-bold text-lg p-2 bg-slate-100 rounded-md sticky top-0">${className}</h3>
@@ -1328,16 +1361,12 @@
                     </div>
                 `;
 
-                showModal('Student Attendance Status - Today', contentHTML, `<button id="cancel-delete" class="px-4 py-2 rounded-md bg-slate-100 hover:bg-slate-200">Close</button>`);
-
             } catch (error) {
                 console.error("Error fetching students for list modal:", error);
-                showToast("Could not load student list.", "error");
-            } finally {
-                hideLoading();
-            }
+                container.innerHTML = `<p class="text-red-500">Could not load student list.</p>`;
+            } 
         };
-        
+
         const showAssignedClassesModal = () => {
             if (!state.currentTeacherData || !state.currentTeacherData.assignedClasses) {
                 showToast("No assigned classes found.", "info");
@@ -1370,12 +1399,6 @@
         // ===================================================================
         // =================== CALENDAR & HOLIDAY FUNCTIONS ==================
         // ===================================================================
-
-        const calendarState = {
-            holiday: { year: new Date().getFullYear(), month: new Date().getMonth() },
-            student: { year: new Date().getFullYear(), month: new Date().getMonth() },
-            holidays: new Set(), // Store 'YYYY-MM-DD' strings
-        };
 
         const fetchHolidaysForMonth = async (year, month) => {
             try {
@@ -1413,7 +1436,7 @@
                                 <button id="next-holiday-month" class="p-2 rounded-full hover:bg-slate-200"><i data-lucide="ChevronRight" class="pointer-events-none"></i></button>
                              </div>
                              <div class="grid grid-cols-7 gap-1 text-center font-semibold text-slate-500 text-sm mb-2">
-                                <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+                                 <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
                              </div>
                              <div class="grid grid-cols-7 gap-1">`;
 
@@ -1461,26 +1484,42 @@
             try {
                 // 1. Fetch holidays for the current month view
                 await fetchHolidaysForMonth(year, month);
-
-                // 2. Fetch all attendance for the student and filter client-side.
-                const attendanceQuery = query(collection(db, 'attendance'), where('studentId', '==', studentId));
-                const attendanceSnapshot = await getDocs(attendanceQuery);
-                const attendanceByDate = {}; // { 'YYYY-MM-DD': 'present' or 'absent' }
-
+        
+                // 2. Fetch all of the student's attendance records for the visible month.
+                // NOTE: This query requires a composite index in Firestore: (studentId ASC, date ASC) on the 'attendance' collection.
                 const monthStartStr = formatToYYYYMMDD(new Date(year, month, 1));
                 const monthEndStr = formatToYYYYMMDD(new Date(year, month + 1, 0));
+        
+                const attendanceQuery = query(collection(db, 'attendance'),
+                    where('studentId', '==', studentId),
+                    where('date', '>=', monthStartStr),
+                    where('date', '<=', monthEndStr)
+                );
+                const attendanceSnapshot = await getDocs(attendanceQuery);
+                
+                // --- DEFINITIVE LOGIC FIX ---
+                // This two-pass approach ensures that a 'present' status always overrides an 'absent' one for any given day.
+                const dailyStatusMap = {}; 
 
+                // First pass: Mark any day with a record as 'absent' by default.
                 attendanceSnapshot.forEach(doc => {
                     const record = doc.data();
-                    const recordDateStr = record.date;
-                    if (recordDateStr >= monthStartStr && recordDateStr <= monthEndStr) {
-                        if (attendanceByDate[recordDateStr] !== 'present') {
-                            attendanceByDate[recordDateStr] = record.status;
-                        }
+                    dailyStatusMap[record.date] = 'absent';
+                });
+
+                // Second pass: Upgrade the status to 'present' if any record for that day is 'present'.
+                attendanceSnapshot.forEach(doc => {
+                    const record = doc.data();
+                    if (record.status === 'present') {
+                        dailyStatusMap[record.date] = 'present';
                     }
                 });
 
-                // 3. Calculate Attendance Percentage
+
+                // For debugging: This will show the final calculated attendance map in the browser's developer console.
+                console.log(`[Debug] Processed attendance for ${studentId} in ${year}-${month+1}:`, dailyStatusMap);
+
+                // 3. Calculate Attendance Percentage based on the corrected `dailyStatusMap`.
                 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
                 const firstDay = new Date(year, month, 1).getDay();
                 const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -1498,14 +1537,13 @@
 
                     if (!isHoliday) {
                         workingDays++;
-                        if (attendanceByDate[dateStr] === 'present') {
+                        if (dailyStatusMap[dateStr] === 'present') {
                             presentDays++;
                         }
                     }
                 }
 
                 const attendancePercentage = workingDays > 0 ? ((presentDays / workingDays) * 100).toFixed(0) : 0;
-
 
                 // 4. Render Calendar
                 const student = state.allStudents.find(s => s.id === studentId);
@@ -1515,16 +1553,16 @@
                                  <p class="text-sm font-medium text-slate-500">Monthly Attendance Rate (Working Days)</p>
                                  <p class="text-3xl font-bold text-indigo-600">${attendancePercentage}%</p>
                                  <div class="w-full bg-slate-200 rounded-full h-2.5 mt-1">
-                                    <div class="bg-indigo-600 h-2.5 rounded-full" style="width: ${attendancePercentage}%"></div>
+                                     <div class="bg-indigo-600 h-2.5 rounded-full" style="width: ${attendancePercentage}%"></div>
                                  </div>
                              </div>
                              <div class="flex items-center justify-between mb-4">
-                                <button id="prev-student-month" class="p-2 rounded-full hover:bg-slate-200"><i data-lucide="ChevronLeft" class="pointer-events-none"></i></button>
-                                <h3 class="text-lg font-bold">${monthNames[month]} ${year}</h3>
-                                <button id="next-student-month" class="p-2 rounded-full hover:bg-slate-200"><i data-lucide="ChevronRight" class="pointer-events-none"></i></button>
+                                 <button id="prev-student-month" class="p-2 rounded-full hover:bg-slate-200"><i data-lucide="ChevronLeft" class="pointer-events-none"></i></button>
+                                 <h3 class="text-lg font-bold">${monthNames[month]} ${year}</h3>
+                                 <button id="next-student-month" class="p-2 rounded-full hover:bg-slate-200"><i data-lucide="ChevronRight" class="pointer-events-none"></i></button>
                              </div>
                              <div class="grid grid-cols-7 gap-1 text-center font-semibold text-slate-500 text-sm mb-2">
-                                <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+                                 <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
                              </div>
                              <div class="grid grid-cols-7 gap-2">`;
 
@@ -1545,11 +1583,11 @@
                         cellClass += ' bg-sky-100 text-sky-700 font-medium';
                         content += '<span class="absolute bottom-1.5 text-[10px] font-semibold">Holiday</span>';
                     } else { // It's a past, working day
-                        const status = attendanceByDate[dateStr];
+                        const status = dailyStatusMap[dateStr];
                         if (status === 'present') {
                             cellClass += ' bg-green-100 text-green-800';
                             content = `<div class="flex flex-col items-center justify-center"><i data-lucide="Check" class="w-5 h-5 text-green-600"></i><span class="font-bold mt-1">${i}</span></div>`;
-                        } else { // Absent (not present on any record for this day)
+                        } else { // Absent (status is 'absent' or undefined for a working day)
                             cellClass += ' bg-red-100 text-red-800';
                             content = `<div class="flex flex-col items-center justify-center"><i data-lucide="X" class="w-5 h-5 text-red-600"></i><span class="font-bold mt-1">${i}</span></div>`;
                         }
@@ -1559,9 +1597,9 @@
 
                 table += `</div>
                           <div class="flex flex-wrap justify-end gap-x-4 gap-y-2 mt-4 text-sm">
-                            <span class="flex items-center gap-2"><div class="w-4 h-4 rounded bg-green-100 border border-green-200"></div> Present</span>
-                            <span class="flex items-center gap-2"><div class="w-4 h-4 rounded bg-red-100 border border-red-200"></div> Absent</span>
-                            <span class="flex items-center gap-2"><div class="w-4 h-4 rounded bg-sky-100 border border-sky-200"></div> Holiday</span>
+                              <span class="flex items-center gap-2"><div class="w-4 h-4 rounded bg-green-100 border border-green-200"></div> Present</span>
+                              <span class="flex items-center gap-2"><div class="w-4 h-4 rounded bg-red-100 border border-red-200"></div> Absent</span>
+                              <span class="flex items-center gap-2"><div class="w-4 h-4 rounded bg-sky-100 border border-sky-200"></div> Holiday</span>
                           </div>`;
 
                 container.innerHTML = table;
@@ -1569,8 +1607,91 @@
 
             } catch (error) {
                 console.error("Error rendering student attendance calendar:", error);
-                showToast("Failed to load student calendar.", "error");
-                container.innerHTML = `<p class="text-red-500 text-center">Could not load calendar.</p>`;
+                showToast("Failed to load student calendar. Please ensure the required Firestore index is built.", "error");
+                container.innerHTML = `<p class="text-red-500 text-center">Could not load calendar. A database index might be missing or still building.</p>`;
+            } finally {
+                hideLoading();
+            }
+        };
+
+        const renderTeacherCalendar = async (teacherId, year, month, containerId, navPrefix) => {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            showLoading();
+
+            try {
+                // 1. Fetch holidays for the current month view
+                await fetchHolidaysForMonth(year, month);
+        
+                // 2. Fetch all of the teacher's attendance records for the visible month.
+                // NOTE: This query requires a composite index in Firestore: (teacherId ASC, date ASC) on the 'attendance' collection.
+                const monthStartStr = formatToYYYYMMDD(new Date(year, month, 1));
+                const monthEndStr = formatToYYYYMMDD(new Date(year, month + 1, 0));
+        
+                const attendanceQuery = query(collection(db, 'attendance'),
+                    where('teacherId', '==', teacherId),
+                    where('date', '>=', monthStartStr),
+                    where('date', '<=', monthEndStr)
+                );
+                const attendanceSnapshot = await getDocs(attendanceQuery);
+                
+                // Create a simple Set of unique dates where the teacher took a class.
+                const presentDates = new Set();
+                attendanceSnapshot.forEach(doc => {
+                    presentDates.add(doc.data().date);
+                });
+                
+                const totalDaysPresent = presentDates.size;
+                const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                const firstDay = new Date(year, month, 1).getDay();
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+                let table = `<div class="text-center mb-4 p-3 bg-slate-50 rounded-lg">
+                                 <p class="text-sm font-medium text-slate-500">Class Days This Month</p>
+                                 <p class="text-3xl font-bold text-indigo-600">${totalDaysPresent}</p>
+                             </div>
+                             <div class="flex items-center justify-between mb-4">
+                                 <button id="prev-${navPrefix}-month" class="p-2 rounded-full hover:bg-slate-200"><i data-lucide="ChevronLeft" class="pointer-events-none"></i></button>
+                                 <h3 class="text-lg font-bold">${monthNames[month]} ${year}</h3>
+                                 <button id="next-${navPrefix}-month" class="p-2 rounded-full hover:bg-slate-200"><i data-lucide="ChevronRight" class="pointer-events-none"></i></button>
+                             </div>
+                             <div class="grid grid-cols-7 gap-1 text-center font-semibold text-slate-500 text-sm mb-2">
+                                 <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+                             </div>
+                             <div class="grid grid-cols-7 gap-2">`;
+
+                for (let i = 0; i < firstDay; i++) { table += '<div></div>'; }
+
+                for (let i = 1; i <= daysInMonth; i++) {
+                    const dateStr = formatToYYYYMMDD(new Date(year, month, i));
+                    const isHoliday = calendarState.holidays.has(dateStr);
+                    const isPresent = presentDates.has(dateStr);
+                    const isToday = formatToYYYYMMDD(new Date()) === dateStr;
+
+                    let cellClass = 'h-10 flex items-center justify-center rounded-lg text-center leading-tight p-1';
+                    
+                    if (isPresent) {
+                        cellClass += ' bg-green-500 text-white font-bold';
+                    } else if (isHoliday) {
+                        cellClass += ' bg-sky-200 text-sky-800';
+                    } else {
+                        cellClass += ' bg-slate-100 text-slate-400';
+                    }
+                    if (isToday) {
+                        cellClass += ' ring-2 ring-indigo-500';
+                    }
+
+                    table += `<div class="${cellClass}">${i}</div>`;
+                }
+
+                table += `</div>`;
+                container.innerHTML = table;
+                lucide.createIcons();
+
+            } catch (error) {
+                console.error("Error rendering teacher calendar:", error);
+                showToast("Failed to load teacher calendar. A required database index might be missing.", "error");
+                container.innerHTML = `<p class="text-red-500 text-center">Could not load calendar data.</p>`;
             } finally {
                 hideLoading();
             }
@@ -2048,8 +2169,8 @@
             const unsubTests = onSnapshot(testsQuery, (snap) => {
                  const el = document.getElementById('live-tests-stat');
                  if (el) {
-                    const startValue = parseInt(el.textContent.replace(/,/g, ''), 10) || 0;
-                    animateValue(el, startValue, snap.size, 1000);
+                     const startValue = parseInt(el.textContent.replace(/,/g, ''), 10) || 0;
+                     animateValue(el, startValue, snap.size, 1000);
                  }
             });
 
@@ -2125,12 +2246,12 @@
                 if(!cont) return;
 
                  getDocs(query(collection(db, 'teachers'), orderBy('name'))).then(snap => {
-                      if(snap.empty){ cont.innerHTML = '<p class="text-slate-500">No teachers found.</p>'; return; }
-                      cont.innerHTML = `<table class="w-full text-sm"><thead class="bg-slate-50 text-left"><tr class="border-b border-slate-200"><th class="p-2">Name</th><th class="p-2">Email</th><th class="p-2">Assigned Classes</th><th class="p-2 text-center">Actions</th></tr></thead><tbody>${snap.docs.map(d => {
-                          const t = d.data();
-                          return `<tr class="border-b border-slate-200"><td class="p-2 font-medium">${t.name}</td><td class="p-2">${t.email}</td><td class="p-2">${t.assignedClasses.map(c => `<span class="bg-indigo-100 text-indigo-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">${c.class} (${c.subject})</span>`).join('') || 'None'}</td><td class="p-2 text-center"><button class="edit-teacher-btn text-blue-500 p-1" data-id="${d.id}"><i data-lucide="Edit" class="w-4 h-4 pointer-events-none"></i></button><button class="assign-class-btn text-green-500 p-1" data-id="${d.id}" data-name="${t.name}"><i data-lucide="Plus" class="w-4 h-4 pointer-events-none"></i></button><button class="delete-teacher-btn p-1 text-red-500 hover:bg-red-100 rounded-full" data-id="${d.id}"><i data-lucide="Trash2" class="w-4 h-4 pointer-events-none"></i></button></td></tr>`;
-                      }).join('')}</tbody></table>`;
-                      lucide.createIcons();
+                     if(snap.empty){ cont.innerHTML = '<p class="text-slate-500">No teachers found.</p>'; return; }
+                     cont.innerHTML = `<table class="w-full text-sm"><thead class="bg-slate-50 text-left"><tr class="border-b border-slate-200"><th class="p-2">Name</th><th class="p-2">Email</th><th class="p-2">Assigned Classes</th><th class="p-2 text-center">Actions</th></tr></thead><tbody>${snap.docs.map(d => {
+                         const t = d.data();
+                         return `<tr class="border-b border-slate-200"><td class="p-2 font-medium">${t.name}</td><td class="p-2">${t.email}</td><td class="p-2">${t.assignedClasses.map(c => `<span class="bg-indigo-100 text-indigo-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">${c.class} (${c.subject})</span>`).join('') || 'None'}</td><td class="p-2 text-center flex justify-center items-center gap-1"><button class="edit-teacher-btn text-blue-500 p-1" data-id="${d.id}" title="Edit Teacher"><i data-lucide="Edit" class="w-4 h-4 pointer-events-none"></i></button><button class="assign-class-btn text-green-500 p-1" data-id="${d.id}" data-name="${t.name}" title="Assign Class"><i data-lucide="Plus" class="w-4 h-4 pointer-events-none"></i></button><button class="delete-teacher-btn p-1 text-red-500 hover:bg-red-100 rounded-full" data-id="${d.id}" title="Delete Teacher"><i data-lucide="Trash2" class="w-4 h-4 pointer-events-none"></i></button></td></tr>`;
+                     }).join('')}</tbody></table>`;
+                     lucide.createIcons();
                  });
             };
             
@@ -2218,61 +2339,16 @@
             if (!card || !listEl) return;
 
             card.classList.remove('hidden');
-
-            const checkTimeAndRefresh = () => {
-                const now = new Date();
-                const day = now.getDay(); // 0 = Sunday
-                const hour = now.getHours();
-                const minute = now.getMinutes();
-                const currentTimeInMinutes = hour * 60 + minute;
-                
-                let isClassTime = false;
-
-                if (day === 0) { // Sunday
-                    // Assuming morning hours end before 5:30 PM
-                    if (currentTimeInMinutes < (17 * 60 + 30)) {
-                        isClassTime = true;
-                    }
-                } else { // Monday to Saturday
-                    const startTimeInMinutes = 17 * 60 + 30; // 5:30 PM
-                    const endTimeInMinutes = 20 * 60 + 30;   // 8:30 PM
-                    if (currentTimeInMinutes >= startTimeInMinutes && currentTimeInMinutes <= endTimeInMinutes) {
-                        isClassTime = true;
-                    }
-                }
-
-                if (!isClassTime) {
-                    listEl.innerHTML = `<p class="text-slate-500 text-sm sm:col-span-3">Classes are not currently in session.</p>`;
-                    return true; // Session is over/not started
-                }
-                
-                return false; // Session is active
-            };
-
-            if (checkTimeAndRefresh()) {
-                // Set a timer to check again tomorrow
-                const tomorrow = new Date();
-                tomorrow.setDate(tomorrow.getDate() + 1);
-                tomorrow.setHours(0, 0, 0, 0);
-                const timeToTomorrow = tomorrow.getTime() - Date.now();
-                setTimeout(setupTeacherLiveStats, timeToTomorrow);
-                return;
-            }
-
+            
             const todayStr = getTodayDateString();
             const attendanceQuery = query(
                 collection(db, 'attendance'),
                 where('teacherId', '==', state.currentUser.uid),
-                where('date', '==', todayStr),
-                orderBy('timestamp', 'desc')
+                where('date', '==', todayStr)
             );
 
             const unsub = onSnapshot(attendanceQuery, (snap) => {
-                if (checkTimeAndRefresh()) {
-                    unsub(); // Stop listening if day is over
-                    return;
-                }
-
+                
                 if (snap.empty) {
                     listEl.innerHTML = `<p class="text-slate-500 text-sm sm:col-span-3">No classes taken yet today.</p>`;
                     return;
@@ -2374,22 +2450,24 @@
                 }
             });
             
-            const unsubRequests = onSnapshot(query(collection(db, 'requests'), where('teacherId', '==', state.currentUser.uid), orderBy('timestamp', 'desc')), snap => {
+            const unsubRequests = onSnapshot(query(collection(db, 'requests'), where('teacherId', '==', state.currentUser.uid)), snap => {
                  const cont = document.getElementById('teacher-requests-list');
                 if(!cont) return;
                 if (snap.empty) { cont.innerHTML = '<p class="text-slate-500">You have not submitted any requests.</p>'; return; }
-                 cont.innerHTML = snap.docs.map(d => {
+                const docs = snap.docs.sort((a,b) => b.data().timestamp.toMillis() - a.data().timestamp.toMillis());
+                 cont.innerHTML = docs.map(d => {
                     const r = d.data();
                     const statusColors = { pending: 'bg-amber-100 text-amber-800', approved: 'bg-green-100 text-green-800', denied: 'bg-red-100 text-red-800' };
                     return `<div class="p-3 rounded-md bg-slate-50"><div class="flex justify-between items-start"><div><h3 class="font-semibold">${r.title}</h3><p class="text-sm text-slate-500">${r.content}</p></div><span class="text-xs font-medium px-2.5 py-0.5 rounded-full ${statusColors[r.status]}">${r.status}</span></div><p class="text-xs text-slate-400 text-right mt-1">${formatDate(r.timestamp)}</p></div>`;
                 }).join('');
             });
-             const unsubMyExamRequests = onSnapshot(query(collection(db, 'exam-requests'), where('teacherId', '==', state.currentUser.uid), orderBy('createdAt', 'desc')), snap => {
+             const unsubMyExamRequests = onSnapshot(query(collection(db, 'exam-requests'), where('teacherId', '==', state.currentUser.uid)), snap => {
                 const cont = document.getElementById('teacher-exam-requests-list');
                 if(!cont) return;
                 if (snap.empty) { cont.innerHTML = '<p class="text-slate-500">You have not requested any exams.</p>'; return; }
+                const docs = snap.docs.sort((a,b) => b.data().createdAt.toMillis() - a.data().createdAt.toMillis());
                 const statusColors = { pending: 'bg-amber-100 text-amber-800', approved: 'bg-green-100 text-green-800', denied: 'bg-red-100 text-red-800' };
-                cont.innerHTML = snap.docs.map(d => {
+                cont.innerHTML = docs.map(d => {
                     const r = d.data();
                     return `<div class="p-3 rounded-md bg-slate-50 border">
                         <div class="flex justify-between items-start">
@@ -2872,7 +2950,9 @@
                 }
 
                 if (target.closest('#total-students-card')) {
-                    showStudentListModal();
+                    const content = `<div id="modal-student-list"></div>`;
+                    showModal('All Students - Live Attendance', content, `<button id="cancel-delete" class="px-4 py-2 rounded-md bg-slate-100 hover:bg-slate-200">Close</button>`);
+                    showStudentListModal('modal-student-list');
                 }
 
                 // Admin buttons
@@ -2909,6 +2989,11 @@
                 if (target.closest('.edit-student-btn')) showEditStudentModal(target.closest('.edit-student-btn').dataset.id);
                 if (target.closest('.delete-student-btn')) deleteStudent(target.closest('.delete-student-btn').dataset.id);
                 if (target.closest('.edit-teacher-btn')) showEditTeacherModal(target.closest('.edit-teacher-btn').dataset.id);
+                if (target.closest('.view-teacher-calendar-btn')) {
+                    const btn = target.closest('.view-teacher-calendar-btn');
+                    showTeacherCalendarModal(btn.dataset.id, btn.dataset.name);
+                }
+
 
                 if (target.classList.contains('approve-request-btn')) updateDoc(doc(db, 'requests', target.dataset.id), { status: 'approved' });
                 if (target.classList.contains('deny-request-btn')) updateDoc(doc(db, 'requests', target.dataset.id), { status: 'denied' });
@@ -3069,6 +3154,14 @@
                         document.getElementById('upload-progress-container').classList.remove('hidden');
                     }
                 }
+                if (e.target.id === 'admin-teacher-select') {
+                    const teacherId = e.target.value;
+                    if (teacherId) {
+                        renderTeacherCalendar(teacherId, new Date().getFullYear(), new Date().getMonth(), 'admin-teacher-calendar-container', 'modal-teacher');
+                    } else {
+                         document.getElementById('admin-teacher-calendar-container').innerHTML = `<p class="text-slate-500">Please select a teacher to view their calendar.</p>`;
+                    }
+                }
             });
         };
         
@@ -3104,6 +3197,51 @@
                     }
                 });
             }
+             // Event delegation for teacher calendar navigation
+            document.getElementById('dashboard-container').addEventListener('click', e => {
+                const target = e.target;
+                const teacherId = state.currentUser?.uid;
+                
+                // For the teacher's own calendar
+                if (teacherId && (target.closest('#prev-teacher-month') || target.closest('#next-teacher-month'))) {
+                    if (target.closest('#prev-teacher-month')) {
+                        calendarState.teacher.month--;
+                        if (calendarState.teacher.month < 0) {
+                            calendarState.teacher.month = 11;
+                            calendarState.teacher.year--;
+                        }
+                    }
+                    if (target.closest('#next-teacher-month')) {
+                         calendarState.teacher.month++;
+                        if (calendarState.teacher.month > 11) {
+                            calendarState.teacher.month = 0;
+                            calendarState.teacher.year++;
+                        }
+                    }
+                    renderTeacherCalendar(teacherId, calendarState.teacher.year, calendarState.teacher.month, 'teacher-attendance-calendar-container', 'teacher');
+                }
+
+                // For the admin's view of a teacher's calendar
+                const adminTeacherSelect = document.getElementById('admin-teacher-select');
+                if (adminTeacherSelect && adminTeacherSelect.value && (target.closest('#prev-modal-teacher-month') || target.closest('#next-modal-teacher-month'))) {
+                    const selectedTeacherId = adminTeacherSelect.value;
+                    if (target.closest('#prev-modal-teacher-month')) {
+                        calendarState.modalTeacher.month--;
+                        if (calendarState.modalTeacher.month < 0) {
+                            calendarState.modalTeacher.month = 11;
+                            calendarState.modalTeacher.year--;
+                        }
+                    }
+                    if (target.closest('#next-modal-teacher-month')) {
+                        calendarState.modalTeacher.month++;
+                        if (calendarState.modalTeacher.month > 11) {
+                            calendarState.modalTeacher.month = 0;
+                            calendarState.modalTeacher.year++;
+                        }
+                    }
+                    renderTeacherCalendar(selectedTeacherId, calendarState.modalTeacher.year, calendarState.modalTeacher.month, 'admin-teacher-calendar-container', 'modal-teacher');
+                }
+            });
         };
         
         // ===================================================================
@@ -3123,8 +3261,4 @@
 
 </body>
 </html>
-
-
-
-
 
