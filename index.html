@@ -237,6 +237,17 @@
         #student-portal .digital-clock {
             background: rgba(0,0,0,0.2);
             color: #e0e7ff; /* indigo-200 */
+            /* Make the clock more compact */
+            padding: 0.2rem 0.4rem;
+            font-size: 0.75rem; /* smaller font */
+            letter-spacing: 0.025em;
+        }
+        /* Override the default responsive sizing for the portal clock */
+        @media (min-width: 640px) {
+             #student-portal .digital-clock {
+                padding: 0.25rem 0.6rem;
+                font-size: 0.85rem;
+            }
         }
     </style>
 </head>
@@ -261,13 +272,13 @@
         <section id="login-page" class="page hidden flex items-center justify-center min-h-screen bg-slate-100 fade-in">
             <div class="w-full max-w-md">
                 <div class="text-center mb-8">
-                     <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto text-indigo-600"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto text-indigo-600"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>
                     <h1 class="text-3xl font-bold text-slate-800 mt-2">Adarsha Educational Institute</h1>
                     <p class="text-slate-500">Welcome back! Please sign in to your account.</p>
                 </div>
 
                 <div class="card bg-white p-8">
-                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                         <button id="admin-login-btn" class="login-type-btn active flex items-center justify-center gap-2 py-3 px-4 font-semibold text-white bg-indigo-600 rounded-md transition-all duration-300 transform hover:scale-105">
                             <i data-lucide="Shield"></i> Admin Login
                         </button>
@@ -318,7 +329,6 @@
                         <h1 id="page-title" class="text-xl md:text-2xl font-bold truncate">Dashboard</h1>
                     </div>
                     <div class="flex items-center gap-2 sm:gap-4 flex-shrink-0">
-                        <div id="digital-clock" class="digital-clock">00:00:00</div>
                         <div id="user-avatar" class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center font-bold text-indigo-700 border-2 border-indigo-300">
                             A
                         </div>
@@ -357,10 +367,10 @@
                     <div class="flex items-center justify-between h-20">
                         <div class="flex items-center min-w-0">
                             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>
-                            <span class="ml-3 text-lg sm:text-xl font-bold">Adarsha Educational Institute</span>
+                            <span class="ml-3 text-lg sm:text-xl font-bold truncate">Adarsha Educational Institute</span>
                         </div>
-                        <div class="flex flex-col items-end gap-2 flex-shrink-0">
-                             <div id="portal-digital-clock" class="digital-clock">00:00:00</div>
+                        <div class="flex flex-col items-end gap-1 flex-shrink-0">
+                             <div id="portal-digital-clock" class="digital-clock">00:00:00 AM</div>
                             <a href="#login-page" id="go-to-login" class="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium bg-white text-indigo-600 rounded-md hover:bg-indigo-50 transition whitespace-nowrap">Admin/Teacher Login</a>
                         </div>
                     </div>
@@ -371,18 +381,18 @@
                  <div id="student-stats-grid">
                     <div class="card interactive">
                          <div class="grid grid-cols-3 divide-x divide-slate-200 -m-4">
-                            <div class="p-4 flex flex-col items-center justify-center gap-2 text-center">
-                                <div class="p-2 rounded-full bg-green-100"><i data-lucide="Contact" class="w-6 h-6 text-green-500"></i></div>
-                                <div><p id="portal-student-count" class="text-xl font-bold">0</p><p class="text-xs text-slate-500">Students</p></div>
-                            </div>
                              <div class="p-4 flex flex-col items-center justify-center gap-2 text-center">
-                                <div class="p-2 rounded-full bg-blue-100"><i data-lucide="Users" class="w-6 h-6 text-blue-500"></i></div>
-                                <div><p id="portal-teacher-count" class="text-xl font-bold">0</p><p class="text-xs text-slate-500">Total Teachers</p></div>
-                            </div>
+                                 <div class="p-2 rounded-full bg-green-100"><i data-lucide="Contact" class="w-6 h-6 text-green-500"></i></div>
+                                 <div><p id="portal-student-count" class="text-xl font-bold">0</p><p class="text-xs text-slate-500">Students</p></div>
+                             </div>
                              <div class="p-4 flex flex-col items-center justify-center gap-2 text-center">
-                                <div class="p-2 rounded-full bg-purple-100"><i data-lucide="Book" class="w-6 h-6 text-purple-500"></i></div>
-                                <div><p id="portal-subject-count" class="text-xl font-bold">0</p><p class="text-xs text-slate-500">Subjects</p></div>
-                            </div>
+                                 <div class="p-2 rounded-full bg-blue-100"><i data-lucide="Users" class="w-6 h-6 text-blue-500"></i></div>
+                                 <div><p id="portal-teacher-count" class="text-xl font-bold">0</p><p class="text-xs text-slate-500">Total Teachers</p></div>
+                             </div>
+                             <div class="p-4 flex flex-col items-center justify-center gap-2 text-center">
+                                 <div class="p-2 rounded-full bg-purple-100"><i data-lucide="Book" class="w-6 h-6 text-purple-500"></i></div>
+                                 <div><p id="portal-subject-count" class="text-xl font-bold">0</p><p class="text-xs text-slate-500">Subjects</p></div>
+                             </div>
                          </div>
                     </div>
                  </div>
@@ -415,15 +425,15 @@
                          <!-- Daily Absentees Tile -->
                         <div id="absentee-card" class="card interactive cursor-pointer">
                              <div class="flex items-center justify-between">
-                                <div class="flex items-center gap-4">
-                                    <div class="p-3 rounded-full bg-red-100"><i data-lucide="UserX" class="w-8 h-8 text-red-500"></i></div>
-                                    <div>
-                                        <p class="text-sm text-slate-500">Today's Absentees</p>
-                                        <p id="absentee-count" class="text-2xl font-bold">0</p>
-                                    </div>
-                                </div>
-                                <i data-lucide="ArrowRight" class="text-slate-400"></i>
-                            </div>
+                                 <div class="flex items-center gap-4">
+                                     <div class="p-3 rounded-full bg-red-100"><i data-lucide="UserX" class="w-8 h-8 text-red-500"></i></div>
+                                     <div>
+                                         <p class="text-sm text-slate-500">Today's Absentees</p>
+                                         <p id="absentee-count" class="text-2xl font-bold">0</p>
+                                     </div>
+                                 </div>
+                                 <i data-lucide="ArrowRight" class="text-slate-400"></i>
+                             </div>
                         </div>
                     </div>
                     
@@ -447,7 +457,7 @@
                         </div>
                     </div>
                     
-                      <!-- Published Marks Sheets -->
+                     <!-- Published Marks Sheets -->
                     <div class="card interactive md:col-span-2 lg:grid-cols-3">
                         <h2 class="text-xl font-bold mb-4 flex items-center">
                             <i data-lucide="GraduationCap" class="w-6 h-6 mr-2 text-green-500"></i>
@@ -694,6 +704,7 @@
         const startClock = () => {
             if (state.clockInterval) clearInterval(state.clockInterval);
 
+            // This element no longer exists in the dashboard, but the check is harmless.
             const clockElDashboard = document.getElementById('digital-clock');
             const clockElPortal = document.getElementById('portal-digital-clock');
 
@@ -703,10 +714,16 @@
                 const istOffset = 5.5 * 3600000;
                 const istTime = new Date(utc + istOffset);
 
-                const hours = String(istTime.getHours()).padStart(2, '0');
+                let hours = istTime.getHours();
                 const minutes = String(istTime.getMinutes()).padStart(2, '0');
                 const seconds = String(istTime.getSeconds()).padStart(2, '0');
-                const timeString = `${hours}:${minutes}:${seconds}`;
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                
+                hours = hours % 12;
+                hours = hours ? hours : 12; // the hour '0' should be '12'
+                const hoursStr = String(hours).padStart(2, '0');
+
+                const timeString = `${hoursStr}:${minutes}:${seconds} ${ampm}`;
 
                 if (clockElDashboard) clockElDashboard.textContent = timeString;
                 if (clockElPortal) clockElPortal.textContent = timeString;
@@ -853,7 +870,7 @@
                     </nav>
                     <div class="sidebar-footer p-3 border-t border-slate-700">
                         <div class="flex items-center gap-3">
-                            ${avatarHTML}
+                             <div id="sidebar-avatar-container">${avatarHTML}</div>
                             <div class="flex-grow min-w-0">
                                 <p class="font-semibold text-sm text-white user-name truncate" title="${userEmail}">${userEmail}</p>
                                 <p class="text-xs text-slate-400 user-role">${role.charAt(0).toUpperCase() + role.slice(1)}</p>
@@ -1047,7 +1064,7 @@
                      </div>
                       <div id="upload-progress-container" class="mt-4 hidden">
                          <button id="upload-pic-btn" class="btn-primary ripple w-full">Upload and Save</button>
-                      </div>
+                     </div>
                 </div>
                 <div class="card">
                     <h2 class="text-xl font-bold mb-4">Change Password</h2>
@@ -1136,11 +1153,11 @@
                                     <li class="p-4 rounded-md bg-slate-50 border">
                                         <div class="flex items-center justify-between">
                                              <div class="flex items-center gap-3">
-                                                ${avatar}
-                                                <div>
-                                                    <p class="font-medium text-slate-800">${teacher.name}</p>
-                                                    <p class="text-sm text-slate-500">${teacher.email}</p>
-                                                </div>
+                                                 ${avatar}
+                                                 <div>
+                                                     <p class="font-medium text-slate-800">${teacher.name}</p>
+                                                     <p class="text-sm text-slate-500">${teacher.email}</p>
+                                                 </div>
                                              </div>
                                             ${statusIndicator}
                                         </div>
@@ -2092,13 +2109,17 @@
 
                     const profilePicPreview = document.getElementById('profile-pic-preview');
                     const headerAvatar = document.getElementById('user-avatar');
+                    const sidebarAvatarContainer = document.getElementById('sidebar-avatar-container');
+
                     if (state.currentTeacherData.photoURL) {
-                        profilePicPreview.src = state.currentTeacherData.photoURL;
-                        headerAvatar.innerHTML = `<img src="${state.currentTeacherData.photoURL}" class="w-full h-full rounded-full object-cover">`;
+                        if (profilePicPreview) profilePicPreview.src = state.currentTeacherData.photoURL;
+                        if (headerAvatar) headerAvatar.innerHTML = `<img src="${state.currentTeacherData.photoURL}" class="w-full h-full rounded-full object-cover">`;
+                        if (sidebarAvatarContainer) sidebarAvatarContainer.innerHTML = `<img src="${state.currentTeacherData.photoURL}" class="w-10 h-10 rounded-full object-cover">`;
                     } else {
                         const userInitial = state.currentUser.email.charAt(0).toUpperCase();
-                         profilePicPreview.src = `https://placehold.co/80x80/e0e7ff/4f46e5?text=${userInitial}`;
-                         headerAvatar.innerHTML = userInitial;
+                         if (profilePicPreview) profilePicPreview.src = `https://placehold.co/80x80/e0e7ff/4f46e5?text=${userInitial}`;
+                         if (headerAvatar) headerAvatar.innerHTML = userInitial;
+                         if (sidebarAvatarContainer) sidebarAvatarContainer.innerHTML = `<div class="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center font-bold text-white">${userInitial}</div>`;
                     }
                     
                     populateSelect('teacher-attendance-class-subject', state.currentTeacherData.assignedClasses, c => `${c.class} - ${c.subject}`, c => `${c.class}|${c.subject}`);
@@ -2120,13 +2141,13 @@
                     }
                     const examClassSelect = document.getElementById('teacher-exam-class');
                      if(examClassSelect) {
-                        examClassSelect.addEventListener('change', () => {
-                            const selectedClass = examClassSelect.value;
-                            const subjectsForClass = state.currentTeacherData.assignedClasses
-                                .filter(c => c.class === selectedClass)
-                                .map(c => c.subject);
-                            populateSelect('teacher-exam-subject', subjectsForClass);
-                        });
+                         examClassSelect.addEventListener('change', () => {
+                             const selectedClass = examClassSelect.value;
+                             const subjectsForClass = state.currentTeacherData.assignedClasses
+                                 .filter(c => c.class === selectedClass)
+                                 .map(c => c.subject);
+                             populateSelect('teacher-exam-subject', subjectsForClass);
+                         });
                     }
                 }
             });
@@ -2354,11 +2375,58 @@
         // ========================= EVENT LISTENERS =========================
         // ===================================================================
 
-        const attachAllDashboardActionListeners = () => {
+        const uploadProfilePicture = async () => {
+            const fileInput = document.getElementById('profile-pic-input');
+            const file = fileInput.files[0];
+            if (!file) {
+                showToast('Please select an image first.', 'info');
+                return;
+            }
+
+            if (!state.currentUser) {
+                showToast('You must be logged in to upload a picture.', 'error');
+                return;
+            }
+
+            showLoading();
+            try {
+                const storageRef = ref(storage, `profile-pictures/${state.currentUser.uid}/${file.name}`);
+                const snapshot = await uploadBytes(storageRef, file);
+                const downloadURL = await getDownloadURL(snapshot.ref);
+
+                await updateDoc(doc(db, 'teachers', state.currentUser.uid), {
+                    photoURL: downloadURL
+                });
+
+                document.getElementById('upload-progress-container').classList.add('hidden');
+                fileInput.value = ''; // Clear the input
+                showToast('Profile picture updated successfully!', 'success');
+            } catch (error) {
+                console.error("Error uploading profile picture:", error);
+                showToast('Failed to upload profile picture.', 'error');
+            } finally {
+                hideLoading();
+            }
+        };
+
+        const attachAppEventListeners = () => {
             const app = document.getElementById('app');
+
             app.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const formId = e.target.id;
+                
+                // --- Login Form Submissions ---
+                if (formId === 'admin-login-form') {
+                    handleLogin(document.getElementById('admin-email').value, document.getElementById('admin-password').value, 'admin');
+                    return;
+                }
+                if (formId === 'teacher-login-form') {
+                    handleLogin(document.getElementById('teacher-email').value, document.getElementById('teacher-password').value, 'teacher');
+                    return;
+                }
+
+                // --- Other Form Submissions ---
                 let collectionName, docData;
                 
                 if (formId === 'add-teacher-form') addTeacher(e.target.querySelector('#new-teacher-name').value, e.target.querySelector('#new-teacher-email').value, e.target.querySelector('#new-teacher-password').value);
@@ -2434,6 +2502,43 @@
 
             app.addEventListener('click', async (e) => {
                 const target = e.target;
+
+                // --- Page Navigation & Login Form Toggles ---
+                if (target.closest('#go-to-login')) {
+                    e.preventDefault();
+                    cleanupListeners();
+                    showPage('login-page');
+                    return;
+                }
+                if (target.closest('#go-to-student-portal')) {
+                    e.preventDefault();
+                    cleanupListeners();
+                    showPage('student-portal');
+                    initializeStudentPortal();
+                    return;
+                }
+                 const adminBtn = document.getElementById('admin-login-btn');
+                 const teacherBtn = document.getElementById('teacher-login-btn');
+                 const adminForm = document.getElementById('admin-login-form');
+                 const teacherForm = document.getElementById('teacher-login-form');
+                if (target.closest('#admin-login-btn')) {
+                    adminBtn.classList.add('active', 'bg-indigo-600', 'text-white');
+                    adminBtn.classList.remove('bg-slate-200', 'text-slate-600');
+                    teacherBtn.classList.remove('active', 'bg-indigo-600', 'text-white');
+                    teacherBtn.classList.add('bg-slate-200', 'text-slate-600');
+                    adminForm.classList.remove('hidden');
+                    teacherForm.classList.add('hidden');
+                    return;
+                }
+                if (target.closest('#teacher-login-btn')) {
+                    teacherBtn.classList.add('active', 'bg-indigo-600', 'text-white');
+                    teacherBtn.classList.remove('bg-slate-200', 'text-slate-600');
+                    adminBtn.classList.remove('active', 'bg-indigo-600', 'text-white');
+                    adminBtn.classList.add('bg-slate-200', 'text-slate-600');
+                    teacherForm.classList.remove('hidden');
+                    adminForm.classList.add('hidden');
+                    return;
+                }
 
                 // Universal logout button check
                 if (target.closest('#header-logout-btn')) {
@@ -2648,36 +2753,7 @@
                 }
             });
         };
-
-        const attachLoginEventListeners = () => {
-             const adminBtn = document.getElementById('admin-login-btn');
-            const teacherBtn = document.getElementById('teacher-login-btn');
-            const adminForm = document.getElementById('admin-login-form');
-            const teacherForm = document.getElementById('teacher-login-form');
-
-            adminBtn.addEventListener('click', () => {
-                adminBtn.classList.add('active', 'bg-indigo-600', 'text-white');
-                adminBtn.classList.remove('bg-slate-200', 'text-slate-600');
-                teacherBtn.classList.remove('active', 'bg-indigo-600', 'text-white');
-                teacherBtn.classList.add('bg-slate-200', 'text-slate-600');
-                adminForm.classList.remove('hidden');
-                teacherForm.classList.add('hidden');
-            });
-
-            teacherBtn.addEventListener('click', () => {
-                teacherBtn.classList.add('active', 'bg-indigo-600', 'text-white');
-                teacherBtn.classList.remove('bg-slate-200', 'text-slate-600');
-                adminBtn.classList.remove('active', 'bg-indigo-600', 'text-white');
-                adminBtn.classList.add('bg-slate-200', 'text-slate-600');
-                teacherForm.classList.remove('hidden');
-                adminForm.classList.add('hidden');
-            });
-            
-            document.getElementById('admin-login-form').addEventListener('submit', (e) => { e.preventDefault(); handleLogin(document.getElementById('admin-email').value, document.getElementById('admin-password').value, 'admin'); });
-            document.getElementById('teacher-login-form').addEventListener('submit', (e) => { e.preventDefault(); handleLogin(document.getElementById('teacher-email').value, document.getElementById('teacher-password').value, 'teacher'); });
-            document.getElementById('go-to-student-portal').addEventListener('click', (e) => { e.preventDefault(); showPage('student-portal'); });
-            document.getElementById('go-to-login').addEventListener('click', (e) => { e.preventDefault(); cleanupListeners(); showPage('login-page'); });
-        };
+        
         const attachDashboardEventListeners = () => {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebar-overlay');
@@ -2718,8 +2794,7 @@
         
         const init = () => {
             lucide.createIcons();
-            attachLoginEventListeners();
-            attachAllDashboardActionListeners(); 
+            attachAppEventListeners(); 
             // onAuthStateChanged will handle showing the correct initial page after the auto-logout
             if (window.location.hash === '#login-page') showPage('login-page');
             else showPage('student-portal');
@@ -2730,4 +2805,8 @@
 
 </body>
 </html>
+
+
+
+
 
