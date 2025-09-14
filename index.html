@@ -5,17 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Adarsha Educational Institute</title>
 
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
+    <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
+    <!-- Icons: Lucide -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
+    <!-- PDF Generation Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
     
+    <!-- Chart.js for Analytics -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 
@@ -248,16 +253,22 @@
 </head>
 <body class="bg-slate-100">
 
+    <!-- Loading Spinner -->
     <div id="loading-spinner" class="fixed inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center z-[100] hidden">
         <div class="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-indigo-600"></div>
     </div>
     
+    <!-- Toast Notification -->
     <div id="toast-notification" class="fixed top-5 right-5 bg-green-500 text-white py-2 px-5 rounded-lg shadow-lg opacity-0 translate-y-10 transition-all duration-300 z-[99]">
         <p>This is a toast message!</p>
     </div>
 
+    <!-- MAIN APPLICATION CONTAINER -->
     <div id="app">
 
+        <!-- =================================================================== -->
+        <!-- ======================== LOGIN PAGE =============================== -->
+        <!-- =================================================================== -->
         <section id="login-page" class="page hidden flex items-center justify-center min-h-screen bg-slate-100 fade-in">
             <div class="w-full max-w-md">
                 <div class="text-center mb-8">
@@ -276,6 +287,7 @@
                         </button>
                     </div>
 
+                    <!-- Admin Login Form -->
                     <form id="admin-login-form" class="space-y-4">
                         <h3 class="font-bold text-center text-lg text-slate-700">Admin Sign In</h3>
                         <input type="email" id="admin-email" placeholder="Admin Email" class="input-field" required>
@@ -283,6 +295,7 @@
                         <button type="submit" class="btn-primary w-full ripple">Sign In</button>
                     </form>
 
+                    <!-- Teacher Login Form -->
                     <form id="teacher-login-form" class="space-y-4 hidden">
                         <h3 class="font-bold text-center text-lg text-slate-700">Teacher Sign In</h3>
                         <input type="email" id="teacher-email" placeholder="Teacher Email" class="input-field" required>
@@ -296,9 +309,14 @@
             </div>
         </section>
 
+        <!-- =================================================================== -->
+        <!-- ====================== DASHBOARD CONTAINER ======================== -->
+        <!-- =================================================================== -->
         <div id="dashboard-container" class="app-container hidden">
-            <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-30 hidden md:hidden"></div>
+            <!-- Sidebar is dynamically inserted here -->
+             <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-30 hidden md:hidden"></div>
             
+            <!-- Main Content Area -->
             <main class="main-content">
                 <header class="p-4 md:p-6 bg-white/80 backdrop-blur-sm sticky top-0 z-20 flex items-center justify-between border-b border-slate-200">
                     <div class="flex items-center gap-2 sm:gap-4 min-w-0">
@@ -322,17 +340,29 @@
                 </header>
                 
                 <div class="p-4 md:p-6 space-y-6">
+                    <!-- =================================================================== -->
+                    <!-- ======================= ADMIN DASHBOARD ========================= -->
+                    <!-- =================================================================== -->
                     <section id="admin-dashboard" class="dashboard-page hidden space-y-6">
-                        </section>
+                        <!-- Admin Subsections will be dynamically shown here -->
+                    </section>
                     
+                    <!-- =================================================================== -->
+                    <!-- ======================= TEACHER DASHBOARD ======================= -->
+                    <!-- =================================================================== -->
                     <section id="teacher-dashboard" class="dashboard-page hidden space-y-6">
-                        </section>
+                        <!-- Teacher Subsections will be dynamically shown here -->
+                    </section>
                 </div>
             </main>
         </div>
 
+        <!-- =================================================================== -->
+        <!-- =================== STUDENT & PARENT PORTAL ======================= -->
+        <!-- =================================================================== -->
         <section id="student-portal" class="page fade-in">
-            <header class="bg-indigo-600 text-white shadow-md">
+            <!-- Student Portal content goes here -->
+             <header class="bg-indigo-600 text-white shadow-md">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex items-center justify-between h-20">
                         <div class="flex items-center min-w-0">
@@ -365,10 +395,11 @@
                              </div>
                          </div>
                      </div>
-                </div>
+                 </div>
 
-                <div id="student-main-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                 <div id="student-main-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     
+                    <!-- Notices Card -->
                     <div class="lg:col-span-2 card interactive">
                         <h2 class="text-xl font-bold mb-4 flex items-center">
                             <i data-lucide="Megaphone" class="w-6 h-6 mr-2 text-indigo-500"></i>
@@ -380,7 +411,8 @@
                     </div>
 
                     <div class="space-y-6">
-                         <div class="card interactive">
+                         <!-- Upcoming Exams Card -->
+                        <div class="card interactive">
                             <h2 class="text-xl font-bold mb-4 flex items-center">
                                 <i data-lucide="CalendarDays" class="w-6 h-6 mr-2 text-amber-500"></i>
                                 Upcoming Exams
@@ -390,7 +422,8 @@
                             </div>
                         </div>
 
-                         <div id="absentee-card" class="card interactive cursor-pointer">
+                         <!-- Daily Absentees Tile -->
+                        <div id="absentee-card" class="card interactive cursor-pointer">
                              <div class="flex items-center justify-between">
                                  <div class="flex items-center gap-4">
                                      <div class="p-3 rounded-full bg-red-100"><i data-lucide="UserX" class="w-8 h-8 text-red-500"></i></div>
@@ -404,16 +437,19 @@
                         </div>
                     </div>
                     
-                     <div class="card interactive md:col-span-2 lg:col-span-3">
+                     <!-- Published Attendance Sheets -->
+                    <div class="card interactive md:col-span-2 lg:col-span-3">
                         <h2 class="text-xl font-bold mb-4 flex items-center">
                             <i data-lucide="Sheet" class="w-6 h-6 mr-2 text-sky-500"></i>
                             Published Attendance Sheets
                         </h2>
                         <div class="flex items-center gap-4 mb-4">
                             <select id="attendance-sheet-month" class="input-field w-auto">
-                                </select>
+                                <!-- Months will be populated here -->
+                            </select>
                              <select id="attendance-sheet-class" class="input-field w-auto">
-                                </select>
+                                <!-- Classes will be populated here -->
+                            </select>
                             <button id="view-attendance-sheet-btn" class="btn-primary ripple">View</button>
                         </div>
                         <div id="student-attendance-sheets-display" class="max-h-[500px] overflow-y-auto">
@@ -421,7 +457,8 @@
                         </div>
                     </div>
                     
-                      <div class="card interactive md:col-span-2 lg:grid-cols-3">
+                      <!-- Published Marks Sheets -->
+                    <div class="card interactive md:col-span-2 lg:grid-cols-3">
                         <h2 class="text-xl font-bold mb-4 flex items-center">
                             <i data-lucide="GraduationCap" class="w-6 h-6 mr-2 text-green-500"></i>
                             All Published Marks
@@ -435,7 +472,10 @@
             </main>
         </section>
 
-    </div> <div id="modal-container"></div>
+    </div> <!-- End #app -->
+
+    <!-- Modal Container -->
+    <div id="modal-container"></div>
     
     <script type="module">
         // Firebase Imports
@@ -631,17 +671,13 @@
                     populateSelect('report-marks-class', state.allClasses);
                     populateSelect('report-low-perf-class', state.allClasses);
                 }
-                if (sectionId === 'teacher-reports') {
-                    const uniqueClasses = [...new Set(state.currentTeacherData?.assignedClasses.map(c => c.class))].sort();
-                    populateSelect('teacher-report-marks-class', uniqueClasses);
-                }
 
             } else {
                 console.error(`Section with id ${sectionId} not found.`);
             }
              if (window.innerWidth < 768) {
-                  document.getElementById('sidebar')?.classList.remove('open');
-                  document.getElementById('sidebar-overlay')?.classList.add('hidden');
+                 document.getElementById('sidebar')?.classList.remove('open');
+                 document.getElementById('sidebar-overlay')?.classList.add('hidden');
              }
         };
 
@@ -835,7 +871,6 @@
                 { id: 'teacher-exam-request', icon: 'FilePlus', text: 'Request Exam' },
                 { id: 'teacher-attendance', icon: 'CalendarPlus', text: 'Mark Attendance' },
                 { id: 'teacher-marks', icon: 'ClipboardEdit', text: 'Enter Marks' },
-                { id: 'teacher-reports', icon: 'Download', text: 'My Reports' },
                 { id: 'teacher-analytics', icon: 'LineChart', text: 'Analytics' },
                 { id: 'teacher-requests', icon: 'Send', text: 'My Requests' },
                 { id: 'teacher-settings', icon: 'Settings', text: 'Settings' },
@@ -921,6 +956,7 @@
             `;
             document.getElementById('admin-reports').innerHTML = `
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Monthly Attendance Report -->
                     <div class="card">
                         <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i data-lucide="CalendarCheck" class="text-blue-500"></i>Monthly Attendance Report</h2>
                         <div class="space-y-4">
@@ -929,6 +965,7 @@
                             <button id="generate-attendance-report-btn" class="btn-primary w-full ripple">Generate Report</button>
                         </div>
                     </div>
+                    <!-- Final Marks Sheet -->
                     <div class="card">
                         <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i data-lucide="GraduationCap" class="text-green-500"></i>Final Marks Sheet</h2>
                         <div class="space-y-4">
@@ -936,6 +973,7 @@
                             <button id="generate-marks-report-btn" class="btn-primary w-full ripple">Generate Marksheet</button>
                         </div>
                     </div>
+                    <!-- Low Performance List -->
                     <div class="card">
                         <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i data-lucide="TrendingDown" class="text-red-500"></i>Low Performance List</h2>
                         <div class="space-y-4">
@@ -1021,7 +1059,6 @@
                 <div id="teacher-exam-request" class="dashboard-section hidden"></div>
                 <div id="teacher-attendance" class="dashboard-section hidden"></div>
                 <div id="teacher-marks" class="dashboard-section hidden"></div>
-                <div id="teacher-reports" class="dashboard-section hidden"></div>
                 <div id="teacher-analytics" class="dashboard-section hidden"></div>
                 <div id="teacher-requests" class="dashboard-section hidden"></div>
                 <div id="teacher-settings" class="dashboard-section hidden"></div>
@@ -1101,15 +1138,6 @@
                 </div>
                 <div id="teacher-marks-sheet"></div>
             </div>`;
-             document.getElementById('teacher-reports').innerHTML = `
-                <div class="card max-w-lg mx-auto">
-                     <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i data-lucide="GraduationCap" class="text-green-500"></i>Download Class Marksheet</h2>
-                     <p class="text-sm text-slate-500 mb-4">Select one of your classes to generate a consolidated PDF marksheet of all tests for which you have entered marks.</p>
-                     <div class="space-y-4">
-                         <select id="teacher-report-marks-class" class="input-field"></select>
-                         <button id="teacher-generate-marks-report-btn" class="btn-primary w-full ripple">Generate & Download Marksheet</button>
-                     </div>
-                </div>`;
             document.getElementById('teacher-analytics').innerHTML = `<div class="card"><h2 class="text-xl font-bold mb-4">Performance Analytics</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4"><select id="analytics-exam-select" class="input-field"></select><select id="analytics-class-select" class="input-field"></select></div><div id="analytics-chart-container" class="mt-4"><canvas id="marks-chart"></canvas><p id="analytics-placeholder" class="text-slate-500">Select an exam and class to view analytics.</p></div></div>`;
             document.getElementById('teacher-requests').innerHTML = `<div class="grid grid-cols-1 lg:grid-cols-3 gap-6"><div class="lg:col-span-1"><div class="card"><h2 class="text-xl font-bold mb-4">Submit a New Request</h2><form id="add-request-form" class="space-y-4"><input type="text" id="request-title" placeholder="Request Subject" class="input-field" required><textarea id="request-content" placeholder="Details of your request..." class="input-field h-32" required></textarea><button type="submit" class="btn-primary w-full ripple">Submit Request</button></form></div></div><div class="lg:col-span-2"><div class="card"><h2 class="text-xl font-bold mb-4">My Past Requests</h2><div id="teacher-requests-list" class="space-y-3 max-h-[60vh] overflow-y-auto"></div></div></div></div>`;
             document.getElementById('teacher-settings').innerHTML = `<div class="max-w-xl mx-auto space-y-6">
@@ -1123,7 +1151,7 @@
                               <p class="text-xs text-slate-500 mt-2">Recommended: Square image (e.g., 200x200px).</p>
                          </div>
                      </div>
-                     <div id="upload-progress-container" class="mt-4 hidden">
+                      <div id="upload-progress-container" class="mt-4 hidden">
                          <button id="upload-pic-btn" class="btn-primary ripple w-full">Upload and Save</button>
                     </div>
                 </div>
@@ -1147,7 +1175,8 @@
                 <div class="card h-[70vh] flex flex-col">
                     <h2 class="text-xl font-bold mb-4 border-b pb-2 border-slate-200">Internal Group Chat</h2>
                     <div id="${containerId}-messages" class="flex-grow overflow-y-auto mb-4 p-2 space-y-4 bg-slate-50 rounded-md">
-                        </div>
+                        <!-- Messages will appear here -->
+                    </div>
                     <form id="${containerId}-form" class="flex gap-2">
                         <input type="text" id="${containerId}-input" placeholder="Type your message..." class="input-field flex-grow" required>
                         <button type="submit" class="btn-primary ripple flex items-center gap-2">Send <i data-lucide="Send" class="w-4 h-4"></i></button>
@@ -1402,14 +1431,14 @@
                 const daysInMonth = 32 - new Date(year, month, 32).getDate();
 
                 let table = `<div class="flex items-center justify-between mb-4">
-                                     <button id="prev-holiday-month" class="p-2 rounded-full hover:bg-slate-200"><i data-lucide="ChevronLeft" class="pointer-events-none"></i></button>
-                                     <h3 class="text-lg font-bold">${monthNames[month]} ${year}</h3>
-                                     <button id="next-holiday-month" class="p-2 rounded-full hover:bg-slate-200"><i data-lucide="ChevronRight" class="pointer-events-none"></i></button>
-                                 </div>
-                                 <div class="grid grid-cols-7 gap-1 text-center font-semibold text-slate-500 text-sm mb-2">
-                                     <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
-                                 </div>
-                                 <div class="grid grid-cols-7 gap-1">`;
+                                <button id="prev-holiday-month" class="p-2 rounded-full hover:bg-slate-200"><i data-lucide="ChevronLeft" class="pointer-events-none"></i></button>
+                                <h3 class="text-lg font-bold">${monthNames[month]} ${year}</h3>
+                                <button id="next-holiday-month" class="p-2 rounded-full hover:bg-slate-200"><i data-lucide="ChevronRight" class="pointer-events-none"></i></button>
+                             </div>
+                             <div class="grid grid-cols-7 gap-1 text-center font-semibold text-slate-500 text-sm mb-2">
+                                 <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+                             </div>
+                             <div class="grid grid-cols-7 gap-1">`;
 
                 for (let i = 0; i < firstDay; i++) {
                     table += '<div></div>';
@@ -1506,7 +1535,8 @@
                     const dateStr = formatToYYYYMMDD(currentDate);
                     const isHoliday = calendarState.holidays.has(dateStr);
 
-                    if (!isHoliday) {
+                    // A day is only a working day if it's not a holiday AND attendance was taken.
+                    if (!isHoliday && dailyStatusMap.hasOwnProperty(dateStr)) {
                         workingDays++;
                         if (dailyStatusMap[dateStr] === 'present') {
                             presentDays++;
@@ -1520,22 +1550,22 @@
                 const student = state.allStudents.find(s => s.id === studentId);
 
                 let table = `<h3 class="text-lg font-bold text-center mb-2">Attendance for ${student?.name || 'Student'}</h3>
-                                 <div class="text-center mb-4 p-3 bg-slate-50 rounded-lg">
-                                     <p class="text-sm font-medium text-slate-500">Monthly Attendance Rate (Working Days)</p>
-                                     <p class="text-3xl font-bold text-indigo-600">${attendancePercentage}%</p>
-                                     <div class="w-full bg-slate-200 rounded-full h-2.5 mt-1">
-                                         <div class="bg-indigo-600 h-2.5 rounded-full" style="width: ${attendancePercentage}%"></div>
-                                     </div>
+                             <div class="text-center mb-4 p-3 bg-slate-50 rounded-lg">
+                                 <p class="text-sm font-medium text-slate-500">Monthly Attendance Rate (Working Days)</p>
+                                 <p class="text-3xl font-bold text-indigo-600">${attendancePercentage}%</p>
+                                 <div class="w-full bg-slate-200 rounded-full h-2.5 mt-1">
+                                     <div class="bg-indigo-600 h-2.5 rounded-full" style="width: ${attendancePercentage}%"></div>
                                  </div>
-                                 <div class="flex items-center justify-between mb-4">
-                                     <button id="prev-student-month" class="p-2 rounded-full hover:bg-slate-200"><i data-lucide="ChevronLeft" class="pointer-events-none"></i></button>
-                                     <h3 class="text-lg font-bold">${monthNames[month]} ${year}</h3>
-                                     <button id="next-student-month" class="p-2 rounded-full hover:bg-slate-200"><i data-lucide="ChevronRight" class="pointer-events-none"></i></button>
-                                 </div>
-                                 <div class="grid grid-cols-7 gap-1 text-center font-semibold text-slate-500 text-sm mb-2">
-                                     <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
-                                 </div>
-                                 <div class="grid grid-cols-7 gap-2">`;
+                             </div>
+                             <div class="flex items-center justify-between mb-4">
+                                 <button id="prev-student-month" class="p-2 rounded-full hover:bg-slate-200"><i data-lucide="ChevronLeft" class="pointer-events-none"></i></button>
+                                 <h3 class="text-lg font-bold">${monthNames[month]} ${year}</h3>
+                                 <button id="next-student-month" class="p-2 rounded-full hover:bg-slate-200"><i data-lucide="ChevronRight" class="pointer-events-none"></i></button>
+                             </div>
+                             <div class="grid grid-cols-7 gap-1 text-center font-semibold text-slate-500 text-sm mb-2">
+                                 <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+                             </div>
+                             <div class="grid grid-cols-7 gap-2">`;
 
                 for (let i = 0; i < firstDay; i++) { table += '<div></div>'; }
 
@@ -1567,11 +1597,11 @@
                 }
 
                 table += `</div>
-                                  <div class="flex flex-wrap justify-end gap-x-4 gap-y-2 mt-4 text-sm">
-                                      <span class="flex items-center gap-2"><div class="w-4 h-4 rounded bg-green-100 border border-green-200"></div> Present</span>
-                                      <span class="flex items-center gap-2"><div class="w-4 h-4 rounded bg-red-100 border border-red-200"></div> Absent</span>
-                                      <span class="flex items-center gap-2"><div class="w-4 h-4 rounded bg-sky-100 border border-sky-200"></div> Holiday</span>
-                                  </div>`;
+                          <div class="flex flex-wrap justify-end gap-x-4 gap-y-2 mt-4 text-sm">
+                              <span class="flex items-center gap-2"><div class="w-4 h-4 rounded bg-green-100 border border-green-200"></div> Present</span>
+                              <span class="flex items-center gap-2"><div class="w-4 h-4 rounded bg-red-100 border border-red-200"></div> Absent</span>
+                              <span class="flex items-center gap-2"><div class="w-4 h-4 rounded bg-sky-100 border border-sky-200"></div> Holiday</span>
+                          </div>`;
 
                 container.innerHTML = table;
                 lucide.createIcons();
@@ -1618,18 +1648,18 @@
                 const daysInMonth = new Date(year, month + 1, 0).getDate();
 
                 let table = `<div class="text-center mb-4 p-3 bg-slate-50 rounded-lg">
-                                     <p class="text-sm font-medium text-slate-500">Class Days This Month</p>
-                                     <p class="text-3xl font-bold text-indigo-600">${totalDaysPresent}</p>
-                                 </div>
-                                 <div class="flex items-center justify-between mb-4">
-                                     <button id="prev-${navPrefix}-month" class="p-2 rounded-full hover:bg-slate-200"><i data-lucide="ChevronLeft" class="pointer-events-none"></i></button>
-                                     <h3 class="text-lg font-bold">${monthNames[month]} ${year}</h3>
-                                     <button id="next-${navPrefix}-month" class="p-2 rounded-full hover:bg-slate-200"><i data-lucide="ChevronRight" class="pointer-events-none"></i></button>
-                                 </div>
-                                 <div class="grid grid-cols-7 gap-1 text-center font-semibold text-slate-500 text-sm mb-2">
-                                     <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
-                                 </div>
-                                 <div class="grid grid-cols-7 gap-2">`;
+                                 <p class="text-sm font-medium text-slate-500">Class Days This Month</p>
+                                 <p class="text-3xl font-bold text-indigo-600">${totalDaysPresent}</p>
+                             </div>
+                             <div class="flex items-center justify-between mb-4">
+                                 <button id="prev-${navPrefix}-month" class="p-2 rounded-full hover:bg-slate-200"><i data-lucide="ChevronLeft" class="pointer-events-none"></i></button>
+                                 <h3 class="text-lg font-bold">${monthNames[month]} ${year}</h3>
+                                 <button id="next-${navPrefix}-month" class="p-2 rounded-full hover:bg-slate-200"><i data-lucide="ChevronRight" class="pointer-events-none"></i></button>
+                             </div>
+                             <div class="grid grid-cols-7 gap-1 text-center font-semibold text-slate-500 text-sm mb-2">
+                                 <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+                             </div>
+                             <div class="grid grid-cols-7 gap-2">`;
 
                 for (let i = 0; i < firstDay; i++) { table += '<div></div>'; }
 
@@ -2140,8 +2170,8 @@
             const unsubTests = onSnapshot(testsQuery, (snap) => {
                  const el = document.getElementById('live-tests-stat');
                  if (el) {
-                      const startValue = parseInt(el.textContent.replace(/,/g, ''), 10) || 0;
-                      animateValue(el, startValue, snap.size, 1000);
+                     const startValue = parseInt(el.textContent.replace(/,/g, ''), 10) || 0;
+                     animateValue(el, startValue, snap.size, 1000);
                  }
             });
 
@@ -2397,7 +2427,6 @@
                     populateSelect('teacher-marks-class', uniqueClasses);
                     populateSelect('teacher-exam-class', uniqueClasses);
                     populateSelect('analytics-class-select', uniqueClasses);
-                    populateSelect('teacher-report-marks-class', uniqueClasses);
 
                     const marksClassSelect = document.getElementById('teacher-marks-class');
                     if (marksClassSelect) {
@@ -2411,13 +2440,13 @@
                     }
                     const examClassSelect = document.getElementById('teacher-exam-class');
                      if(examClassSelect) {
-                           examClassSelect.addEventListener('change', () => {
-                               const selectedClass = examClassSelect.value;
-                               const subjectsForClass = state.currentTeacherData.assignedClasses
-                                   .filter(c => c.class === selectedClass)
-                                   .map(c => c.subject);
-                               populateSelect('teacher-exam-subject', subjectsForClass);
-                           });
+                          examClassSelect.addEventListener('change', () => {
+                              const selectedClass = examClassSelect.value;
+                              const subjectsForClass = state.currentTeacherData.assignedClasses
+                                  .filter(c => c.class === selectedClass)
+                                  .map(c => c.subject);
+                              populateSelect('teacher-exam-subject', subjectsForClass);
+                          });
                      }
                 }
             });
@@ -2510,23 +2539,6 @@
 
         const initializeStudentPortal = async () => {
             startClock();
-
-             // Populate month dropdown for attendance sheets
-            const monthSelect = document.getElementById('attendance-sheet-month');
-            if (monthSelect) {
-                const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-                const now = new Date();
-                for (let i = 0; i < 12; i++) {
-                    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-                    const year = d.getFullYear();
-                    const month = d.getMonth();
-                    const optionText = `${months[month]} ${year}`;
-                    const optionValue = `${year}-${String(month + 1).padStart(2, '0')}`;
-                    monthSelect.innerHTML += `<option value="${optionValue}">${optionText}</option>`;
-                }
-            }
-
-
             // Animate cards
             document.querySelectorAll('#student-portal .card, #student-stats-grid .card').forEach((card, index) => {
                 card.classList.add('fade-in');
@@ -3018,16 +3030,27 @@
                     }
                     viewAdminAttendanceRecords(date, className, subject.trim());
                 }
-                if (target.id === 'generate-marks-report-btn') {
-                    const className = document.getElementById('report-marks-class').value;
-                    if (!className) {
-                        showToast('Please select a class to generate the marksheet.', 'error');
-                        return;
-                    }
-                    generateMarksheetPDF(className);
-                }
                  if (target.id === 'custom-attendance-toggle') {
                     document.getElementById('custom-attendance-details').classList.toggle('hidden');
+                }
+                 // Report Generation Buttons
+                if (target.id === 'generate-attendance-report-btn') {
+                    const className = document.getElementById('report-attendance-class').value;
+                    const month = document.getElementById('report-attendance-month').value;
+                    if (!className || !month) { showToast('Please select a class and month.', 'error'); return; }
+                    generateAttendanceReport(className, month);
+                }
+                if (target.id === 'generate-marks-report-btn') {
+                    const className = document.getElementById('report-marks-class').value;
+                    if (!className) { showToast('Please select a class.', 'error'); return; }
+                    generateMarksReport(className);
+                }
+                if (target.id === 'generate-low-perf-report-btn') {
+                    const className = document.getElementById('report-low-perf-class').value;
+                    const type = document.querySelector('input[name="low-perf-type"]:checked').value;
+                    const threshold = document.getElementById('low-perf-threshold').value;
+                    if (!className || !threshold) { showToast('Please select a class and set a threshold.', 'error'); return; }
+                    generateLowPerformanceReport(className, type, Number(threshold));
                 }
 
                 // Teacher buttons
@@ -3037,14 +3060,6 @@
                     if (!sel.value || !date) { showToast('Please select all fields.', 'error'); return; }
                     const [className, subject] = sel.value.split('|');
                     loadAttendanceSheet(className, subject, date);
-                }
-                 if (target.id === 'teacher-generate-marks-report-btn') {
-                    const className = document.getElementById('teacher-report-marks-class').value;
-                    if (!className) {
-                        showToast('Please select one of your classes.', 'error');
-                        return;
-                    }
-                    generateMarksheetPDF(className, state.currentUser.uid, state.currentTeacherData.name);
                 }
                 if (target.id === 'teacher-load-marks-sheet-btn') {
                     const testName = document.getElementById('teacher-marks-test-name').value;
@@ -3143,13 +3158,7 @@
                 }
                 // Student portal buttons
                  if (target.id === 'view-attendance-sheet-btn') {
-                    const monthYear = document.getElementById('attendance-sheet-month').value;
-                    const className = document.getElementById('attendance-sheet-class').value;
-                    if(!monthYear || !className) {
-                        showToast("Please select a month and class.", 'info');
-                        return;
-                    }
-                    displayPublicAttendanceSheet(monthYear, className);
+                    showToast('This feature is under development.', 'info');
                 }
             });
              // Add a single 'change' event listener for the whole app
@@ -3256,179 +3265,6 @@
         };
         
         // ===================================================================
-        // ======================= PDF & REPORTING ===========================
-        // ===================================================================
-
-        const generateMarksheetPDF = async (className, teacherId = null, teacherName = null) => {
-            showLoading();
-            try {
-                // 1. Fetch students and marks
-                const studentsQuery = query(collection(db, 'students'), where('class', '==', className));
-                
-                let marksQuery;
-                if(teacherId) {
-                    // Teacher's view: only marks they entered
-                    marksQuery = query(collection(db, 'marks'), where('class', '==', className), where('teacherId', '==', teacherId));
-                } else {
-                    // Admin's view: all marks for the class
-                    marksQuery = query(collection(db, 'marks'), where('class', '==', className));
-                }
-
-                const [studentsSnapshot, marksSnapshot] = await Promise.all([ getDocs(studentsQuery), getDocs(marksQuery) ]);
-
-                if (studentsSnapshot.empty) { showToast(`No students found in ${className}.`, 'info'); return; }
-
-                const allStudents = studentsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                const allMarks = marksSnapshot.docs.map(doc => doc.data());
-
-                // 2. Process and aggregate data
-                const studentResults = {};
-                const uniqueTests = new Set();
-                allStudents.forEach(student => { studentResults[student.id] = { name: student.name, marks: {} }; });
-                allMarks.forEach(mark => {
-                    const testKey = `${mark.testName} - ${mark.subject}`;
-                    uniqueTests.add(testKey);
-                    if (studentResults[mark.studentId]) {
-                        studentResults[mark.studentId].marks[testKey] = { scored: mark.marks, max: mark.maxMarks };
-                    }
-                });
-                
-                const sortedTests = Array.from(uniqueTests).sort();
-
-                // 3. Prepare data for PDF table
-                const head = [['#', 'Student Name', ...sortedTests.map(t => `${t} (Max)`), 'Total', 'Percentage']];
-                const body = [];
-
-                allStudents.sort((a,b) => a.name.localeCompare(b.name)).forEach((student, index) => {
-                    const studentData = studentResults[student.id];
-                    let totalMarks = 0;
-                    let maxMarksTotal = 0;
-                    const rowData = [index + 1, studentData.name];
-                    
-                    sortedTests.forEach(testKey => {
-                        const mark = studentData.marks[testKey];
-                        if (mark) {
-                            rowData.push(`${mark.scored} / ${mark.max}`);
-                            totalMarks += mark.scored;
-                            maxMarksTotal += mark.max;
-                        } else { rowData.push('N/A'); }
-                    });
-
-                    const percentage = maxMarksTotal > 0 ? ((totalMarks / maxMarksTotal) * 100).toFixed(2) + '%' : 'N/A';
-                    rowData.push(`${totalMarks} / ${maxMarksTotal}`);
-                    rowData.push(percentage);
-                    body.push(rowData);
-                });
-
-                // 4. Generate PDF
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF({ orientation: 'landscape' });
-
-                // Header
-                doc.setFont('helvetica', 'bold');
-                doc.setFontSize(22);
-                doc.text('Adarsha Educational Institute', doc.internal.pageSize.getWidth() / 2, 20, { align: 'center' });
-                doc.setFont('helvetica', 'normal');
-                doc.setFontSize(16);
-                doc.text(`Consolidated Marksheet - Class: ${className}`, doc.internal.pageSize.getWidth() / 2, 30, { align: 'center' });
-                if(teacherName){
-                    doc.setFontSize(10);
-                    doc.text(`(Marks entered by: ${teacherName})`, doc.internal.pageSize.getWidth() / 2, 35, { align: 'center' });
-                }
-
-                // Table
-                doc.autoTable({
-                    head: head, body: body, startY: 40, theme: 'grid',
-                    headStyles: { fillColor: [30, 41, 59], textColor: 255, fontStyle: 'bold' },
-                    alternateRowStyles: { fillColor: [241, 245, 249] },
-                    styles: { fontSize: 8, cellPadding: 2, },
-                    didDrawPage: (data) => {
-                        // Footer
-                        doc.setFontSize(10);
-                        doc.text('Page ' + doc.internal.getNumberOfPages(), data.settings.margin.left, doc.internal.pageSize.getHeight() - 10);
-                        doc.text('Generated on: ' + new Date().toLocaleDateString('en-GB'), doc.internal.pageSize.getWidth() - data.settings.margin.right, doc.internal.pageSize.getHeight() - 10, { align: 'right' });
-                    }
-                });
-
-                doc.save(`Marksheet-Class_${className.replace(/\s/g, '_')}.pdf`);
-                showToast('Marksheet downloaded successfully!', 'success');
-
-            } catch (error) {
-                console.error("Error generating PDF:", error);
-                showToast("Failed to generate marksheet PDF.", "error");
-            } finally {
-                hideLoading();
-            }
-        };
-
-        const displayPublicAttendanceSheet = async(monthYear, className) => {
-            const display = document.getElementById('student-attendance-sheets-display');
-            showLoading();
-            try {
-                const [year, month] = monthYear.split('-').map(Number);
-                const daysInMonth = new Date(year, month, 0).getDate();
-                
-                await fetchHolidaysForMonth(year, month - 1);
-
-                const studentsQuery = query(collection(db, 'students'), where('class', '==', className), orderBy('name'));
-                const studentsSnap = await getDocs(studentsQuery);
-                if(studentsSnap.empty){
-                     display.innerHTML = `<p class="text-slate-500">No students found for this class.</p>`; return;
-                }
-                const students = studentsSnap.docs.map(d => ({id: d.id, name: d.data().name}));
-
-                const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
-                const endDate = `${year}-${String(month).padStart(2, '0')}-${String(daysInMonth).padStart(2, '0')}`;
-                const attendanceQuery = query(collection(db, 'attendance'), where('class', '==', className), where('date', '>=', startDate), where('date', '<=', endDate));
-                const attendanceSnap = await getDocs(attendanceQuery);
-                
-                const attendanceData = {}; // { studentId: { 'YYYY-MM-DD': 'present'/'absent' } }
-                attendanceSnap.docs.forEach(doc => {
-                    const rec = doc.data();
-                    if(!attendanceData[rec.studentId]) attendanceData[rec.studentId] = {};
-                    // If student is marked present in any class, they are present for the day
-                    if(attendanceData[rec.studentId][rec.date] !== 'present') {
-                         attendanceData[rec.studentId][rec.date] = rec.status;
-                    }
-                });
-
-                // Build Table
-                let tableHTML = `<div class="overflow-x-auto"><table class="w-full text-xs text-center whitespace-nowrap"><thead class="bg-slate-100 sticky top-0"><tr><th class="p-2 text-left sticky left-0 bg-slate-100 z-10">Student Name</th>`;
-                for(let i=1; i<=daysInMonth; i++) { tableHTML += `<th class="p-2">${i}</th>`; }
-                tableHTML += `</tr></thead><tbody>`;
-                
-                students.forEach(student => {
-                    tableHTML += `<tr class="border-b"><td class="p-2 text-left font-medium sticky left-0 bg-white">${student.name}</td>`;
-                    for(let i=1; i<=daysInMonth; i++) {
-                        const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-                        if(calendarState.holidays.has(dateStr)){
-                            tableHTML += `<td class="p-2 bg-sky-100 text-sky-700 font-bold">H</td>`;
-                        } else {
-                            const status = attendanceData[student.id]?.[dateStr];
-                            if(status === 'present'){
-                                tableHTML += `<td class="p-2 bg-green-100 text-green-700 font-bold">P</td>`;
-                            } else if (status === 'absent'){
-                                tableHTML += `<td class="p-2 bg-red-100 text-red-700">A</td>`;
-                            } else {
-                                tableHTML += `<td class="p-2 bg-slate-50">-</td>`;
-                            }
-                        }
-                    }
-                    tableHTML += `</tr>`;
-                });
-                tableHTML += `</tbody></table></div>`;
-                display.innerHTML = tableHTML;
-
-            } catch (error) {
-                 console.error("Error displaying attendance sheet: ", error);
-                 display.innerHTML = `<p class="text-red-500">Could not load attendance sheet data.</p>`;
-            } finally {
-                hideLoading();
-            }
-        };
-
-
-        // ===================================================================
         // ========================= APP INITIALIZATION ======================
         // ===================================================================
         
@@ -3445,3 +3281,4 @@
 
 </body>
 </html>
+
