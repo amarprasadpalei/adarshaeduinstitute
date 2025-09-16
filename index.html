@@ -249,6 +249,27 @@
                 font-size: 0.85rem;
             }
         }
+        
+        /* -- NEW STYLES for Admin Overview -- */
+        .activity-timeline .timeline-item {
+            position: relative;
+            padding-left: 1.75rem;
+            padding-bottom: 1.25rem;
+            border-left: 2px solid #e2e8f0; /* slate-200 */
+        }
+        .activity-timeline .timeline-item:last-child {
+            border-left-color: transparent;
+            padding-bottom: 0;
+        }
+        .activity-timeline .timeline-dot {
+            position: absolute;
+            left: -0.45rem; /* Adjust to center on the line */
+            top: 0.25rem;
+            height: 0.75rem;
+            width: 0.75rem;
+            border-radius: 9999px;
+            border: 2px solid white;
+        }
     </style>
 </head>
 <body class="bg-slate-100">
@@ -457,7 +478,7 @@
                         </div>
                     </div>
                     
-                      <!-- Published Marks Sheets -->
+                     <!-- Published Marks Sheets -->
                     <div class="card interactive md:col-span-2 lg:grid-cols-3">
                         <h2 class="text-xl font-bold mb-4 flex items-center">
                             <i data-lucide="GraduationCap" class="w-6 h-6 mr-2 text-green-500"></i>
@@ -656,28 +677,28 @@
                     document.getElementById('student-attendance-calendar-container').innerHTML = `<p class="text-slate-500">Please select a class and student to view their attendance calendar.</p>`;
                 }
                  if (sectionId === 'admin-teacher-attendance') {
-                    const teacherSelect = document.getElementById('admin-teacher-select');
-                    getDocs(query(collection(db, 'teachers'), orderBy('name'))).then(snap => {
-                        const teachers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                        populateSelect('admin-teacher-select', teachers, 'name', 'id');
-                    });
-                    document.getElementById('admin-teacher-calendar-container').innerHTML = `<p class="text-slate-500">Please select a teacher to view their calendar.</p>`;
-                }
+                     const teacherSelect = document.getElementById('admin-teacher-select');
+                     getDocs(query(collection(db, 'teachers'), orderBy('name'))).then(snap => {
+                         const teachers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                         populateSelect('admin-teacher-select', teachers, 'name', 'id');
+                     });
+                     document.getElementById('admin-teacher-calendar-container').innerHTML = `<p class="text-slate-500">Please select a teacher to view their calendar.</p>`;
+                 }
                  if (sectionId === 'teacher-my-attendance') {
-                    renderTeacherCalendar(state.currentUser.uid, calendarState.teacher.year, calendarState.teacher.month, 'teacher-attendance-calendar-container', 'teacher');
-                }
+                     renderTeacherCalendar(state.currentUser.uid, calendarState.teacher.year, calendarState.teacher.month, 'teacher-attendance-calendar-container', 'teacher');
+                 }
                  if (sectionId === 'admin-reports') {
-                    populateSelect('report-attendance-class', state.allClasses);
-                    populateSelect('report-marks-class', state.allClasses);
-                    populateSelect('report-low-perf-class', state.allClasses);
-                }
+                     populateSelect('report-attendance-class', state.allClasses);
+                     populateSelect('report-marks-class', state.allClasses);
+                     populateSelect('report-low-perf-class', state.allClasses);
+                 }
 
             } else {
                 console.error(`Section with id ${sectionId} not found.`);
             }
              if (window.innerWidth < 768) {
-                 document.getElementById('sidebar')?.classList.remove('open');
-                 document.getElementById('sidebar-overlay')?.classList.add('hidden');
+                  document.getElementById('sidebar')?.classList.remove('open');
+                  document.getElementById('sidebar-overlay')?.classList.add('hidden');
              }
         };
 
@@ -695,11 +716,11 @@
         };
 
          const formatToYYYYMMDD = (date) => {
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        };
+             const year = date.getFullYear();
+             const month = String(date.getMonth() + 1).padStart(2, '0');
+             const day = String(date.getDate()).padStart(2, '0');
+             return `${year}-${month}-${day}`;
+         };
         
         const formatTime = (timestamp) => {
             if (!timestamp) return 'N/A';
@@ -937,23 +958,81 @@
                 <div id="admin-students" class="dashboard-section hidden"></div>
                 <div id="admin-chat" class="dashboard-section hidden"></div>
             `;
+            // --- NEW Admin Overview HTML ---
             document.getElementById('admin-overview').innerHTML = `
+                <!-- Top Stat Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div id="total-teachers-card" class="card interactive flex items-center gap-4 cursor-pointer hover:bg-slate-50 transition-colors"><div class="p-3 rounded-full bg-blue-100"><i data-lucide="Users" class="w-8 h-8 text-blue-500"></i></div><div><p class="text-sm text-slate-500">Total Teachers</p><p id="total-teachers-stat" class="text-2xl font-bold">0</p></div></div>
-                    <div id="total-students-card" class="card interactive flex items-center gap-4 cursor-pointer hover:bg-slate-50 transition-colors"><div class="p-3 rounded-full bg-green-100"><i data-lucide="Contact" class="w-8 h-8 text-green-500"></i></div><div><p class="text-sm text-slate-500">Total Students</p><p id="total-students-stat" class="text-2xl font-bold">0</p></div></div>
-                    <div class="card flex items-center gap-4"><div class="p-3 rounded-full bg-amber-100"><i data-lucide="Megaphone" class="w-8 h-8 text-amber-500"></i></div><div><p class="text-sm text-slate-500">Active Notices</p><p id="active-notices-stat" class="text-2xl font-bold">0</p></div></div>
-                    <div class="card flex items-center gap-4"><div class="p-3 rounded-full bg-red-100"><i data-lucide="Send" class="w-8 h-8 text-red-500"></i></div><div><p class="text-sm text-slate-500">Pending Requests</p><p id="pending-requests-stat" class="text-2xl font-bold">0</p></div></div>
+                    <div id="total-students-card" class="p-6 rounded-2xl text-white shadow-lg transform hover:-translate-y-1 transition-transform duration-300 cursor-pointer bg-gradient-to-br from-indigo-500 to-blue-600">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-lg opacity-80">Total Students</p>
+                                <p id="total-students-stat" class="text-4xl font-bold">0</p>
+                            </div>
+                            <div class="p-3 bg-white/20 rounded-xl">
+                                <i data-lucide="Contact" class="w-8 h-8"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="total-teachers-card" class="p-6 rounded-2xl text-white shadow-lg transform hover:-translate-y-1 transition-transform duration-300 cursor-pointer bg-gradient-to-br from-cyan-500 to-teal-500">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-lg opacity-80">Total Teachers</p>
+                                <p id="total-teachers-stat" class="text-4xl font-bold">0</p>
+                            </div>
+                            <div class="p-3 bg-white/20 rounded-xl">
+                                <i data-lucide="Users" class="w-8 h-8"></i>
+                            </div>
+                        </div>
+                    </div>
+                     <div id="pending-requests-card" class="p-6 rounded-2xl text-white shadow-lg transform hover:-translate-y-1 transition-transform duration-300 cursor-pointer bg-gradient-to-br from-amber-500 to-orange-500">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-lg opacity-80">Pending Requests</p>
+                                <p id="pending-requests-stat" class="text-4xl font-bold">0</p>
+                            </div>
+                            <div class="p-3 bg-white/20 rounded-xl">
+                                <i data-lucide="Send" class="w-8 h-8"></i>
+                            </div>
+                        </div>
+                    </div>
+                     <div id="upcoming-tests-card" class="p-6 rounded-2xl text-white shadow-lg transform hover:-translate-y-1 transition-transform duration-300 cursor-pointer bg-gradient-to-br from-rose-500 to-pink-500">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-lg opacity-80">Upcoming Tests</p>
+                                <p id="live-tests-stat" class="text-4xl font-bold">0</p>
+                            </div>
+                            <div class="p-3 bg-white/20 rounded-xl">
+                                <i data-lucide="ClipboardList" class="w-8 h-8"></i>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <h2 class="text-2xl font-bold mb-4 text-slate-700">Live Statistics</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <div class="card"><div class="flex justify-between items-center mb-2"><p class="text-sm font-medium text-slate-500">Today's Attendance</p><i data-lucide="BarChart3" class="w-5 h-5 text-slate-400"></i></div><p id="live-attendance-stat" class="text-3xl font-bold">0%</p></div>
-                        <div class="card interactive cursor-pointer" id="ongoing-classes-card"><div class="flex justify-between items-center mb-2"><p class="text-sm font-medium text-slate-500">Ongoing Classes</p><i data-lucide="Presentation" class="w-5 h-5 text-slate-400"></i></div><p id="live-classes-stat" class="text-3xl font-bold">0</p></div>
-                        <div class="card interactive cursor-pointer" id="upcoming-tests-card"><div class="flex justify-between items-center mb-2"><p class="text-sm font-medium text-slate-500">Upcoming Tests (7d)</p><i data-lucide="ClipboardList" class="w-5 h-5 text-slate-400"></i></div><p id="live-tests-stat" class="text-3xl font-bold">0</p></div>
-                        <div class="card"><div class="flex justify-between items-center mb-2"><p class="text-sm font-medium text-slate-500">Recent Teacher Activity</p><i data-lucide="UserCheck" class="w-5 h-5 text-slate-400"></i></div><p id="live-teacher-activity-stat" class="text-lg font-bold truncate">N/A</p></div>
+
+                <!-- Charts and Activity Feed -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 card">
+                         <h2 class="text-xl font-bold mb-4 text-slate-700">Live Campus Status</h2>
+                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 h-64">
+                             <div class="flex flex-col items-center justify-center p-4 bg-slate-50 rounded-lg">
+                                 <h3 class="font-semibold text-slate-600 mb-2">Today's Attendance</h3>
+                                 <div class="w-full h-full max-w-[180px]"><canvas id="overview-attendance-chart"></canvas></div>
+                             </div>
+                             <div class="flex flex-col items-center justify-center p-4 bg-slate-50 rounded-lg">
+                                 <h3 class="font-semibold text-slate-600 mb-2">Teacher Status</h3>
+                                 <div class="w-full h-full max-w-[180px]"><canvas id="overview-teacher-status-chart"></canvas></div>
+                             </div>
+                         </div>
+                    </div>
+                    <div class="card">
+                        <h2 class="text-xl font-bold mb-4 text-slate-700">Recent Activity</h2>
+                        <div id="recent-activity-feed" class="space-y-2 max-h-64 overflow-y-auto">
+                            <!-- Activity items will be injected here -->
+                            <p class="text-slate-500">No recent activity.</p>
+                        </div>
                     </div>
                 </div>
             `;
+            // --- END NEW Admin Overview HTML ---
             document.getElementById('admin-reports').innerHTML = `
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <!-- Monthly Attendance Report -->
@@ -985,8 +1064,8 @@
                                     <label class="flex items-center gap-2"><input type="radio" name="low-perf-type" value="marks"> Marks</label>
                                 </div>
                             </div>
-                            <div>
-                               <label for="low-perf-threshold" class="text-sm font-medium">Threshold (% below):</label>
+                             <div>
+                                <label for="low-perf-threshold" class="text-sm font-medium">Threshold (% below):</label>
                                <input type="number" id="low-perf-threshold" class="input-field" value="75" min="1" max="99">
                            </div>
                             <button id="generate-low-perf-report-btn" class="btn-primary w-full ripple">Generate List</button>
@@ -1153,7 +1232,7 @@
                      </div>
                       <div id="upload-progress-container" class="mt-4 hidden">
                          <button id="upload-pic-btn" class="btn-primary ripple w-full">Upload and Save</button>
-                    </div>
+                     </div>
                 </div>
                 <div class="card">
                     <h2 class="text-xl font-bold mb-4">Change Password</h2>
@@ -1552,22 +1631,22 @@
 
                 // 4. Render Calendar
                 let table = `<h3 class="text-lg font-bold text-center mb-2">Attendance for ${student?.name}</h3>
-                             <div class="text-center mb-4 p-3 bg-slate-50 rounded-lg">
-                                 <p class="text-sm font-medium text-slate-500">Monthly Attendance Rate</p>
-                                 <p class="text-3xl font-bold text-indigo-600">${attendancePercentage}%</p>
-                                 <div class="w-full bg-slate-200 rounded-full h-2.5 mt-1">
-                                     <div class="bg-indigo-600 h-2.5 rounded-full" style="width: ${attendancePercentage}%"></div>
+                                 <div class="text-center mb-4 p-3 bg-slate-50 rounded-lg">
+                                     <p class="text-sm font-medium text-slate-500">Monthly Attendance Rate</p>
+                                     <p class="text-3xl font-bold text-indigo-600">${attendancePercentage}%</p>
+                                     <div class="w-full bg-slate-200 rounded-full h-2.5 mt-1">
+                                         <div class="bg-indigo-600 h-2.5 rounded-full" style="width: ${attendancePercentage}%"></div>
+                                     </div>
                                  </div>
-                             </div>
-                             <div class="flex items-center justify-between mb-4">
-                                 <button id="prev-student-month" class="p-2 rounded-full hover:bg-slate-200"><i data-lucide="ChevronLeft" class="pointer-events-none"></i></button>
-                                 <h3 class="text-lg font-bold">${monthNames[month]} ${year}</h3>
-                                 <button id="next-student-month" class="p-2 rounded-full hover:bg-slate-200"><i data-lucide="ChevronRight" class="pointer-events-none"></i></button>
-                             </div>
-                             <div class="grid grid-cols-7 gap-1 text-center font-semibold text-slate-500 text-sm mb-2">
-                                 <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
-                             </div>
-                             <div class="grid grid-cols-7 gap-2">`;
+                                 <div class="flex items-center justify-between mb-4">
+                                     <button id="prev-student-month" class="p-2 rounded-full hover:bg-slate-200"><i data-lucide="ChevronLeft" class="pointer-events-none"></i></button>
+                                     <h3 class="text-lg font-bold">${monthNames[month]} ${year}</h3>
+                                     <button id="next-student-month" class="p-2 rounded-full hover:bg-slate-200"><i data-lucide="ChevronRight" class="pointer-events-none"></i></button>
+                                 </div>
+                                 <div class="grid grid-cols-7 gap-1 text-center font-semibold text-slate-500 text-sm mb-2">
+                                     <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+                                 </div>
+                                 <div class="grid grid-cols-7 gap-2">`;
 
                 for (let i = 0; i < firstDay; i++) { table += '<div></div>'; }
 
@@ -1602,12 +1681,12 @@
                 }
 
                 table += `</div>
-                          <div class="flex flex-wrap justify-end gap-x-4 gap-y-2 mt-4 text-sm">
-                              <span class="flex items-center gap-2"><div class="w-4 h-4 rounded bg-green-100 border border-green-200"></div> Present</span>
-                              <span class="flex items-center gap-2"><div class="w-4 h-4 rounded bg-red-100 border border-red-200"></div> Absent</span>
-                              <span class="flex items-center gap-2"><div class="w-4 h-4 rounded bg-sky-100 border border-sky-200"></div> Holiday</span>
-                               <span class="flex items-center gap-2"><div class="w-4 h-4 rounded bg-slate-100 border border-slate-200"></div> No Class</span>
-                          </div>`;
+                                 <div class="flex flex-wrap justify-end gap-x-4 gap-y-2 mt-4 text-sm">
+                                     <span class="flex items-center gap-2"><div class="w-4 h-4 rounded bg-green-100 border border-green-200"></div> Present</span>
+                                     <span class="flex items-center gap-2"><div class="w-4 h-4 rounded bg-red-100 border border-red-200"></div> Absent</span>
+                                     <span class="flex items-center gap-2"><div class="w-4 h-4 rounded bg-sky-100 border border-sky-200"></div> Holiday</span>
+                                      <span class="flex items-center gap-2"><div class="w-4 h-4 rounded bg-slate-100 border border-slate-200"></div> No Class</span>
+                                 </div>`;
 
                 container.innerHTML = table;
                 lucide.createIcons();
@@ -1654,18 +1733,18 @@
                 const daysInMonth = new Date(year, month + 1, 0).getDate();
 
                 let table = `<div class="text-center mb-4 p-3 bg-slate-50 rounded-lg">
-                                 <p class="text-sm font-medium text-slate-500">Class Days This Month</p>
-                                 <p class="text-3xl font-bold text-indigo-600">${totalDaysPresent}</p>
-                             </div>
-                             <div class="flex items-center justify-between mb-4">
-                                 <button id="prev-${navPrefix}-month" class="p-2 rounded-full hover:bg-slate-200"><i data-lucide="ChevronLeft" class="pointer-events-none"></i></button>
-                                 <h3 class="text-lg font-bold">${monthNames[month]} ${year}</h3>
-                                 <button id="next-${navPrefix}-month" class="p-2 rounded-full hover:bg-slate-200"><i data-lucide="ChevronRight" class="pointer-events-none"></i></button>
-                             </div>
-                             <div class="grid grid-cols-7 gap-1 text-center font-semibold text-slate-500 text-sm mb-2">
-                                 <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
-                             </div>
-                             <div class="grid grid-cols-7 gap-2">`;
+                                     <p class="text-sm font-medium text-slate-500">Class Days This Month</p>
+                                     <p class="text-3xl font-bold text-indigo-600">${totalDaysPresent}</p>
+                                 </div>
+                                 <div class="flex items-center justify-between mb-4">
+                                     <button id="prev-${navPrefix}-month" class="p-2 rounded-full hover:bg-slate-200"><i data-lucide="ChevronLeft" class="pointer-events-none"></i></button>
+                                     <h3 class="text-lg font-bold">${monthNames[month]} ${year}</h3>
+                                     <button id="next-${navPrefix}-month" class="p-2 rounded-full hover:bg-slate-200"><i data-lucide="ChevronRight" class="pointer-events-none"></i></button>
+                                 </div>
+                                 <div class="grid grid-cols-7 gap-1 text-center font-semibold text-slate-500 text-sm mb-2">
+                                     <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+                                 </div>
+                                 <div class="grid grid-cols-7 gap-2">`;
 
                 for (let i = 0; i < firstDay; i++) { table += '<div></div>'; }
 
@@ -2005,12 +2084,12 @@
                  const userDocRef = doc(db, 'users', user.uid);
                  const userDocSnap = await getDoc(userDocRef);
                  if (userDocSnap.exists()) {
-                    state.currentUser = user;
-                    state.userRole = userDocSnap.data().role;
-                    initializeAppUI(state.userRole);
+                   state.currentUser = user;
+                   state.userRole = userDocSnap.data().role;
+                   initializeAppUI(state.userRole);
                  } else { 
-                    await signOut(auth);
-                    showPage('login-page');
+                   await signOut(auth);
+                   showPage('login-page');
                  }
             } else { 
                 state.currentUser = null;
@@ -2148,25 +2227,69 @@
         // ===================================================================
         
         const setupLiveStatistics = () => {
-            // Live Attendance
+            // Live Attendance for Overview Chart
             const todayStr = getTodayDateString();
             const attendanceQuery = query(collection(db, 'attendance'), where('date', '==', todayStr));
             const unsubAttendance = onSnapshot(attendanceQuery, async (snap) => {
-                const el = document.getElementById('live-attendance-stat');
-                if(!el) return;
                 const totalRecords = snap.size;
                 const presentRecords = snap.docs.filter(d => d.data().status === 'present').length;
-                const percentage = totalRecords > 0 ? ((presentRecords / totalRecords) * 100).toFixed(1) : '0.0';
-                el.textContent = `${percentage}%`;
+                
+                const canvas = document.getElementById('overview-attendance-chart');
+                if(!canvas) return;
+                const ctx = canvas.getContext('2d');
+                if (state.charts['overview-attendance-chart']) {
+                    state.charts['overview-attendance-chart'].destroy();
+                }
+                 state.charts['overview-attendance-chart'] = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Present', 'Absent'],
+                        datasets: [{
+                            data: [presentRecords, totalRecords - presentRecords],
+                            backgroundColor: [ '#22c55e', '#ef4444' ],
+                            borderColor: '#fff',
+                            borderWidth: 4,
+                            hoverOffset: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false, cutout: '70%',
+                        plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 15 } } }
+                    }
+                });
             });
 
-            // Ongoing Classes (simple estimation)
-             const unsubOngoingClasses = onSnapshot(query(collection(db, 'status'), where('state', '==', 'online')), (snap) => {
-                const el = document.getElementById('live-classes-stat');
-                if (el) {
-                    const startValue = parseInt(el.textContent.replace(/,/g, ''), 10) || 0;
-                    animateValue(el, startValue, snap.size, 1000);
+            // Teacher Status for Overview Chart
+             const unsubOngoingClasses = onSnapshot(query(collection(db, 'status')), (snap) => {
+                let online = 0, offline = 0;
+                snap.forEach(doc => {
+                    if (doc.data().state === 'online') online++;
+                    else offline++;
+                });
+
+                const canvas = document.getElementById('overview-teacher-status-chart');
+                if(!canvas) return;
+                const ctx = canvas.getContext('2d');
+                if (state.charts['overview-teacher-status-chart']) {
+                    state.charts['overview-teacher-status-chart'].destroy();
                 }
+                 state.charts['overview-teacher-status-chart'] = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Online', 'Offline'],
+                        datasets: [{
+                            data: [online, offline],
+                            backgroundColor: ['#3b82f6', '#9ca3af'],
+                            borderColor: '#fff',
+                            borderWidth: 4,
+                            hoverOffset: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false, cutout: '70%',
+                        plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 15 } } }
+                    }
+                });
             });
             
             // Upcoming Tests
@@ -2175,26 +2298,13 @@
             const testsQuery = query(collection(db, 'exams'), where('date', '>=', Timestamp.fromDate(today)), where('date', '<=', Timestamp.fromDate(nextWeek)));
             const unsubTests = onSnapshot(testsQuery, (snap) => {
                  const el = document.getElementById('live-tests-stat');
-                 if (el) {
-                     const startValue = parseInt(el.textContent.replace(/,/g, ''), 10) || 0;
-                     animateValue(el, startValue, snap.size, 1000);
-                 }
+                  if (el) {
+                       const startValue = parseInt(el.textContent.replace(/,/g, ''), 10) || 0;
+                       animateValue(el, startValue, snap.size, 1000);
+                  }
             });
 
-            // Recent Teacher Activity
-            const activityQuery = query(collection(db, 'status'), orderBy('last_changed', 'desc'), limit(1));
-            const unsubActivity = onSnapshot(activityQuery, (snap) => {
-                const el = document.getElementById('live-teacher-activity-stat');
-                if (!el) return;
-                if (!snap.empty) {
-                    const latest = snap.docs[0].data();
-                    el.textContent = latest.teacherName || latest.teacherEmail;
-                } else {
-                    el.textContent = 'No activity';
-                }
-            });
-
-            state.unsubscribeListeners.push(unsubAttendance, unsubOngoingClasses, unsubTests, unsubActivity);
+            state.unsubscribeListeners.push(unsubAttendance, unsubOngoingClasses, unsubTests);
         };
 
         const setupAdminListeners = () => {
@@ -2209,13 +2319,6 @@
             });
             const unsubS = onSnapshot(collection(db, 'students'), s => {
                  const el = document.getElementById('total-students-stat');
-                if (el) {
-                    const startValue = parseInt(el.textContent.replace(/,/g, ''), 10) || 0;
-                    animateValue(el, startValue, s.size, 1000);
-                }
-            });
-            const unsubN = onSnapshot(collection(db, 'notices'), s => {
-                const el = document.getElementById('active-notices-stat');
                 if (el) {
                     const startValue = parseInt(el.textContent.replace(/,/g, ''), 10) || 0;
                     animateValue(el, startValue, s.size, 1000);
@@ -2253,12 +2356,12 @@
                 if(!cont) return;
 
                  getDocs(query(collection(db, 'teachers'), orderBy('name'))).then(snap => {
-                     if(snap.empty){ cont.innerHTML = '<p class="text-slate-500">No teachers found.</p>'; return; }
-                     cont.innerHTML = `<table class="w-full text-sm"><thead class="bg-slate-50 text-left"><tr class="border-b border-slate-200"><th class="p-2">Name</th><th class="p-2">Email</th><th class="p-2">Assigned Classes</th><th class="p-2 text-center">Actions</th></tr></thead><tbody>${snap.docs.map(d => {
-                         const t = d.data();
-                         return `<tr class="border-b border-slate-200"><td class="p-2 font-medium">${t.name}</td><td class="p-2">${t.email}</td><td class="p-2">${t.assignedClasses.map(c => `<span class="bg-indigo-100 text-indigo-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">${c.class} (${c.subject})</span>`).join('') || 'None'}</td><td class="p-2 text-center flex justify-center items-center gap-1"><button class="edit-teacher-btn text-blue-500 p-1" data-id="${d.id}" title="Edit Teacher"><i data-lucide="Edit" class="w-4 h-4 pointer-events-none"></i></button><button class="assign-class-btn text-green-500 p-1" data-id="${d.id}" data-name="${t.name}" title="Assign Class"><i data-lucide="Plus" class="w-4 h-4 pointer-events-none"></i></button><button class="delete-teacher-btn p-1 text-red-500 hover:bg-red-100 rounded-full" data-id="${d.id}" title="Delete Teacher"><i data-lucide="Trash2" class="w-4 h-4 pointer-events-none"></i></button></td></tr>`;
-                     }).join('')}</tbody></table>`;
-                     lucide.createIcons();
+                      if(snap.empty){ cont.innerHTML = '<p class="text-slate-500">No teachers found.</p>'; return; }
+                      cont.innerHTML = `<table class="w-full text-sm"><thead class="bg-slate-50 text-left"><tr class="border-b border-slate-200"><th class="p-2">Name</th><th class="p-2">Email</th><th class="p-2">Assigned Classes</th><th class="p-2 text-center">Actions</th></tr></thead><tbody>${snap.docs.map(d => {
+                          const t = d.data();
+                          return `<tr class="border-b border-slate-200"><td class="p-2 font-medium">${t.name}</td><td class="p-2">${t.email}</td><td class="p-2">${t.assignedClasses.map(c => `<span class="bg-indigo-100 text-indigo-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">${c.class} (${c.subject})</span>`).join('') || 'None'}</td><td class="p-2 text-center flex justify-center items-center gap-1"><button class="edit-teacher-btn text-blue-500 p-1" data-id="${d.id}" title="Edit Teacher"><i data-lucide="Edit" class="w-4 h-4 pointer-events-none"></i></button><button class="assign-class-btn text-green-500 p-1" data-id="${d.id}" data-name="${t.name}" title="Assign Class"><i data-lucide="Plus" class="w-4 h-4 pointer-events-none"></i></button><button class="delete-teacher-btn p-1 text-red-500 hover:bg-red-100 rounded-full" data-id="${d.id}" title="Delete Teacher"><i data-lucide="Trash2" class="w-4 h-4 pointer-events-none"></i></button></td></tr>`;
+                      }).join('')}</tbody></table>`;
+                      lucide.createIcons();
                  });
             };
             
@@ -2338,7 +2441,7 @@
                 }).join('');
                 cont.scrollTop = cont.scrollHeight;
             });
-            state.unsubscribeListeners.push(unsubT, unsubS, unsubN, unsubR, unsubNoticesList, unsubTeachersList, unsubStudentsList, unsubRequestsAdmin, unsubChat, unsubStatuses, unsubExamRequests, unsubScheduledExams);
+            state.unsubscribeListeners.push(unsubT, unsubS, unsubR, unsubNoticesList, unsubTeachersList, unsubStudentsList, unsubRequestsAdmin, unsubChat, unsubStatuses, unsubExamRequests, unsubScheduledExams);
         };
         const setupTeacherLiveStats = () => {
             const card = document.getElementById('teacher-attendance-recap-card');
@@ -2371,7 +2474,7 @@
                     acc[key].total++;
                     if (record.status === 'present') acc[key].present++;
                     if (!acc[key].timestamp || record.timestamp.toMillis() > acc[key].timestamp.toMillis()) {
-                       acc[key].timestamp = record.timestamp;
+                        acc[key].timestamp = record.timestamp;
                     }
                     return acc;
                 }, {});
@@ -2446,13 +2549,13 @@
                     }
                     const examClassSelect = document.getElementById('teacher-exam-class');
                      if(examClassSelect) {
-                          examClassSelect.addEventListener('change', () => {
-                              const selectedClass = examClassSelect.value;
-                              const subjectsForClass = state.currentTeacherData.assignedClasses
-                                  .filter(c => c.class === selectedClass)
-                                  .map(c => c.subject);
-                              populateSelect('teacher-exam-subject', subjectsForClass);
-                          });
+                           examClassSelect.addEventListener('change', () => {
+                               const selectedClass = examClassSelect.value;
+                               const subjectsForClass = state.currentTeacherData.assignedClasses
+                                   .filter(c => c.class === selectedClass)
+                                   .map(c => c.subject);
+                               populateSelect('teacher-exam-subject', subjectsForClass);
+                           });
                      }
                 }
             });
@@ -2468,7 +2571,7 @@
                     return `<div class="p-3 rounded-md bg-slate-50"><div class="flex justify-between items-start"><div><h3 class="font-semibold">${r.title}</h3><p class="text-sm text-slate-500">${r.content}</p></div><span class="text-xs font-medium px-2.5 py-0.5 rounded-full ${statusColors[r.status]}">${r.status}</span></div><p class="text-xs text-slate-400 text-right mt-1">${formatDate(r.timestamp)}</p></div>`;
                 }).join('');
             });
-             const unsubMyExamRequests = onSnapshot(query(collection(db, 'exam-requests'), where('teacherId', '==', state.currentUser.uid)), snap => {
+              const unsubMyExamRequests = onSnapshot(query(collection(db, 'exam-requests'), where('teacherId', '==', state.currentUser.uid)), snap => {
                 const cont = document.getElementById('teacher-exam-requests-list');
                 if(!cont) return;
                 if (snap.empty) { cont.innerHTML = '<p class="text-slate-500">You have not requested any exams.</p>'; return; }
@@ -2500,13 +2603,13 @@
                 cont.scrollTop = cont.scrollHeight;
             });
 
-             const handleBeforeUnload = (e) => {
-                if (state.currentUser && state.userRole === 'teacher') {
-                    setDoc(doc(db, 'status', state.currentUser.uid), {
-                        state: 'offline',
-                        last_changed: serverTimestamp()
-                    }, { merge: true });
-                }
+               const handleBeforeUnload = (e) => {
+                 if (state.currentUser && state.userRole === 'teacher') {
+                     setDoc(doc(db, 'status', state.currentUser.uid), {
+                         state: 'offline',
+                         last_changed: serverTimestamp()
+                     }, { merge: true });
+                 }
             };
             window.addEventListener('beforeunload', handleBeforeUnload);
 
@@ -2955,6 +3058,13 @@
                 if (target.closest('#total-teachers-card')) {
                     showTeacherStatusModal();
                 }
+                if (target.closest('#pending-requests-card')) {
+                    navigateToSection('admin-requests', 'Teacher Requests');
+                }
+                if (target.closest('#upcoming-tests-card')) {
+                    navigateToSection('admin-exams', 'Manage Exams');
+                }
+
 
                 if (target.closest('#total-students-card')) {
                     const content = `<div id="modal-student-list"></div>`;
@@ -3022,9 +3132,9 @@
                     };
                 }
                  if(target.id === 'admin-view-marks-btn') {
-                     const className = document.getElementById('admin-marks-class').value;
-                     if (!className) { showToast('Please select a class.', 'error'); return; }
-                     viewAdminMarks(className);
+                      const className = document.getElementById('admin-marks-class').value;
+                      if (!className) { showToast('Please select a class.', 'error'); return; }
+                      viewAdminMarks(className);
                  }
                 if(target.id === 'admin-view-attendance-btn') {
                     const date = document.getElementById('admin-attendance-date').value;
@@ -3037,8 +3147,8 @@
                     viewAdminAttendanceRecords(date, className, subject.trim());
                 }
                  if (target.id === 'custom-attendance-toggle') {
-                    document.getElementById('custom-attendance-details').classList.toggle('hidden');
-                }
+                     document.getElementById('custom-attendance-details').classList.toggle('hidden');
+                 }
                  // Report Generation Buttons
                 if (target.id === 'generate-attendance-report-btn') {
                     const className = document.getElementById('report-attendance-class').value;
@@ -3160,12 +3270,12 @@
                     finally { hideLoading(); }
                 }
                  if (target.id === 'upload-pic-btn') {
-                    uploadProfilePicture();
-                }
+                     uploadProfilePicture();
+                 }
                 // Student portal buttons
                  if (target.id === 'view-attendance-sheet-btn') {
-                    showToast('This feature is under development.', 'info');
-                }
+                     showToast('This feature is under development.', 'info');
+                 }
             });
              // Add a single 'change' event listener for the whole app
             app.addEventListener('change', (e) => {
@@ -3287,4 +3397,3 @@
 
 </body>
 </html>
-
